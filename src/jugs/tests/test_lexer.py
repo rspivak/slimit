@@ -36,6 +36,13 @@ class LexerTestCase(unittest.TestCase):
         lexer.build()
         return lexer
 
+    def _get_token(self, text):
+        lexer = Lexer()
+        lexer.build()
+        lexer.input(text)
+        token = lexer.token()
+        return token
+
     def test_identifier(self):
         lexer = self._get_lexer()
         lexer.input('foo')
@@ -66,3 +73,99 @@ class LexerTestCase(unittest.TestCase):
         lexer.input('false')
         token = lexer.token()
         self.assertEquals(token.type, 'FALSE')
+
+    def test_punctuator_eqeq(self):
+        token = self._get_token('==')
+        self.assertEquals(token.type, 'EQEQ')
+
+    def test_punctuator_ne(self):
+        token = self._get_token('!=')
+        self.assertEquals(token.type, 'NE')
+
+    def test_punctuator_streq(self):
+        token = self._get_token('===')
+        self.assertEquals(token.type, 'STREQ')
+
+    def test_punctuator_strneq(self):
+        token = self._get_token('!==')
+        self.assertEquals(token.type, 'STRNEQ')
+
+    def test_punctuator_lt(self):
+        token = self._get_token('<')
+        self.assertEquals(token.type, 'LT')
+
+    def test_punctuator_gt(self):
+        token = self._get_token('>')
+        self.assertEquals(token.type, 'GT')
+
+    def test_punctuator_or(self):
+        token = self._get_token('||')
+        self.assertEquals(token.type, 'OR')
+
+    def test_punctuator_and(self):
+        token = self._get_token('&&')
+        self.assertEquals(token.type, 'AND')
+
+    def test_punctuator_plusplus(self):
+        token = self._get_token('++')
+        self.assertEquals(token.type, 'PLUSPLUS')
+
+    def test_punctuator_minusminus(self):
+        token = self._get_token('--')
+        self.assertEquals(token.type, 'MINUSMINUS')
+
+    def test_punctuator_lshift(self):
+        token = self._get_token('<<')
+        self.assertEquals(token.type, 'LSHIFT')
+
+    def test_punctuator_rshift(self):
+        token = self._get_token('>>')
+        self.assertEquals(token.type, 'RSHIFT')
+
+    def test_punctuator_urshift(self):
+        token = self._get_token('>>>')
+        self.assertEquals(token.type, 'URSHIFT')
+
+    def test_punctuator_plusequal(self):
+        token = self._get_token('+=')
+        self.assertEquals(token.type, 'PLUSEQUAL')
+
+    def test_punctuator_minusequal(self):
+        token = self._get_token('-=')
+        self.assertEquals(token.type, 'MINUSEQUAL')
+
+    def test_punctuator_multequal(self):
+        token = self._get_token('*=')
+        self.assertEquals(token.type, 'MULTEQUAL')
+
+    def test_punctuator_divequal(self):
+        token = self._get_token('/=')
+        self.assertEquals(token.type, 'DIVEQUAL')
+
+    def test_punctuator_lshiftequal(self):
+        token = self._get_token('<<=')
+        self.assertEquals(token.type, 'LSHIFTEQUAL')
+
+    def test_punctuator_rshiftequal(self):
+        token = self._get_token('>>=')
+        self.assertEquals(token.type, 'RSHIFTEQUAL')
+
+    def test_punctuator_urshiftequal(self):
+        token = self._get_token('>>>=')
+        self.assertEquals(token.type, 'URSHIFTEQUAL')
+
+    def test_punctuator_andequal(self):
+        token = self._get_token('&=')
+        self.assertEquals(token.type, 'ANDEQUAL')
+
+    def test_punctuator_modequal(self):
+        token = self._get_token('%=')
+        self.assertEquals(token.type, 'MODEQUAL')
+
+    def test_punctuator_xorequal(self):
+        token = self._get_token('^=')
+        self.assertEquals(token.type, 'XOREQUAL')
+
+    def test_punctuator_orequal(self):
+        token = self._get_token('|=')
+        self.assertEquals(token.type, 'OREQUAL')

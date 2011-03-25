@@ -98,7 +98,7 @@ class Lexer(object):
     t_URSHIFTEQUAL = '>>>='
     t_ANDEQUAL = '&='
     t_MODEQUAL = '%='
-    t_XOREQUAL = '^='
+    t_XOREQUAL = '\^='
     t_OREQUAL = '\|='
 
     # Literals
