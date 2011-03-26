@@ -98,6 +98,14 @@ class LexerTestCase(unittest.TestCase):
         token = self._get_token('>')
         self.assertEquals(token.type, 'GT')
 
+    def test_punctuator_le(self):
+        token = self._get_token('<=')
+        self.assertEquals(token.type, 'LE')
+
+    def test_punctuator_ge(self):
+        token = self._get_token('>=')
+        self.assertEquals(token.type, 'GE')
+
     def test_punctuator_or(self):
         token = self._get_token('||')
         self.assertEquals(token.type, 'OR')

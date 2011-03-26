@@ -57,6 +57,7 @@ class Lexer(object):
         'EQEQ', 'NE',                     # == and !=
         'STREQ', 'STRNEQ',                # === and !==
         'LT', 'GT',                       # < and >
+        'LE', 'GE',                       # <= and >=
         'OR', 'AND',                      # || and &&
         'PLUSPLUS', 'MINUSMINUS',         # ++ and --
         'LSHIFT',                         # <<
@@ -82,6 +83,8 @@ class Lexer(object):
     t_STRNEQ = '!=='
     t_LT = '<'
     t_GT = '>'
+    t_LE = '<='
+    t_GE = '>='
     t_OR = '\|\|'
     t_AND = '&&'
     t_PLUSPLUS = '\+\+'
@@ -125,5 +128,3 @@ class Lexer(object):
     def t_error(self, token):
         print "Illegal character '%s'" % token.value[0]
         token.lexer.skip(1)
-
-
