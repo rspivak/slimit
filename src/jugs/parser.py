@@ -32,8 +32,8 @@ from jugs.lexer import Lexer
 
 class Parser(object):
 
-    def __init__(self, lex_optimize=True, lextab='',
-                 yacc_optimize=True, yacctab='', yacc_debug=False):
+    def __init__(self, lex_optimize=True, lextab='lextab',
+                 yacc_optimize=True, yacctab='yacctab', yacc_debug=False):
         self.lex_optimize = lex_optimize
         self.lextab = lextab
         self.yacc_optimize = yacc_optimize
