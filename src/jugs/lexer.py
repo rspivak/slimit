@@ -104,6 +104,8 @@ class Lexer(object):
     t_XOREQUAL = '\^='
     t_OREQUAL = '\|='
 
+    t_ignore = ' \t'
+
     # Literals
     def t_NULL(self, token):
         r'null'
