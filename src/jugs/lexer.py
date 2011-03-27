@@ -129,6 +129,10 @@ class Lexer(object):
         return token
 
     # Terminal types
+    t_STRING = r""""(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'"""
+
+    t_NUMBER = r"""\d+"""
+
     identifier = r'[a-zA-Z_\$][0-9a-zA-Z_\$]*'
 
     @ply.lex.TOKEN(identifier)
