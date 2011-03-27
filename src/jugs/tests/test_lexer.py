@@ -177,3 +177,10 @@ class LexerTestCase(unittest.TestCase):
     def test_punctuator_orequal(self):
         token = self._get_token('|=')
         self.assertEquals(token.type, 'OREQUAL')
+
+    def test_literals(self):
+        lexer = self._get_lexer()
+        for char in Lexer.literals:
+            lexer.input(char)
+            token = lexer.token()
+            self.assertEquals(token.type, char)

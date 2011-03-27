@@ -77,6 +77,15 @@ class Lexer(object):
         ) + keywords
 
     # Punctuators
+    literals = (
+        ',', '.', ';', ':',
+        '&', '|', '^', '~',
+        '+', '-', '*', '/', '%',
+        '[', ']', '{', '}', '(', ')',
+        '?', '!', '=',
+        )
+
+    # Punctuators
     t_EQEQ = '=='
     t_NE = '!='
     t_STREQ = '==='
