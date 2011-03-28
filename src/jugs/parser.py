@@ -57,8 +57,14 @@ class Parser(object):
         )
 
     def p_source_elements(self, p):
-        """source_elements : source_element
-                           | source_elements source_element
+        """source_elements : empty
+                           | source_element_list
+        """
+        pass
+
+    def p_source_element_list(self, p):
+        """source_element_list : source_element
+                               | source_element_list source_element
         """
         pass
 
@@ -553,7 +559,7 @@ class Parser(object):
         pass
 
     def p_block(self, p):
-        """block : '{' statement_list '}'"""
+        """block : '{' source_elements '}'"""
         pass
 
     def p_variable_statement(self, p):
