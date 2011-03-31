@@ -47,9 +47,8 @@ class Parser(object):
         self.parser = ply.yacc.yacc(module=self, optimize=yacc_optimize,
                                     debug=yacc_debug, tabmodule=yacctab)
 
-    def parse(self, text):
-        #return self.parser.parse(text, lexer=self.lexer, debug=True)
-        return self.parser.parse(text, lexer=self.lexer)
+    def parse(self, text, debug=False):
+        return self.parser.parse(text, lexer=self.lexer, debug=debug)
 
     precedence = (
         ('nonassoc', 'IF_WITHOUT_ELSE'),
