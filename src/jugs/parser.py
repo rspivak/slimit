@@ -100,12 +100,29 @@ class Parser(object):
         pass
 
     def p_literal(self, p):
-        """literal : NULL
-                   | TRUE
-                   | FALSE
-                   | NUMBER
-                   | STRING
+        """literal : null_literal
+                   | boolean_literal
+                   | numeric_literal
+                   | string_literal
         """
+        pass
+
+    def p_boolean_literal(self, p):
+        """boolean_literal : TRUE
+                           | FALSE
+        """
+        pass
+
+    def p_null_literal(self, p):
+        """null_literal : NULL"""
+        pass
+
+    def p_numeric_literal(self, p):
+        """numeric_literal : NUMBER"""
+        pass
+
+    def p_string_literal(self, p):
+        """string_literal : STRING"""
         pass
 
     def p_property(self, p):
