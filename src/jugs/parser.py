@@ -31,6 +31,13 @@ from jugs.lexer import Lexer
 
 
 class Parser(object):
+    """JavaScript parser(ECMA-262 5th edition grammar).
+
+    The '*noin' variants are needed to avoid confusing the `in` operator in
+    a relational expression with the `in` operator in a `for` statement.
+
+    '*nobf' stands for 'no brace or function'
+    """
 
     def __init__(self, lex_optimize=True, lextab='lextab',
                  yacc_optimize=True, yacctab='yacctab', yacc_debug=False):
