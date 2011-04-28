@@ -26,8 +26,8 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import ply.yacc
 
-from jugs import ast
-from jugs.lexer import Lexer
+from slimit import ast
+from slimit.lexer import Lexer
 
 
 class Parser(object):

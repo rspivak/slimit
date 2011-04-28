@@ -26,7 +26,7 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import unittest
 
-from jugs.lexer import Lexer
+from slimit.lexer import Lexer
 
 
 class LexerTestCase(unittest.TestCase):

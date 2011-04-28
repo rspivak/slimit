@@ -9,18 +9,17 @@ Operating System :: Unix
 """
 
 long_description = """\
-JUGS (JavaScript UGlifier) is a JavaScript source-to-source compiler
-and optimizer.
+SlimIt is a JavaScript source-to-source compiler and optimizer / minifier.
 It compiles JavaScript into more compact code so that it downloads
 and runs faster.
 """
 
 setup(
-    name='jugs',
+    name='slimit',
     version='0.1',
-    url='http://github.com/rspivak/jugs',
+    url='http://github.com/rspivak/slimit',
     license='MIT',
-    description='JUGS - JavaScript Compiler / Optimizer',
+    description='SlimIt - JavaScript minifier',
     author='Ruslan Spivak',
     author_email='ruslan.spivak@gmail.com',
     packages=find_packages('src'),
@@ -29,7 +28,7 @@ setup(
     zip_safe=False,
     entry_points="""\
     [console_scripts]
-    jugs = jugs.compiler:main
+    slimit = slimit.compiler:main
     """,
     classifiers=filter(None, classifiers.split('\n')),
     long_description=long_description,

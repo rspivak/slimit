@@ -26,7 +26,7 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import unittest
 
-from jugs.parser import Parser
+from slimit.parser import Parser
 
 class ParserTestCase(unittest.TestCase):
 
