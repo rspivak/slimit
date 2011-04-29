@@ -74,6 +74,18 @@ class LexerTestCase(unittest.TestCase):
          ['NULL null', 'TRUE true', 'FALSE false',
           'ID Null', 'ID True', 'ID False']
          ),
+
+        # Punctuators
+        (('== != === !== < > <= >= || && ++ -- << >> '
+          '>>> += -= *= /= <<= >>= >>>= &= %= ^= |='),
+         ['EQEQ ==', 'NE !=', 'STREQ ===', 'STRNEQ !==', 'LT <', 'GT >',
+          'LE <=', 'GE >=', 'OR ||', 'AND &&', 'PLUSPLUS ++', 'MINUSMINUS --',
+          'LSHIFT <<', 'RSHIFT >>', 'URSHIFT >>>', 'PLUSEQUAL +=',
+          'MINUSEQUAL -=', 'MULTEQUAL *=', 'DIVEQUAL /=', 'LSHIFTEQUAL <<=',
+          'RSHIFTEQUAL >>=', 'URSHIFTEQUAL >>>=', 'ANDEQUAL &=', 'MODEQUAL %=',
+          'XOREQUAL ^=', 'OREQUAL |=',
+          ]
+         ),
         ]
 
 
