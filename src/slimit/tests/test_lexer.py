@@ -61,6 +61,13 @@ class LexerTestCase(unittest.TestCase):
          ),
         (ur'\u03c0 \u03c0_tail var\ua67c',
          [ur'ID \u03c0', ur'ID \u03c0_tail', ur'ID var\ua67c']),
+
+        # Keywords
+        # ('break case ...', ['BREAK break', 'CASE case', ...])
+        (' '.join(kw.lower() for kw in Lexer.keywords),
+         ['%s %s' % (kw, kw.lower()) for kw in Lexer.keywords]
+         ),
+        ('break Break BREAK', ['BREAK break', 'ID Break', 'ID BREAK']),
         ]
 
 
