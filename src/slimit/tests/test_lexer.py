@@ -25,10 +25,14 @@
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import unittest
+import difflib
+import pprint
 
 from slimit.lexer import Lexer
 
 
+# The structure and some test cases are taken
+# from https://bitbucket.org/ned/jslex
 class LexerTestCase(unittest.TestCase):
 
     def _get_lexer(self):
@@ -36,151 +40,41 @@ class LexerTestCase(unittest.TestCase):
         lexer.build()
         return lexer
 
-    def _get_token(self, text):
-        lexer = Lexer()
-        lexer.build()
-        lexer.input(text)
-        token = lexer.token()
-        return token
+    def assertListEqual(self, first, second):
+        """Assert that two lists are equal.
 
-    def test_identifier(self):
+        Prints differences on error.
+        This method is similar to that of Python 2.7 'assertListEqual'
+        """
+        if first != second:
+            message = '\n'.join(
+                difflib.ndiff(pprint.pformat(first).splitlines(),
+                              pprint.pformat(second).splitlines())
+                )
+            self.fail('Lists differ:\n' + message)
+
+    TEST_CASES = [
+        # Identifiers
+        ('i my_variable_name c17 _dummy $str $ _ CamelCase',
+         ['ID i', 'ID my_variable_name', 'ID c17',
+          'ID _dummy', 'ID $str', 'ID $', 'ID _', 'ID CamelCase']
+         ),
+        (ur'\u03c0 \u03c0_tail var\ua67c',
+         [ur'ID \u03c0', ur'ID \u03c0_tail', ur'ID var\ua67c']),
+        ]
+
+
+def make_test_function(input, expected):
+
+    def test_func(self):
         lexer = self._get_lexer()
-        lexer.input('foo')
-        token = lexer.token()
-        self.assertEquals(token.type, 'ID')
+        lexer.input(input)
+        result = ['%s %s' % (token.type, token.value) for token in lexer]
+        self.assertListEqual(result, expected)
 
-    def test_keywords(self):
-        lexer = self._get_lexer()
-        for keyword in Lexer.keywords:
-            lexer.input(keyword)
-            token = lexer.token()
-            self.assertEquals(token.type, 'ID')
+    return test_func
 
-    def test_literal_null(self):
-        lexer = self._get_lexer()
-        lexer.input('null')
-        token = lexer.token()
-        self.assertEquals(token.type, 'NULL')
+for index, (input, expected) in enumerate(LexerTestCase.TEST_CASES):
+    func = make_test_function(input, expected)
+    setattr(LexerTestCase, 'test_case_%d' % index, func)
 
-    def test_literal_true(self):
-        lexer = self._get_lexer()
-        lexer.input('true')
-        token = lexer.token()
-        self.assertEquals(token.type, 'TRUE')
-
-    def test_literal_false(self):
-        lexer = self._get_lexer()
-        lexer.input('false')
-        token = lexer.token()
-        self.assertEquals(token.type, 'FALSE')
-
-    def test_punctuator_eqeq(self):
-        token = self._get_token('==')
-        self.assertEquals(token.type, 'EQEQ')
-
-    def test_punctuator_ne(self):
-        token = self._get_token('!=')
-        self.assertEquals(token.type, 'NE')
-
-    def test_punctuator_streq(self):
-        token = self._get_token('===')
-        self.assertEquals(token.type, 'STREQ')
-
-    def test_punctuator_strneq(self):
-        token = self._get_token('!==')
-        self.assertEquals(token.type, 'STRNEQ')
-
-    def test_punctuator_lt(self):
-        token = self._get_token('<')
-        self.assertEquals(token.type, 'LT')
-
-    def test_punctuator_gt(self):
-        token = self._get_token('>')
-        self.assertEquals(token.type, 'GT')
-
-    def test_punctuator_le(self):
-        token = self._get_token('<=')
-        self.assertEquals(token.type, 'LE')
-
-    def test_punctuator_ge(self):
-        token = self._get_token('>=')
-        self.assertEquals(token.type, 'GE')
-
-    def test_punctuator_or(self):
-        token = self._get_token('||')
-        self.assertEquals(token.type, 'OR')
-
-    def test_punctuator_and(self):
-        token = self._get_token('&&')
-        self.assertEquals(token.type, 'AND')
-
-    def test_punctuator_plusplus(self):
-        token = self._get_token('++')
-        self.assertEquals(token.type, 'PLUSPLUS')
-
-    def test_punctuator_minusminus(self):
-        token = self._get_token('--')
-        self.assertEquals(token.type, 'MINUSMINUS')
-
-    def test_punctuator_lshift(self):
-        token = self._get_token('<<')
-        self.assertEquals(token.type, 'LSHIFT')
-
-    def test_punctuator_rshift(self):
-        token = self._get_token('>>')
-        self.assertEquals(token.type, 'RSHIFT')
-
-    def test_punctuator_urshift(self):
-        token = self._get_token('>>>')
-        self.assertEquals(token.type, 'URSHIFT')
-
-    def test_punctuator_plusequal(self):
-        token = self._get_token('+=')
-        self.assertEquals(token.type, 'PLUSEQUAL')
-
-    def test_punctuator_minusequal(self):
-        token = self._get_token('-=')
-        self.assertEquals(token.type, 'MINUSEQUAL')
-
-    def test_punctuator_multequal(self):
-        token = self._get_token('*=')
-        self.assertEquals(token.type, 'MULTEQUAL')
-
-    def test_punctuator_divequal(self):
-        token = self._get_token('/=')
-        self.assertEquals(token.type, 'DIVEQUAL')
-
-    def test_punctuator_lshiftequal(self):
-        token = self._get_token('<<=')
-        self.assertEquals(token.type, 'LSHIFTEQUAL')
-
-    def test_punctuator_rshiftequal(self):
-        token = self._get_token('>>=')
-        self.assertEquals(token.type, 'RSHIFTEQUAL')
-
-    def test_punctuator_urshiftequal(self):
-        token = self._get_token('>>>=')
-        self.assertEquals(token.type, 'URSHIFTEQUAL')
-
-    def test_punctuator_andequal(self):
-        token = self._get_token('&=')
-        self.assertEquals(token.type, 'ANDEQUAL')
-
-    def test_punctuator_modequal(self):
-        token = self._get_token('%=')
-        self.assertEquals(token.type, 'MODEQUAL')
-
-    def test_punctuator_xorequal(self):
-        token = self._get_token('^=')
-        self.assertEquals(token.type, 'XOREQUAL')
-
-    def test_punctuator_orequal(self):
-        token = self._get_token('|=')
-        self.assertEquals(token.type, 'OREQUAL')
-
-    def test_literals(self):
-        lexer = self._get_lexer()
-        for char in Lexer.literals:
-            lexer.input(char)
-            token = lexer.token()
-            self.assertEquals(token.type, char)

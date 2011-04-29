@@ -26,6 +26,13 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import ply.lex
 
+from slimit.unicode import (
+    LETTER,
+    DIGIT,
+    COMBINING_MARK,
+    CONNECTOR_PUNCTUATION,
+    )
+
 
 class Lexer(object):
 
@@ -38,6 +45,17 @@ class Lexer(object):
 
     def token(self):
         return self.lexer.token()
+
+    # Iterator protocol
+    def __iter__(self):
+        return self
+
+    def next(self):
+        token = self.token()
+        if not token:
+            raise StopIteration
+
+        return token
 
     keywords = (
         'BREAK', 'CASE', 'CATCH', 'CONTINUE', 'DEBUGGER', 'DEFAULT', 'DELETE',
@@ -128,12 +146,13 @@ class Lexer(object):
         r'false'
         return token
 
-    # Terminal types
-    t_STRING = r""""(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'"""
-
-    t_NUMBER = r"""\d+"""
-
-    identifier = r'[a-zA-Z_\$][0-9a-zA-Z_\$]*'
+    # XXX: <ZWNJ> <ZWJ> ?
+    identifier_start = r'(?:' + r'[a-zA-Z_$]' + r'|' + LETTER + r')+'
+    identifier_part = (
+        r'(?:' + COMBINING_MARK + r'|' + DIGIT +
+        r'|' + CONNECTOR_PUNCTUATION + r')*'
+        )
+    identifier = identifier_start + identifier_part
 
     @ply.lex.TOKEN(identifier)
     def t_ID(self, token):
