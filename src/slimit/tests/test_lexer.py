@@ -86,6 +86,12 @@ class LexerTestCase(unittest.TestCase):
           'XOREQUAL ^=', 'OREQUAL |=',
           ]
          ),
+
+        # Punctuator literals
+        # ('& * ...', ['& &', '* *', ...])
+        (' '.join(literal for literal in Lexer.literals),
+         ['%s %s' % (literal, literal) for literal in Lexer.literals]
+         ),
         ]
 
 
