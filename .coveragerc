@@ -1,5 +1,9 @@
 [report]
 omit =
+    /Users/*/.buildout/eggs/*
+    /home/*/.buildout/eggs/*
     parts/*
     eggs/*
     */test*
+    *lextab.py
+    *yacctab.py
