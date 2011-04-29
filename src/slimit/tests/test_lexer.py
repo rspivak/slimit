@@ -68,6 +68,12 @@ class LexerTestCase(unittest.TestCase):
          ['%s %s' % (kw, kw.lower()) for kw in Lexer.keywords]
          ),
         ('break Break BREAK', ['BREAK break', 'ID Break', 'ID BREAK']),
+
+        # Literals
+        ('null true false Null True False',
+         ['NULL null', 'TRUE true', 'FALSE false',
+          'ID Null', 'ID True', 'ID False']
+         ),
         ]
 
 
