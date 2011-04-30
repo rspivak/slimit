@@ -154,6 +154,34 @@ class Lexer(object):
     )
     """
 
+    t_STRING = r"""
+    (?:
+        (?:" # double quoted string
+            (?:
+                [^"\\\n\r]             # no escape chars, line terminators or "
+                |
+                \\[a-zA-Z\\\'"?]       # escaped characters
+                |
+                \\x[0-9a-fA-F]{2}      # hex_escape_sequence
+                |
+                \\u[0-9a-fA-F]{4}      # unicode_escape_sequence
+            )*?
+        ")
+        |
+        (?:' # single quoted string
+            (?:
+                [^"\\\n\r]             # no escape chars, line terminators or "
+                |
+                \\[a-zA-Z\\'"?]        # escaped characters
+                |
+                \\x[0-9a-fA-F]{2}      # hex_escape_sequence
+                |
+                \\u[0-9a-fA-F]{4}      # unicode_escape_sequence
+            )*?
+        ')
+    )
+    """
+
     # Literals
     def t_NULL(self, token):
         r'null'

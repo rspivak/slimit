@@ -1,4 +1,5 @@
 ###############################################################################
+# encoding: utf-8
 #
 # Copyright (c) 2011 Ruslan Spivak
 #
@@ -103,6 +104,20 @@ class LexerTestCase(unittest.TestCase):
           'NUMBER 128.15', 'NUMBER 0x001', 'NUMBER 0X12ABCDEF',
           'NUMBER 0xabcdef']
          ),
+
+        # Strings
+        (r'''"foo" 'foo' "x\";" 'x\';' "foo\tbar"''',
+         ['STRING "foo"', """STRING 'foo'""", r'STRING "x\";"',
+          r"STRING 'x\';'", r'STRING "foo\tbar"']
+         ),
+        (r"""'\x55' "\x12ABCDEF" '!@#$%^&*()_+{}[]\";?'""",
+         [r"STRING '\x55'", r'STRING "\x12ABCDEF"',
+          r"STRING '!@#$%^&*()_+{}[]\";?'"]
+         ),
+        (r"""'\u0001' "\uFCEF" 'a\\\b\n'""",
+         [r"STRING '\u0001'", r'STRING "\uFCEF"', r"STRING 'a\\\b\n'"]
+         ),
+        (ur'"тест строки\""', [ur'STRING "тест строки\""']),
         ]
 
 
