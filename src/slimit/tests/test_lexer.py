@@ -92,6 +92,17 @@ class LexerTestCase(unittest.TestCase):
         (' '.join(literal for literal in Lexer.literals),
          ['%s %s' % (literal, literal) for literal in Lexer.literals]
          ),
+
+        # Numbers
+        (('3 3.3 0 0. 0.0 0.001 010 3.e2 3.e-2 3.e+2 3E2 3E+2 3E-2 '
+          '0.5e2 0.5e+2 0.5e-2 33 128.15 0x001 0X12ABCDEF 0xabcdef'),
+         ['NUMBER 3', 'NUMBER 3.3', 'NUMBER 0', 'NUMBER 0.', 'NUMBER 0.0',
+          'NUMBER 0.001', 'NUMBER 010', 'NUMBER 3.e2', 'NUMBER 3.e-2',
+          'NUMBER 3.e+2', 'NUMBER 3E2', 'NUMBER 3E+2', 'NUMBER 3E-2',
+          'NUMBER 0.5e2', 'NUMBER 0.5e+2', 'NUMBER 0.5e-2', 'NUMBER 33',
+          'NUMBER 128.15', 'NUMBER 0x001', 'NUMBER 0X12ABCDEF',
+          'NUMBER 0xabcdef']
+         ),
         ]
 
 
