@@ -35,6 +35,11 @@ from slimit.unicode import (
 
 
 class Lexer(object):
+    """A JavaScript lexer.
+
+
+    http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf
+    """
 
     def build(self, **kwargs):
         """Build the lexer."""
@@ -90,6 +95,9 @@ class Lexer(object):
         # Terminal types
         'NUMBER', 'STRING', 'ID', 'REGEXP',
 
+        # Comments
+        'LINE_COMMENT', 'BLOCK_COMMENT',
+
         # Automatically inserted semicolon
         # 'AUTOPLUSPLUS', 'AUTOMINUSMINUS', 'IF_WITHOUT_ELSE',
         ) + keywords
@@ -132,6 +140,9 @@ class Lexer(object):
     t_OREQUAL = '\|='
 
     t_ignore = ' \t'
+
+    t_LINE_COMMENT = r'//.*?$'
+    t_BLOCK_COMMENT = r'/\*(.|\n|\r)*?\*/'
 
     t_NUMBER = r"""
     (?:

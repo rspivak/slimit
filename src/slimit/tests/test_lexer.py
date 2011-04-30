@@ -118,6 +118,17 @@ class LexerTestCase(unittest.TestCase):
          [r"STRING '\u0001'", r'STRING "\uFCEF"', r"STRING 'a\\\b\n'"]
          ),
         (ur'"тест строки\""', [ur'STRING "тест строки\""']),
+
+        # Comments
+        ('a//comment', ['ID a', 'LINE_COMMENT //comment']),
+        ('/***/b/=3//line',
+         ['BLOCK_COMMENT /***/', 'ID b', 'DIVEQUAL /=',
+          'NUMBER 3', 'LINE_COMMENT //line']
+         ),
+        ('/*\nCopyright LGPL 2011\n*/\na = 1;',
+         ['BLOCK_COMMENT /*\nCopyright LGPL 2011\n*/',
+          'ID a', '= =', 'NUMBER 1', '; ;']
+         ),
         ]
 
 
