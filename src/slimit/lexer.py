@@ -242,22 +242,21 @@ class Lexer(object):
 
     t_NUMBER = r"""
     (?:
-        0[xX][0-9a-fA-F]+       # hex_integer_literal
-        |
-        0[0-7]+                 # octal_integer_literal (See section B.1.1)
-        |
-        # decimal_literal
-        (?:0|[1-9][0-9]*)       # decimal_integer_literal
-        \.                      # dot
-        [0-9]*                  # decimal_digits_opt
-        (?:[eE][+-]?[0-9]+)?    # exponent_part_opt
-        |
-        \.                      #
-        [0-9]+                  # decimal_digits
-        (?:[eE][+-]?[0-9]+)?    # exponent_part_opt
-        |
-        (?:0|[1-9][0-9]*)       # decimal_integer_literal
-        (?:[eE][+-]?[0-9]+)?    # exponent_part_opt
+        0[xX][0-9a-fA-F]+              # hex_integer_literal
+     |  0[0-7]+                        # or octal_integer_literal (spec B.1.1)
+     |  (?:                            # or decimal_literal
+            (?:0|[1-9][0-9]*)          # decimal_integer_literal
+            \.                         # dot
+            [0-9]*                     # decimal_digits_opt
+            (?:[eE][+-]?[0-9]+)?       # exponent_part_opt
+         |
+            \.                         # dot
+            [0-9]+                     # decimal_digits
+            (?:[eE][+-]?[0-9]+)?       # exponent_part_opt
+         |
+            (?:0|[1-9][0-9]*)          # decimal_integer_literal
+            (?:[eE][+-]?[0-9]+)?       # exponent_part_opt
+         )
     )
     """
 
