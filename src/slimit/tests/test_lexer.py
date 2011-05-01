@@ -127,8 +127,8 @@ class LexerTestCase(unittest.TestCase):
          ['BLOCK_COMMENT /***/', 'ID b', 'DIVEQUAL /=',
           'NUMBER 3', 'LINE_COMMENT //line']
          ),
-        ('/*\nCopyright LGPL 2011\n*/\na = 1;',
-         ['BLOCK_COMMENT /*\nCopyright LGPL 2011\n*/',
+        ('/*\n * Copyright LGPL 2011 \n*/\na = 1;',
+         ['BLOCK_COMMENT /*\n * Copyright LGPL 2011 \n*/',
           'ID a', '= =', 'NUMBER 1', '; ;']
          ),
 

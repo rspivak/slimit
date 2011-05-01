@@ -230,7 +230,7 @@ class Lexer(object):
     t_XOREQUAL = '\^='
     t_OREQUAL = '\|='
 
-    t_ignore = ' \t'
+    t_ignore = ' \t\n'
 
     t_LINE_COMMENT = r'//.*?$'
     t_BLOCK_COMMENT = r'/\*(.|\n|\r)*?\*/'
