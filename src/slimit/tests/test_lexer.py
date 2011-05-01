@@ -77,12 +77,13 @@ class LexerTestCase(unittest.TestCase):
          ),
 
         # Punctuators
+        ('a /= b', ['ID a', 'DIVEQUAL /=', 'ID b']),
         (('== != === !== < > <= >= || && ++ -- << >> '
-          '>>> += -= *= /= <<= >>= >>>= &= %= ^= |='),
+          '>>> += -= *= <<= >>= >>>= &= %= ^= |='),
          ['EQEQ ==', 'NE !=', 'STREQ ===', 'STRNEQ !==', 'LT <', 'GT >',
           'LE <=', 'GE >=', 'OR ||', 'AND &&', 'PLUSPLUS ++', 'MINUSMINUS --',
           'LSHIFT <<', 'RSHIFT >>', 'URSHIFT >>>', 'PLUSEQUAL +=',
-          'MINUSEQUAL -=', 'MULTEQUAL *=', 'DIVEQUAL /=', 'LSHIFTEQUAL <<=',
+          'MINUSEQUAL -=', 'MULTEQUAL *=', 'LSHIFTEQUAL <<=',
           'RSHIFTEQUAL >>=', 'URSHIFTEQUAL >>>=', 'ANDEQUAL &=', 'MODEQUAL %=',
           'XOREQUAL ^=', 'OREQUAL |=',
           ]
@@ -106,6 +107,7 @@ class LexerTestCase(unittest.TestCase):
          ),
 
         # Strings
+        (""" '"' """, ["""STRING '"'"""]),
         (r'''"foo" 'foo' "x\";" 'x\';' "foo\tbar"''',
          ['STRING "foo"', """STRING 'foo'""", r'STRING "x\";"',
           r"STRING 'x\';'", r'STRING "foo\tbar"']
@@ -129,7 +131,93 @@ class LexerTestCase(unittest.TestCase):
          ['BLOCK_COMMENT /*\nCopyright LGPL 2011\n*/',
           'ID a', '= =', 'NUMBER 1', '; ;']
          ),
-        ]
+
+        # regex
+        (r'a=/a*/,1', ['ID a', '= =', 'REGEX /a*/', ', ,', 'NUMBER 1']),
+        (r'a=/a*[^/]+/,1',
+         ['ID a', '= =', 'REGEX /a*[^/]+/', ', ,', 'NUMBER 1']
+         ),
+        (r'a=/a*\[^/,1', ['ID a', '= =', r'REGEX /a*\[^/', ', ,', 'NUMBER 1']),
+        (r'a=/\//,1', ['ID a', '= =', r'REGEX /\//', ', ,', 'NUMBER 1']),
+
+        # next two are from http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
+        ("""for (var x = a in foo && "</x>" || mot ? z:/x:3;x<5;y</g/i) {xyz(x++);}""",
+         ["FOR for", "( (", "VAR var", "ID x", "= =", "ID a", "IN in",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "? ?", "ID z",
+          ": :", "REGEX /x:3;x<5;y</g", "/ /", "ID i", ") )", "{ {",
+          "ID xyz", "( (", "ID x", "PLUSPLUS ++", ") )", "; ;", "} }"]
+         ),
+        ("""for (var x = a in foo && "</x>" || mot ? z/x:3;x<5;y</g/i) {xyz(x++);}""",
+         ["FOR for", "( (", "VAR var", "ID x", "= =", "ID a", "IN in",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "? ?", "ID z",
+          "/ /", "ID x", ": :", "NUMBER 3", "; ;", "ID x", "LT <", "NUMBER 5",
+          "; ;", "ID y", "LT <", "REGEX /g/i", ") )", "{ {",
+          "ID xyz", "( (", "ID x", "PLUSPLUS ++", ") )", "; ;", "} }"]
+         ),
+
+        # Various "illegal" regexes that are valid according to the std.
+        (r"""/????/, /++++/, /[----]/ """,
+         ["REGEX /????/", ", ,", "REGEX /++++/", ", ,", "REGEX /[----]/"]
+         ),
+
+        # Stress cases from http://stackoverflow.com/questions/5533925/what-javascript-constructs-does-jslex-incorrectly-lex/5573409#5573409
+        (r"""/\[/""", [r"""REGEX /\[/"""]),
+        (r"""/[i]/""", [r"""REGEX /[i]/"""]),
+        (r"""/[\]]/""", [r"""REGEX /[\]]/"""]),
+        (r"""/a[\]]/""", [r"""REGEX /a[\]]/"""]),
+        (r"""/a[\]]b/""", [r"""REGEX /a[\]]b/"""]),
+        (r"""/[\]/]/gi""", [r"""REGEX /[\]/]/gi"""]),
+        (r"""/\[[^\]]+\]/gi""", [r"""REGEX /\[[^\]]+\]/gi"""]),
+        ("""
+            rexl.re = {
+            NAME: /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/,
+            UNQUOTED_LITERAL: /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/,
+            QUOTED_LITERAL: /^'(?:[^']|'')*'/,
+            NUMERIC_LITERAL: /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/,
+            SYMBOL: /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/
+            };
+            """,
+         ["ID rexl", ". .", "ID re", "= =", "{ {",
+          "ID NAME", ": :",
+          r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""", ", ,",
+          "ID UNQUOTED_LITERAL", ": :",
+          r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""", ", ,",
+         "ID QUOTED_LITERAL", ": :", r"""REGEX /^'(?:[^']|'')*'/""", ", ,",
+         "ID NUMERIC_LITERAL", ": :",
+         r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", ", ,",
+         "ID SYMBOL", ": :",
+         r"""REGEX /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/""",
+         "} }", "; ;"]
+          ),
+        ("""
+            rexl.re = {
+            NAME: /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/,
+            UNQUOTED_LITERAL: /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/,
+            QUOTED_LITERAL: /^'(?:[^']|'')*'/,
+            NUMERIC_LITERAL: /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/,
+            SYMBOL: /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/
+            };
+            str = '"';
+        """,
+        ["ID rexl", ". .", "ID re", "= =", "{ {",
+         "ID NAME", ": :", r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""", ", ,",
+         "ID UNQUOTED_LITERAL", ": :",
+         r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""", ", ,",
+         "ID QUOTED_LITERAL", ": :", r"""REGEX /^'(?:[^']|'')*'/""", ", ,",
+         "ID NUMERIC_LITERAL", ": :",
+         r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", ", ,",
+         "ID SYMBOL", ": :",
+         r"""REGEX /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/""",
+         "} }", "; ;",
+         "ID str", "= =", """STRING '"'""", "; ;",
+         ]),
+        (r""" this._js = "e.str(\"" + this.value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\")"; """,
+         ["THIS this", ". .", "ID _js", "= =",
+          r'''STRING "e.str(\""''', "+ +", "THIS this", ". .",
+          "ID value", ". .", "ID replace", "( (", r"REGEX /\\/g", ", ,",
+          r'STRING "\\\\"', ") )", ". .", "ID replace", "( (", r'REGEX /"/g',
+          ", ,", r'STRING "\\\""', ") )", "+ +", r'STRING "\")"', "; ;"]),
+        ] # "
 
 
 def make_test_function(input, expected):

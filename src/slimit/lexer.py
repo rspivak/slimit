@@ -33,6 +33,24 @@ from slimit.unicode import (
     CONNECTOR_PUNCTUATION,
     )
 
+TOKENS_THAT_IMPLY_DIVISON = frozenset([
+    'ID',
+    'NUMBER',
+    'STRING',
+    'REGEX'
+    'TRUE',
+    'FALSE',
+    'NULL',
+    ])
+
+TOKEN_VALUES_THAT_IMPLY_DIVISON = frozenset([
+    '++',
+    '--',
+    ')',
+    '}',
+    ']',
+    ])
+
 
 class Lexer(object):
     """A JavaScript lexer.
@@ -40,6 +58,10 @@ class Lexer(object):
 
     http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf
     """
+
+    def __init__(self):
+        self.prev_token = None
+        self.cur_token = None
 
     def build(self, **kwargs):
         """Build the lexer."""
@@ -49,9 +71,47 @@ class Lexer(object):
         self.lexer.input(text)
 
     def token(self):
-        return self.lexer.token()
+        lexer = self.lexer
+        pos = lexer.lexpos
+        try:
+            char = lexer.lexdata[pos]
+            while char.isspace():
+                pos += 1
+                char = lexer.lexdata[pos]
+            next_char = lexer.lexdata[pos + 1]
+        except IndexError:
+            self.prev_token = self.cur_token
+            self.cur_token = lexer.token()
+            return self.cur_token
 
-    # Iterator protocol
+        if char != '/' or (char == '/' and next_char in ('/', '*')):
+            self.prev_token = self.cur_token
+            self.cur_token = lexer.token()
+            return self.cur_token
+
+        # current character is / which is either division or regex
+        cur_token = self.cur_token
+        is_division_allowed = (
+            cur_token is not None and
+            (cur_token.type in TOKENS_THAT_IMPLY_DIVISON or
+             cur_token.value in TOKEN_VALUES_THAT_IMPLY_DIVISON)
+            )
+        if is_division_allowed:
+            self.prev_token = self.cur_token
+            self.cur_token = lexer.token()
+            return self.cur_token
+        else:
+            self.prev_token = self.cur_token
+            self.cur_token = self._read_regex()
+            return self.cur_token
+
+    def _read_regex(self):
+        self.lexer.begin('regex')
+        token = self.lexer.token()
+        self.lexer.begin('INITIAL')
+        return token
+
+    # iterator protocol
     def __iter__(self):
         return self
 
@@ -61,6 +121,10 @@ class Lexer(object):
             raise StopIteration
 
         return token
+
+    states = (
+        ('regex', 'exclusive'),
+        )
 
     keywords = (
         'BREAK', 'CASE', 'CATCH', 'CONTINUE', 'DEBUGGER', 'DEFAULT', 'DELETE',
@@ -93,7 +157,7 @@ class Lexer(object):
         'XOREQUAL', 'OREQUAL',            # ^= and |=
 
         # Terminal types
-        'NUMBER', 'STRING', 'ID', 'REGEXP',
+        'NUMBER', 'STRING', 'ID', 'REGEX',
 
         # Comments
         'LINE_COMMENT', 'BLOCK_COMMENT',
@@ -101,6 +165,38 @@ class Lexer(object):
         # Automatically inserted semicolon
         # 'AUTOPLUSPLUS', 'AUTOMINUSMINUS', 'IF_WITHOUT_ELSE',
         ) + keywords
+
+    # taken from jslex
+    t_regex_REGEX = r"""(?:
+        /                       # opening slash
+        # First character is..
+        (?: [^*\\/[]            # anything but * \ / or [
+        |   \\.                 # or an escape sequence
+        |   \[                  # or a class, which has
+                (   [^\]\\]     #   anything but \ or ]
+                |   \\.         #   or an escape sequence
+                )*              #   many times
+            \]
+        )
+        # Following characters are same, except for excluding a star
+        (?: [^\\/[]             # anything but \ / or [
+        |   \\.                 # or an escape sequence
+        |   \[                  # or a class, which has
+                (   [^\]\\]     #   anything but \ or ]
+                |   \\.         #   or an escape sequence
+                )*              #   many times
+            \]
+        )*                      # many times
+        /                       # closing slash
+        [a-zA-Z0-9]*            # trailing flags
+        )
+        """
+    t_regex_ignore = ' \t'
+    def t_regex_error(self, token):
+        raise TypeError(
+            "Error parsing regular expression '%s' at %s" % (
+                token.value, token.lineno)
+            )
 
     # Punctuators
     literals = (
@@ -181,7 +277,7 @@ class Lexer(object):
         |
         (?:' # single quoted string
             (?:
-                [^"\\\n\r]             # no escape chars, line terminators or "
+                [^'\\\n\r]             # no escape chars, line terminators or '
                 |
                 \\[a-zA-Z\\'"?]        # escaped characters
                 |
@@ -191,7 +287,7 @@ class Lexer(object):
             )*?
         ')
     )
-    """
+    """ # "
 
     # Literals
     def t_NULL(self, token):
