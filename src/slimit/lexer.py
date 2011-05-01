@@ -52,12 +52,46 @@ TOKENS_THAT_IMPLY_DIVISON = frozenset([
 class Lexer(object):
     """A JavaScript lexer.
 
+    >>> from slimit.lexer import Lexer
+    >>> lexer = Lexer()
 
+    Lexer supports iteration:
+
+    >>> lexer.input('a = 1;')
+    >>> for token in lexer:
+    ...     print token
+    ...
+    LexToken(ID,'a',1,0)
+    LexToken(=,'=',1,2)
+    LexToken(NUMBER,'1',1,4)
+    LexToken(;,';',1,5)
+
+    Or call one token at a time with 'token' method:
+
+    >>> lexer.input('a = 1;')
+    >>> while True:
+    ...     token = lexer.token()
+    ...     if not token:
+    ...         break
+    ...     print token
+    ...
+    LexToken(ID,'a',1,0)
+    LexToken(=,'=',1,2)
+    LexToken(NUMBER,'1',1,4)
+    LexToken(;,';',1,5)
+
+    >>> lexer.input('a = 1;')
+    >>> token = lexer.token()
+    >>> token.type, token.value, token.lineno, token.lexpos
+    ('ID', 'a', 1, 0)
+
+    For more information see:
     http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf
     """
     def __init__(self):
         self.prev_token = None
         self.cur_token = None
+        self.build()
 
     def build(self, **kwargs):
         """Build the lexer."""

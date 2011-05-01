@@ -25,6 +25,7 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
+import doctest
 import unittest
 import difflib
 import pprint
@@ -38,7 +39,6 @@ class LexerTestCase(unittest.TestCase):
 
     def _get_lexer(self):
         lexer = Lexer()
-        lexer.build()
         return lexer
 
     def assertListEqual(self, first, second):
@@ -234,3 +234,12 @@ for index, (input, expected) in enumerate(LexerTestCase.TEST_CASES):
     func = make_test_function(input, expected)
     setattr(LexerTestCase, 'test_case_%d' % index, func)
 
+
+def test_suite():
+    return unittest.TestSuite((
+        unittest.makeSuite(LexerTestCase),
+        doctest.DocFileSuite(
+            '../lexer.py',
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
+            ),
+        ))
