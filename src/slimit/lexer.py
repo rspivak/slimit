@@ -173,18 +173,18 @@ class Lexer(object):
         (?: [^*\\/[]            # anything but * \ / or [
         |   \\.                 # or an escape sequence
         |   \[                  # or a class, which has
-                (?: [^\]\\]     #   anything but \ or ]
-                |   \\.         #   or an escape sequence
-                )*              #   many times
+                (?: [^\]\\]     # anything but \ or ]
+                |   \\.         # or an escape sequence
+                )*              # many times
             \]
         )
         # Following characters are same, except for excluding a star
         (?: [^\\/[]             # anything but \ / or [
         |   \\.                 # or an escape sequence
         |   \[                  # or a class, which has
-                (?: [^\]\\]     #   anything but \ or ]
-                |   \\.         #   or an escape sequence
-                )*              #   many times
+                (?: [^\]\\]     # anything but \ or ]
+                |   \\.         # or an escape sequence
+                )*              # many times
             \]
         )*                      # many times
         /                       # closing slash
