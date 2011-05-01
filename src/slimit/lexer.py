@@ -41,11 +41,8 @@ TOKENS_THAT_IMPLY_DIVISON = frozenset([
     'TRUE',
     'FALSE',
     'NULL',
-    ])
-
-TOKEN_VALUES_THAT_IMPLY_DIVISON = frozenset([
-    '++',
-    '--',
+    'PLUSPLUS',
+    'MINUSMINUS',
     ')',
     '}',
     ']',
@@ -58,7 +55,6 @@ class Lexer(object):
 
     http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf
     """
-
     def __init__(self):
         self.prev_token = None
         self.cur_token = None
@@ -89,12 +85,11 @@ class Lexer(object):
             self.cur_token = lexer.token()
             return self.cur_token
 
-        # current character is / which is either division or regex
+        # current character is '/' which is either division or regex
         cur_token = self.cur_token
         is_division_allowed = (
             cur_token is not None and
-            (cur_token.type in TOKENS_THAT_IMPLY_DIVISON or
-             cur_token.value in TOKEN_VALUES_THAT_IMPLY_DIVISON)
+            cur_token.type in TOKENS_THAT_IMPLY_DIVISON
             )
         if is_division_allowed:
             self.prev_token = self.cur_token
@@ -166,7 +161,7 @@ class Lexer(object):
         # 'AUTOPLUSPLUS', 'AUTOMINUSMINUS', 'IF_WITHOUT_ELSE',
         ) + keywords
 
-    # taken from jslex
+    # adapted from https://bitbucket.org/ned/jslex
     t_regex_REGEX = r"""(?:
         /                       # opening slash
         # First character is..
