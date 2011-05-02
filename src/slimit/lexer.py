@@ -37,15 +37,15 @@ TOKENS_THAT_IMPLY_DIVISON = frozenset([
     'ID',
     'NUMBER',
     'STRING',
-    'REGEX'
+    'REGEX',
     'TRUE',
     'FALSE',
     'NULL',
     'PLUSPLUS',
     'MINUSMINUS',
-    ')',
-    '}',
-    ']',
+    'RPAREN',
+    'RBRACE',
+    'RBRACKET',
     ])
 
 
@@ -62,9 +62,9 @@ class Lexer(object):
     ...     print token
     ...
     LexToken(ID,'a',1,0)
-    LexToken(=,'=',1,2)
+    LexToken(EQ,'=',1,2)
     LexToken(NUMBER,'1',1,4)
-    LexToken(;,';',1,5)
+    LexToken(SEMI,';',1,5)
 
     Or call one token at a time with 'token' method:
 
@@ -76,9 +76,9 @@ class Lexer(object):
     ...     print token
     ...
     LexToken(ID,'a',1,0)
-    LexToken(=,'=',1,2)
+    LexToken(EQ,'=',1,2)
     LexToken(NUMBER,'1',1,4)
-    LexToken(;,';',1,5)
+    LexToken(SEMI,';',1,5)
 
     >>> lexer.input('a = 1;')
     >>> token = lexer.token()
@@ -170,20 +170,27 @@ class Lexer(object):
         'NULL', 'TRUE', 'FALSE',
 
         # Punctuators
-        'EQEQ', 'NE',                     # == and !=
-        'STREQ', 'STRNEQ',                # === and !==
-        'LT', 'GT',                       # < and >
-        'LE', 'GE',                       # <= and >=
-        'OR', 'AND',                      # || and &&
-        'PLUSPLUS', 'MINUSMINUS',         # ++ and --
-        'LSHIFT',                         # <<
-        'RSHIFT', 'URSHIFT',              # >> and >>>
-        'PLUSEQUAL', 'MINUSEQUAL',        # += and -=
-        'MULTEQUAL', 'DIVEQUAL',          # *= and /=
-        'LSHIFTEQUAL',                    # <<=
-        'RSHIFTEQUAL', 'URSHIFTEQUAL',    # >>= and >>>=
-        'ANDEQUAL', 'MODEQUAL',           # &= and %=
-        'XOREQUAL', 'OREQUAL',            # ^= and |=
+        'PERIOD', 'COMMA', 'SEMI', 'COLON',    # . , ; :
+        'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', # + - * / %
+        'BAND', 'BOR', 'BXOR', 'BNEG',         # & | ^ ~
+        'QM', 'EM',                            # ? and !
+        'LPAREN', 'RPAREN',                    # ( and )
+        'LBRACE', 'RBRACE',                    # { and }
+        'LBRACKET', 'RBRACKET',                # [ and ]
+        'EQ', 'EQEQ', 'NE',                    # = == !=
+        'STREQ', 'STRNEQ',                     # === and !==
+        'LT', 'GT',                            # < and >
+        'LE', 'GE',                            # <= and >=
+        'OR', 'AND',                           # || and &&
+        'PLUSPLUS', 'MINUSMINUS',              # ++ and --
+        'LSHIFT',                              # <<
+        'RSHIFT', 'URSHIFT',                   # >> and >>>
+        'PLUSEQUAL', 'MINUSEQUAL',             # += and -=
+        'MULTEQUAL', 'DIVEQUAL',               # *= and /=
+        'LSHIFTEQUAL',                         # <<=
+        'RSHIFTEQUAL', 'URSHIFTEQUAL',         # >>= and >>>=
+        'ANDEQUAL', 'MODEQUAL',                # &= and %=
+        'XOREQUAL', 'OREQUAL',                 # ^= and |=
 
         # Terminal types
         'NUMBER', 'STRING', 'ID', 'REGEX',
@@ -228,46 +235,60 @@ class Lexer(object):
             )
 
     # Punctuators
-    literals = (
-        ',', '.', ';', ':',
-        '&', '|', '^', '~',
-        '+', '-', '*', '/', '%',
-        '[', ']', '{', '}', '(', ')',
-        '?', '!', '=',
-        )
+    t_PERIOD        = r'\.'
+    t_COMMA         = r','
+    t_SEMI          = r';'
+    t_COLON         = r':'
+    t_PLUS          = r'\+'
+    t_MINUS         = r'-'
+    t_MULT          = r'\*'
+    t_DIV           = r'/'
+    t_MOD           = r'%'
+    t_BAND          = r'&'
+    t_BOR           = r'\|'
+    t_BXOR          = r'\^'
+    t_BNEG          = r'~'
+    t_QM            = r'\?'
+    t_EM            = r'!'
+    t_LPAREN        = r'\('
+    t_RPAREN        = r'\)'
+    t_LBRACE        = r'{'
+    t_RBRACE        = r'}'
+    t_LBRACKET      = r'\['
+    t_RBRACKET      = r'\]'
+    t_EQ            = r'='
+    t_EQEQ          = r'=='
+    t_NE            = r'!='
+    t_STREQ         = r'==='
+    t_STRNEQ        = r'!=='
+    t_LT            = r'<'
+    t_GT            = r'>'
+    t_LE            = r'<='
+    t_GE            = r'>='
+    t_OR            = r'\|\|'
+    t_AND           = r'&&'
+    t_PLUSPLUS      = r'\+\+'
+    t_MINUSMINUS    = r'--'
+    t_LSHIFT        = r'<<'
+    t_RSHIFT        = r'>>'
+    t_URSHIFT       = r'>>>'
+    t_PLUSEQUAL     = r'\+='
+    t_MINUSEQUAL    = r'-='
+    t_MULTEQUAL     = r'\*='
+    t_DIVEQUAL      = r'/='
+    t_LSHIFTEQUAL   = r'<<='
+    t_RSHIFTEQUAL   = r'>>='
+    t_URSHIFTEQUAL  = r'>>>='
+    t_ANDEQUAL      = r'&='
+    t_MODEQUAL      = r'%='
+    t_XOREQUAL      = r'\^='
+    t_OREQUAL       = r'\|='
 
-    # Punctuators
-    t_EQEQ = '=='
-    t_NE = '!='
-    t_STREQ = '==='
-    t_STRNEQ = '!=='
-    t_LT = '<'
-    t_GT = '>'
-    t_LE = '<='
-    t_GE = '>='
-    t_OR = '\|\|'
-    t_AND = '&&'
-    t_PLUSPLUS = '\+\+'
-    t_MINUSMINUS = '--'
-    t_LSHIFT = '<<'
-    t_RSHIFT = '>>'
-    t_URSHIFT = '>>>'
-    t_PLUSEQUAL = '\+='
-    t_MINUSEQUAL = '-='
-    t_MULTEQUAL = '\*='
-    t_DIVEQUAL = '/='
-    t_LSHIFTEQUAL = '<<='
-    t_RSHIFTEQUAL = '>>='
-    t_URSHIFTEQUAL = '>>>='
-    t_ANDEQUAL = '&='
-    t_MODEQUAL = '%='
-    t_XOREQUAL = '\^='
-    t_OREQUAL = '\|='
+    t_LINE_COMMENT  = r'//.*?$'
+    t_BLOCK_COMMENT = r'/\*(.|\n|\r)*?\*/'
 
     t_ignore = ' \t\n'
 
-    t_LINE_COMMENT = r'//.*?$'
-    t_BLOCK_COMMENT = r'/\*(.|\n|\r)*?\*/'
 
     t_NUMBER = r"""
     (?:

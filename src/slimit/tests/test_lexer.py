@@ -78,22 +78,23 @@ class LexerTestCase(unittest.TestCase):
 
         # Punctuators
         ('a /= b', ['ID a', 'DIVEQUAL /=', 'ID b']),
-        (('== != === !== < > <= >= || && ++ -- << >> '
+        (('= == != === !== < > <= >= || && ++ -- << >> '
           '>>> += -= *= <<= >>= >>>= &= %= ^= |='),
-         ['EQEQ ==', 'NE !=', 'STREQ ===', 'STRNEQ !==', 'LT <', 'GT >',
-          'LE <=', 'GE >=', 'OR ||', 'AND &&', 'PLUSPLUS ++', 'MINUSMINUS --',
-          'LSHIFT <<', 'RSHIFT >>', 'URSHIFT >>>', 'PLUSEQUAL +=',
-          'MINUSEQUAL -=', 'MULTEQUAL *=', 'LSHIFTEQUAL <<=',
+         ['EQ =', 'EQEQ ==', 'NE !=', 'STREQ ===', 'STRNEQ !==', 'LT <',
+          'GT >', 'LE <=', 'GE >=', 'OR ||', 'AND &&', 'PLUSPLUS ++',
+          'MINUSMINUS --', 'LSHIFT <<', 'RSHIFT >>', 'URSHIFT >>>',
+          'PLUSEQUAL +=', 'MINUSEQUAL -=', 'MULTEQUAL *=', 'LSHIFTEQUAL <<=',
           'RSHIFTEQUAL >>=', 'URSHIFTEQUAL >>>=', 'ANDEQUAL &=', 'MODEQUAL %=',
           'XOREQUAL ^=', 'OREQUAL |=',
           ]
          ),
-
-        # Punctuator literals
-        # ('& * ...', ['& &', '* *', ...])
-        (' '.join(literal for literal in Lexer.literals),
-         ['%s %s' % (literal, literal) for literal in Lexer.literals]
+        ('. , ; : + - * % & | ^ ~ ? ! ( ) { } [ ]',
+         ['PERIOD .', 'COMMA ,', 'SEMI ;', 'COLON :', 'PLUS +', 'MINUS -',
+          'MULT *', 'MOD %', 'BAND &', 'BOR |', 'BXOR ^', 'BNEG ~',
+          'QM ?', 'EM !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
+          'LBRACKET [', 'RBRACKET ]']
          ),
+        ('a / b', ['ID a', 'DIV /', 'ID b']),
 
         # Numbers
         (('3 3.3 0 0. 0.0 0.001 010 3.e2 3.e-2 3.e+2 3E2 3E+2 3E-2 '
@@ -129,35 +130,41 @@ class LexerTestCase(unittest.TestCase):
          ),
         ('/*\n * Copyright LGPL 2011 \n*/\na = 1;',
          ['BLOCK_COMMENT /*\n * Copyright LGPL 2011 \n*/',
-          'ID a', '= =', 'NUMBER 1', '; ;']
+          'ID a', 'EQ =', 'NUMBER 1', 'SEMI ;']
          ),
 
         # regex
-        (r'a=/a*/,1', ['ID a', '= =', 'REGEX /a*/', ', ,', 'NUMBER 1']),
+        (r'a=/a*/,1', ['ID a', 'EQ =', 'REGEX /a*/', 'COMMA ,', 'NUMBER 1']),
         (r'a=/a*[^/]+/,1',
-         ['ID a', '= =', 'REGEX /a*[^/]+/', ', ,', 'NUMBER 1']
+         ['ID a', 'EQ =', 'REGEX /a*[^/]+/', 'COMMA ,', 'NUMBER 1']
          ),
-        (r'a=/a*\[^/,1', ['ID a', '= =', r'REGEX /a*\[^/', ', ,', 'NUMBER 1']),
-        (r'a=/\//,1', ['ID a', '= =', r'REGEX /\//', ', ,', 'NUMBER 1']),
+        (r'a=/a*\[^/,1',
+         ['ID a', 'EQ =', r'REGEX /a*\[^/', 'COMMA ,', 'NUMBER 1']
+         ),
+        (r'a=/\//,1', ['ID a', 'EQ =', r'REGEX /\//', 'COMMA ,', 'NUMBER 1']),
 
         # next two are from http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
         ("""for (var x = a in foo && "</x>" || mot ? z:/x:3;x<5;y</g/i) {xyz(x++);}""",
-         ["FOR for", "( (", "VAR var", "ID x", "= =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "? ?", "ID z",
-          ": :", "REGEX /x:3;x<5;y</g", "/ /", "ID i", ") )", "{ {",
-          "ID xyz", "( (", "ID x", "PLUSPLUS ++", ") )", "; ;", "} }"]
+         ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID z", "COLON :", "REGEX /x:3;x<5;y</g", "DIV /", "ID i", "RPAREN )",
+          "LBRACE {",  "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++", "RPAREN )",
+          "SEMI ;", "RBRACE }"]
          ),
+
         ("""for (var x = a in foo && "</x>" || mot ? z/x:3;x<5;y</g/i) {xyz(x++);}""",
-         ["FOR for", "( (", "VAR var", "ID x", "= =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "? ?", "ID z",
-          "/ /", "ID x", ": :", "NUMBER 3", "; ;", "ID x", "LT <", "NUMBER 5",
-          "; ;", "ID y", "LT <", "REGEX /g/i", ") )", "{ {",
-          "ID xyz", "( (", "ID x", "PLUSPLUS ++", ") )", "; ;", "} }"]
+         ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID z", "DIV /", "ID x", "COLON :", "NUMBER 3", "SEMI ;", "ID x",
+          "LT <", "NUMBER 5", "SEMI ;", "ID y", "LT <", "REGEX /g/i",
+          "RPAREN )", "LBRACE {", "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++",
+          "RPAREN )", "SEMI ;", "RBRACE }"]
          ),
 
         # Various "illegal" regexes that are valid according to the std.
         (r"""/????/, /++++/, /[----]/ """,
-         ["REGEX /????/", ", ,", "REGEX /++++/", ", ,", "REGEX /[----]/"]
+         ['REGEX /????/', 'COMMA ,',
+          'REGEX /++++/', 'COMMA ,', 'REGEX /[----]/']
          ),
 
         # Stress cases from http://stackoverflow.com/questions/5533925/what-javascript-constructs-does-jslex-incorrectly-lex/5573409#5573409
@@ -177,17 +184,18 @@ class LexerTestCase(unittest.TestCase):
             SYMBOL: /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/
             };
             """,
-         ["ID rexl", ". .", "ID re", "= =", "{ {",
-          "ID NAME", ": :",
-          r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""", ", ,",
-          "ID UNQUOTED_LITERAL", ": :",
-          r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""", ", ,",
-         "ID QUOTED_LITERAL", ": :", r"""REGEX /^'(?:[^']|'')*'/""", ", ,",
-         "ID NUMERIC_LITERAL", ": :",
-         r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", ", ,",
-         "ID SYMBOL", ": :",
-         r"""REGEX /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/""",
-         "} }", "; ;"]
+         ["ID rexl", "PERIOD .", "ID re", "EQ =", "LBRACE {",
+          "ID NAME", "COLON :",
+          r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""", "COMMA ,",
+          "ID UNQUOTED_LITERAL", "COLON :",
+          r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""",
+          "COMMA ,", "ID QUOTED_LITERAL", "COLON :",
+          r"""REGEX /^'(?:[^']|'')*'/""", "COMMA ,", "ID NUMERIC_LITERAL",
+          "COLON :",
+          r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", "COMMA ,",
+          "ID SYMBOL", "COLON :",
+          r"""REGEX /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/""",
+         "RBRACE }", "SEMI ;"]
           ),
         ("""
             rexl.re = {
@@ -199,24 +207,26 @@ class LexerTestCase(unittest.TestCase):
             };
             str = '"';
         """,
-        ["ID rexl", ". .", "ID re", "= =", "{ {",
-         "ID NAME", ": :", r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""", ", ,",
-         "ID UNQUOTED_LITERAL", ": :",
-         r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""", ", ,",
-         "ID QUOTED_LITERAL", ": :", r"""REGEX /^'(?:[^']|'')*'/""", ", ,",
-         "ID NUMERIC_LITERAL", ": :",
-         r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", ", ,",
-         "ID SYMBOL", ": :",
+        ["ID rexl", "PERIOD .", "ID re", "EQ =", "LBRACE {",
+         "ID NAME", "COLON :", r"""REGEX /^(?!\d)(?:\w)+|^"(?:[^"]|"")+"/""",
+         "COMMA ,", "ID UNQUOTED_LITERAL", "COLON :",
+         r"""REGEX /^@(?:(?!\d)(?:\w|\:)+|^"(?:[^"]|"")+")\[[^\]]+\]/""",
+         "COMMA ,", "ID QUOTED_LITERAL", "COLON :",
+         r"""REGEX /^'(?:[^']|'')*'/""", "COMMA ,",
+         "ID NUMERIC_LITERAL", "COLON :",
+         r"""REGEX /^[0-9]+(?:\.[0-9]*(?:[eE][-+][0-9]+)?)?/""", "COMMA ,",
+         "ID SYMBOL", "COLON :",
          r"""REGEX /^(?:==|=|<>|<=|<|>=|>|!~~|!~|~~|~|!==|!=|!~=|!~|!|&|\||\.|\:|,|\(|\)|\[|\]|\{|\}|\?|\:|;|@|\^|\/\+|\/|\*|\+|-)/""",
-         "} }", "; ;",
-         "ID str", "= =", """STRING '"'""", "; ;",
+         "RBRACE }", "SEMI ;",
+         "ID str", "EQ =", """STRING '"'""", "SEMI ;",
          ]),
         (r""" this._js = "e.str(\"" + this.value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\")"; """,
-         ["THIS this", ". .", "ID _js", "= =",
-          r'''STRING "e.str(\""''', "+ +", "THIS this", ". .",
-          "ID value", ". .", "ID replace", "( (", r"REGEX /\\/g", ", ,",
-          r'STRING "\\\\"', ") )", ". .", "ID replace", "( (", r'REGEX /"/g',
-          ", ,", r'STRING "\\\""', ") )", "+ +", r'STRING "\")"', "; ;"]),
+         ["THIS this", "PERIOD .", "ID _js", "EQ =",
+          r'''STRING "e.str(\""''', "PLUS +", "THIS this", "PERIOD .",
+          "ID value", "PERIOD .", "ID replace", "LPAREN (", r"REGEX /\\/g",
+          "COMMA ,", r'STRING "\\\\"', "RPAREN )", "PERIOD .", "ID replace",
+          "LPAREN (", r'REGEX /"/g', "COMMA ,", r'STRING "\\\""', "RPAREN )",
+          "PLUS +", r'STRING "\")"', "SEMI ;"]),
         ] # "
 
 
