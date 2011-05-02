@@ -43,7 +43,7 @@ div.body {
     background-color: #ffffff;
     color: #3E4349;
     padding: 0 30px 30px 30px;
-    font-size: 0.9em;
+    font-size: 17px;
 }
 
 div.footer {
@@ -225,7 +225,7 @@ pre {
     color: #222;
     line-height: 1.2em;
     border: 1px solid #C6C9CB;
-    font-size: 1.1em;
+    font-size: 0.85em;
     margin: 1.5em 0 1.5em 0;
     -webkit-box-shadow: 1px 1px 1px #d8d8d8;
     -moz-box-shadow: 1px 1px 1px #d8d8d8;
@@ -235,7 +235,7 @@ tt {
     background-color: #ecf0f3;
     color: #222;
     /* padding: 1px 2px; */
-    font-size: 1.1em;
+    font-size: 0.85em;
     font-family: monospace;
 }
 
