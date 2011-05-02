@@ -24,7 +24,7 @@ def read(*rel_names):
 setup(
     name='slimit',
     version='0.1dev',
-    url='http://github.com/rspivak/slimit',
+    url='http://slimit.org',
     license='MIT',
     description='SlimIt - JavaScript minifier',
     author='Ruslan Spivak',
