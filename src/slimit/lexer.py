@@ -33,6 +33,8 @@ from slimit.unicode import (
     CONNECTOR_PUNCTUATION,
     )
 
+# See "Regular Expression Literals" at
+# http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html
 TOKENS_THAT_IMPLY_DIVISON = frozenset([
     'ID',
     'NUMBER',
