@@ -16,7 +16,7 @@ and runs faster.
 
 setup(
     name='slimit',
-    version='0.1',
+    version='0.1dev',
     url='http://github.com/rspivak/slimit',
     license='MIT',
     description='SlimIt - JavaScript minifier',
