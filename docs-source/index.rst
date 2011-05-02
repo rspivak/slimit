@@ -10,7 +10,7 @@ Welcome to SlimIt
 It compiles JavaScript into more compact code so that it downloads
 and runs faster.
 
-As of version `0.1` it provides only a JavaScript lexer.
+At version `0.1` it provides only a JavaScript lexer.
 
 Using lexer in your project
 ---------------------------
