@@ -54,7 +54,7 @@ class LexerTestCase(unittest.TestCase):
                 )
             self.fail('Lists differ:\n' + message)
 
-    def test_wrong_unicode_identifier(self):
+    def test_illegal_unicode_char_in_identifier(self):
         lexer = self._get_lexer()
         lexer.input(u'\u0036_tail')
         token = lexer.token()
