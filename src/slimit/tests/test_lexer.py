@@ -143,7 +143,8 @@ class LexerTestCase(unittest.TestCase):
          ),
         (r'a=/\//,1', ['ID a', 'EQ =', r'REGEX /\//', 'COMMA ,', 'NUMBER 1']),
 
-        # next two are from http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
+        # next two are from
+        # http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
         ("""for (var x = a in foo && "</x>" || mot ? z:/x:3;x<5;y</g/i) {xyz(x++);}""",
          ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
           "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
@@ -227,7 +228,7 @@ class LexerTestCase(unittest.TestCase):
           "COMMA ,", r'STRING "\\\\"', "RPAREN )", "PERIOD .", "ID replace",
           "LPAREN (", r'REGEX /"/g', "COMMA ,", r'STRING "\\\""', "RPAREN )",
           "PLUS +", r'STRING "\")"', "SEMI ;"]),
-        ] # "
+        ]
 
 
 def make_test_function(input, expected):

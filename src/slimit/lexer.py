@@ -170,27 +170,27 @@ class Lexer(object):
         'NULL', 'TRUE', 'FALSE',
 
         # Punctuators
-        'PERIOD', 'COMMA', 'SEMI', 'COLON',    # . , ; :
-        'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', # + - * / %
-        'BAND', 'BOR', 'BXOR', 'BNEG',         # & | ^ ~
-        'QM', 'EM',                            # ? and !
-        'LPAREN', 'RPAREN',                    # ( and )
-        'LBRACE', 'RBRACE',                    # { and }
-        'LBRACKET', 'RBRACKET',                # [ and ]
-        'EQ', 'EQEQ', 'NE',                    # = == !=
-        'STREQ', 'STRNEQ',                     # === and !==
-        'LT', 'GT',                            # < and >
-        'LE', 'GE',                            # <= and >=
-        'OR', 'AND',                           # || and &&
-        'PLUSPLUS', 'MINUSMINUS',              # ++ and --
-        'LSHIFT',                              # <<
-        'RSHIFT', 'URSHIFT',                   # >> and >>>
-        'PLUSEQUAL', 'MINUSEQUAL',             # += and -=
-        'MULTEQUAL', 'DIVEQUAL',               # *= and /=
-        'LSHIFTEQUAL',                         # <<=
-        'RSHIFTEQUAL', 'URSHIFTEQUAL',         # >>= and >>>=
-        'ANDEQUAL', 'MODEQUAL',                # &= and %=
-        'XOREQUAL', 'OREQUAL',                 # ^= and |=
+        'PERIOD', 'COMMA', 'SEMI', 'COLON',     # . , ; :
+        'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD',  # + - * / %
+        'BAND', 'BOR', 'BXOR', 'BNEG',          # & | ^ ~
+        'QM', 'EM',                             # ? and !
+        'LPAREN', 'RPAREN',                     # ( and )
+        'LBRACE', 'RBRACE',                     # { and }
+        'LBRACKET', 'RBRACKET',                 # [ and ]
+        'EQ', 'EQEQ', 'NE',                     # = == !=
+        'STREQ', 'STRNEQ',                      # === and !==
+        'LT', 'GT',                             # < and >
+        'LE', 'GE',                             # <= and >=
+        'OR', 'AND',                            # || and &&
+        'PLUSPLUS', 'MINUSMINUS',               # ++ and --
+        'LSHIFT',                               # <<
+        'RSHIFT', 'URSHIFT',                    # >> and >>>
+        'PLUSEQUAL', 'MINUSEQUAL',              # += and -=
+        'MULTEQUAL', 'DIVEQUAL',                # *= and /=
+        'LSHIFTEQUAL',                          # <<=
+        'RSHIFTEQUAL', 'URSHIFTEQUAL',          # >>= and >>>=
+        'ANDEQUAL', 'MODEQUAL',                 # &= and %=
+        'XOREQUAL', 'OREQUAL',                  # ^= and |=
 
         # Terminal types
         'NUMBER', 'STRING', 'ID', 'REGEX',
@@ -227,7 +227,9 @@ class Lexer(object):
         [a-zA-Z0-9]*            # trailing flags
         )
         """
+
     t_regex_ignore = ' \t'
+
     def t_regex_error(self, token):
         raise TypeError(
             "Error parsing regular expression '%s' at %s" % (
@@ -289,7 +291,6 @@ class Lexer(object):
 
     t_ignore = ' \t\n'
 
-
     t_NUMBER = r"""
     (?:
         0[xX][0-9a-fA-F]+              # hex_integer_literal
@@ -330,7 +331,7 @@ class Lexer(object):
             )*?                        # zero or many times
         ')                             # closing single quote
     )
-    """ # "
+    """  # "
 
     # Literals
     def t_NULL(self, token):
