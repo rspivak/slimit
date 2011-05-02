@@ -110,14 +110,10 @@ class Lexer(object):
                 char = lexer.lexdata[pos]
             next_char = lexer.lexdata[pos + 1]
         except IndexError:
-            self.prev_token = self.cur_token
-            self.cur_token = lexer.token()
-            return self.cur_token
+            return self._get_update_token()
 
         if char != '/' or (char == '/' and next_char in ('/', '*')):
-            self.prev_token = self.cur_token
-            self.cur_token = lexer.token()
-            return self.cur_token
+            return self._get_update_token()
 
         # current character is '/' which is either division or regex
         cur_token = self.cur_token
@@ -126,9 +122,7 @@ class Lexer(object):
             cur_token.type in TOKENS_THAT_IMPLY_DIVISON
             )
         if is_division_allowed:
-            self.prev_token = self.cur_token
-            self.cur_token = lexer.token()
-            return self.cur_token
+            return self._get_update_token()
         else:
             self.prev_token = self.cur_token
             self.cur_token = self._read_regex()
@@ -139,6 +133,11 @@ class Lexer(object):
         token = self.lexer.token()
         self.lexer.begin('INITIAL')
         return token
+
+    def _get_update_token(self):
+        self.prev_token = self.cur_token
+        self.cur_token = self.lexer.token()
+        return self.cur_token
 
     # iterator protocol
     def __iter__(self):
