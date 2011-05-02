@@ -54,6 +54,15 @@ class LexerTestCase(unittest.TestCase):
                 )
             self.fail('Lists differ:\n' + message)
 
+    def test_wrong_unicode_identifier(self):
+        lexer = self._get_lexer()
+        lexer.input(u'\u0036_tail')
+        token = lexer.token()
+        # \u0036_tail is the same as 6_tail and that's not a correct ID
+        # Check that the token is NUMBER and not an ID
+        self.assertEqual(token.type, 'NUMBER')
+        self.assertEqual(token.value, '6')
+
     TEST_CASES = [
         # Identifiers
         ('i my_variable_name c17 _dummy $str $ _ CamelCase',
