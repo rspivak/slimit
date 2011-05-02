@@ -1,4 +1,7 @@
+import os
+
 from setuptools import setup, find_packages
+
 
 classifiers = """\
 Intended Audience :: Developers
@@ -14,6 +17,10 @@ It compiles JavaScript into more compact code so that it downloads
 and runs faster.
 """
 
+def read(*rel_names):
+    return open(os.path.join(os.path.dirname(__file__), *rel_names)).read()
+
+
 setup(
     name='slimit',
     version='0.1',
@@ -28,9 +35,8 @@ setup(
     zip_safe=False,
     entry_points="""\
     [console_scripts]
-    slimit = slimit.compiler:main
     """,
     classifiers=filter(None, classifiers.split('\n')),
-    long_description=long_description,
+    long_description=read('README.rst'),
     extras_require={'test': []}
     )
