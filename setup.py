@@ -28,7 +28,6 @@ setup(
     zip_safe=False,
     entry_points="""\
     [console_scripts]
-    slimit = slimit.compiler:main
     """,
     classifiers=filter(None, classifiers.split('\n')),
     long_description=long_description,
