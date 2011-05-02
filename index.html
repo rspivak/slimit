@@ -1,1 +1,127 @@
-My GitHub Page
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to SlimIt &mdash; SlimIt</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SlimIt" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#">SlimIt</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-slimit">
+<h1>Welcome to SlimIt<a class="headerlink" href="#welcome-to-slimit" title="Permalink to this headline">¶</a></h1>
+<p><cite>SlimIt</cite> is a JavaScript minifier written in Python.
+It compiles JavaScript into more compact code so that it downloads
+and runs faster.</p>
+<p>As of version <cite>0.1</cite> it provides only a JavaScript lexer.</p>
+<div class="section" id="using-lexer-in-your-project">
+<h2>Using lexer in your project<a class="headerlink" href="#using-lexer-in-your-project" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">slimit.lexer</span> <span class="kn">import</span> <span class="n">Lexer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lexer</span> <span class="o">=</span> <span class="n">Lexer</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s">&#39;a = 1;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">lexer</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">token</span>
+<span class="gp">...</span>
+<span class="go">LexToken(ID,&#39;a&#39;,1,0)</span>
+<span class="go">LexToken(EQ,&#39;=&#39;,1,2)</span>
+<span class="go">LexToken(NUMBER,&#39;1&#39;,1,4)</span>
+<span class="go">LexToken(SEMI,&#39;;&#39;,1,5)</span>
+</pre></div>
+</div>
+<p>You can get one token at a time using <tt class="docutils literal"><span class="pre">token</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s">&#39;a = 1;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">token</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">token</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">break</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">token</span>
+<span class="gp">...</span>
+<span class="go">LexToken(ID,&#39;a&#39;,1,0)</span>
+<span class="go">LexToken(EQ,&#39;=&#39;,1,2)</span>
+<span class="go">LexToken(NUMBER,&#39;1&#39;,1,4)</span>
+<span class="go">LexToken(SEMI,&#39;;&#39;,1,5)</span>
+</pre></div>
+</div>
+<p><cite>LexToken</cite> instance has different attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s">&#39;a = 1;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">token</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">token</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">token</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">lexpos</span>
+<span class="go">(&#39;ID&#39;, &#39;a&#39;, 1, 0)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Using <tt class="docutils literal"><span class="pre">pip</span></tt>:</p>
+<div class="highlight-python"><pre>$ sudo pip install slimit</pre>
+</div>
+<p>Using <tt class="docutils literal"><span class="pre">easy_install</span></tt>:</p>
+<div class="highlight-python"><pre>$ sudo easy_install slimit</pre>
+</div>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="#">
+  <img class="logo" src="_static/slimit-small.png" alt="Logo"/>
+</a></p><h3>About SlimIt</h3>
+<p>
+  SlimIt is a JavaScript minifier.
+</p>
+<h3>Useful Links</h3>
+<ul>
+  <li><a href="http://pypi.python.org/pypi/slimit">SlimIt @ PyPI</a></li>
+  <li><a href="http://github.com/rspivak/slimit">SlimIt @ GitHub</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#">SlimIt</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Ruslan Spivak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
