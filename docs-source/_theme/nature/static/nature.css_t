@@ -36,7 +36,7 @@ hr {
 }
 
 div.document {
-    background-color: #eee;
+    background-color: #fafafa;
 }
 
 div.body {
@@ -63,7 +63,6 @@ div.related {
     background-color: #6BA81E;
     line-height: 32px;
     color: #fff;
-    text-shadow: 0px 1px 0 #444;
     font-size: 0.9em;
 }
 
@@ -72,7 +71,7 @@ div.related a {
 }
 
 div.sphinxsidebar {
-    font-size: 0.75em;
+    font-size: 15px;
     line-height: 1.5em;
 }
 
@@ -84,12 +83,11 @@ div.sphinxsidebar h3,
 div.sphinxsidebar h4 {
     font-family: Arial, sans-serif;
     color: #222;
-    font-size: 1.2em;
+    font-size: 1.4em;
     font-weight: normal;
     margin: 0;
     padding: 5px 10px;
     background-color: #ddd;
-    text-shadow: 1px 1px 0 white
 }
 
 div.sphinxsidebar h4{
@@ -117,7 +115,15 @@ div.sphinxsidebar ul {
 
 div.sphinxsidebar a {
     color: #444;
+    border-bottom: 1px dotted #999999;
+    text-decoration: none;
 }
+
+div.sphinxsidebar a:hover {
+    color: #444;
+    border-bottom: 1px solid #999999;
+}
+
 
 div.sphinxsidebar input {
     border: 1px solid #ccc;
@@ -148,18 +154,17 @@ div.body h4,
 div.body h5,
 div.body h6 {
     font-family: Arial, sans-serif;
-    background-color: #BED4EB;
+    border-bottom: 1px solid #C8D5E3;
     font-weight: normal;
     color: #212224;
     margin: 30px 0px 10px 0px;
     padding: 5px 0 5px 10px;
-    text-shadow: 0px 1px 0 white
 }
 
-div.body h1 { border-top: 20px solid white; margin-top: 0; font-size: 200%; }
-div.body h2 { font-size: 150%; background-color: #C8D5E3; }
-div.body h3 { font-size: 120%; background-color: #D8DEE3; }
-div.body h4 { font-size: 110%; background-color: #D8DEE3; }
+div.body h1 { border-top: 20px solid white; margin-top: 0; font-size: 240%; }
+div.body h2 { font-size: 180%; background-color: #C8D5E3; }
+div.body h3 { font-size: 150%; background-color: #D8DEE3; }
+div.body h4 { font-size: 130%; background-color: #D8DEE3; }
 div.body h5 { font-size: 100%; background-color: #D8DEE3; }
 div.body h6 { font-size: 100%; background-color: #D8DEE3; }
 
