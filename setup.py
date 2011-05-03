@@ -11,19 +11,13 @@ Topic :: Software Development :: Compilers
 Operating System :: Unix
 """
 
-long_description = """\
-SlimIt is a JavaScript source-to-source compiler and optimizer / minifier.
-It compiles JavaScript into more compact code so that it downloads
-and runs faster.
-"""
-
 def read(*rel_names):
     return open(os.path.join(os.path.dirname(__file__), *rel_names)).read()
 
 
 setup(
     name='slimit',
-    version='0.1dev',
+    version='0.2dev',
     url='http://slimit.org',
     license='MIT',
     description='SlimIt - JavaScript minifier',
