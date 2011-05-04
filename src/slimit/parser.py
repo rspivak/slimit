@@ -71,7 +71,7 @@ class Parser(object):
         """source_elements : empty
                            | source_element_list
         """
-        pass
+        p[0] = p[1]
 
     def p_source_element_list(self, p):
         """source_element_list : source_element
@@ -83,7 +83,7 @@ class Parser(object):
         """source_element : statement
                           | function_declaration
         """
-        pass
+        p[0] = p[1]
 
     def p_statement(self, p):
         """statement : block
@@ -102,8 +102,13 @@ class Parser(object):
                      | try_statement
                      | debugger_statement
         """
-        pass
+        p[0] = p[1]
 
+    # By having source_elements in the production we support
+    # also function_declaration inside blocks
+    def p_block(self, p):
+        """block : LBRACE source_elements RBRACE"""
+        p[0] = p[2]
 
     def p_statement_list(self, p):
         """statement_list : statement
@@ -584,10 +589,6 @@ class Parser(object):
         """expr_nobf : assignment_expr_nobf
                      | expr_nobf ',' assignment_expr
         """
-        pass
-
-    def p_block(self, p):
-        """block : '{' source_elements '}'"""
         pass
 
     def p_variable_statement(self, p):
