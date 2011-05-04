@@ -352,14 +352,33 @@ class Parser(object):
                         | left_hand_side_expr PLUSPLUS
                         | left_hand_side_expr MINUSMINUS
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.UnaryOp(op=p[2], value=p[1], postfix=True)
 
     def p_postfix_expr_nobf(self, p):
         """postfix_expr_nobf : left_hand_side_expr_nobf
                              | left_hand_side_expr_nobf PLUSPLUS
                              | left_hand_side_expr_nobf MINUSMINUS
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.UnaryOp(op=p[2], value=p[1], postfix=True)
+
+    # 11.4 Unary Operators
+    def p_unary_expr(self, p):
+        """unary_expr : postfix_expr
+                      | unary_expr_common
+        """
+        p[0] = p[1]
+
+    def p_unary_expr_nobf(self, p):
+        """unary_expr_nobf : postfix_expr_nobf
+                           | unary_expr_common
+        """
+        p[0] = p[1]
 
     def p_unary_expr_common(self, p):
         """unary_expr_common : DELETE unary_expr
@@ -367,24 +386,12 @@ class Parser(object):
                              | TYPEOF unary_expr
                              | PLUSPLUS unary_expr
                              | MINUSMINUS unary_expr
-                             | '+' unary_expr
-                             | '-' unary_expr
-                             | '~' unary_expr
-                             | '!' unary_expr
+                             | PLUS unary_expr
+                             | MINUS unary_expr
+                             | BNEG unary_expr
+                             | NOT unary_expr
         """
-        pass
-
-    def p_unary_expr(self, p):
-        """unary_expr : postfix_expr
-                      | unary_expr_common
-        """
-        pass
-
-    def p_unary_expr_nobf(self, p):
-        """unary_expr_nobf : postfix_expr_nobf
-                           | unary_expr_common
-        """
-        pass
+        p[0] = ast.UnaryOp(p[1], p[2])
 
     def p_multiplicative_expr(self, p):
         """multiplicative_expr : unary_expr
@@ -612,13 +619,17 @@ class Parser(object):
         """
         pass
 
+    # 11.13 Assignment Operators
     def p_assignment_expr(self, p):
         """
         assignment_expr \
             : conditional_expr
             | left_hand_side_expr assignment_operator assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Assign(p[1], p[2], p[3])
 
     def p_assignment_expr_noin(self, p):
         """
@@ -626,7 +637,10 @@ class Parser(object):
             : conditional_expr_noin
             | left_hand_side_expr assignment_operator assignment_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Assign(p[1], p[2], p[3])
 
     def p_assignment_expr_nobf(self, p):
         """
@@ -634,7 +648,10 @@ class Parser(object):
             : conditional_expr_nobf
             | left_hand_side_expr_nobf assignment_operator assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Assign(p[1], p[2], p[3])
 
     def p_assignment_operator(self, p):
         """assignment_operator : EQ
@@ -652,67 +669,95 @@ class Parser(object):
         """
         p[0] = p[1]
 
+    # 11.4 Comma Operator
     def p_expr(self, p):
         """expr : assignment_expr
-                | expr ',' assignment_expr
+                | expr COMMA assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_expr_noin(self, p):
         """expr_noin : assignment_expr_noin
                      | expr_noin ',' assignment_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_expr_nobf(self, p):
         """expr_nobf : assignment_expr_nobf
                      | expr_nobf ',' assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     # 12.2 Variable Statement
     def p_variable_statement(self, p):
         """variable_statement : VAR variable_declaration_list SEMI
                               | VAR variable_declaration_list auto_semi
         """
-        pass
+        p[0] = ast.VarStatement(p[2])
 
     def p_variable_declaration_list(self, p):
         """
         variable_declaration_list \
             : variable_declaration
-            | variable_declaration_list ',' variable_declaration
+            | variable_declaration_list COMMA variable_declaration
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_variable_declaration_list_noin(self, p):
         """
         variable_declaration_list_noin \
             : variable_declaration_noin
-            | variable_declaration_list_noin ',' variable_declaration_noin
+            | variable_declaration_list_noin COMMA variable_declaration_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_variable_declaration(self, p):
         """variable_declaration : ID
                                 | ID initializer
         """
-        pass
+        if len(p) == 2:
+            p[0] = ast.VarDecl(p[1])
+        else:
+            p[0] = ast.VarDecl(p[1], p[2])
 
     def p_variable_declaration_noin(self, p):
         """variable_declaration_noin : ID
                                      | ID initializer_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = ast.VarDecl(p[1])
+        else:
+            p[0] = ast.VarDecl(p[1], p[2])
 
     def p_initializer(self, p):
-        """initializer : '=' assignment_expr"""
-        pass
+        """initializer : EQ assignment_expr"""
+        p[0] = p[2]
 
     def p_initializer_noin(self, p):
-        """initializer_noin : '=' assignment_expr_noin"""
-        pass
+        """initializer_noin : EQ assignment_expr_noin"""
+        p[0] = p[2]
 
+    # 12.3 Empty Statement
     def p_empty_statement(self, p):
         """empty_statement : ';'"""
         pass
