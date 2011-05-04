@@ -65,7 +65,7 @@ class Parser(object):
 
     def p_program(self, p):
         """program : source_elements"""
-        p[0] = p[1]
+        p[0] = ast.Program(p[1])
 
     def p_source_elements(self, p):
         """source_elements : empty
@@ -77,7 +77,11 @@ class Parser(object):
         """source_element_list : source_element
                                | source_element_list source_element
         """
-        pass
+        if len(p[0]) == 2: # single source element
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[2])
+            p[0] = p[1]
 
     def p_source_element(self, p):
         """source_element : statement
@@ -108,38 +112,107 @@ class Parser(object):
     # also function_declaration inside blocks
     def p_block(self, p):
         """block : LBRACE source_elements RBRACE"""
-        p[0] = p[2]
-
-    def p_statement_list(self, p):
-        """statement_list : statement
-                          | statement_list statement
-        """
-        pass
+        p[0] = ast.Block(p[2])
 
     def p_literal(self, p):
         """literal : null_literal
                    | boolean_literal
                    | numeric_literal
                    | string_literal
+                   | regex_literal
         """
-        pass
+        p[0] = p[1]
 
     def p_boolean_literal(self, p):
         """boolean_literal : TRUE
                            | FALSE
         """
-        pass
+        p[0] = ast.Boolean(p[1])
 
     def p_null_literal(self, p):
         """null_literal : NULL"""
-        pass
+        p[0] = ast.Null(p[1])
 
     def p_numeric_literal(self, p):
         """numeric_literal : NUMBER"""
-        pass
+        p[0] = ast.Number(p[1])
 
     def p_string_literal(self, p):
         """string_literal : STRING"""
+        p[0] = ast.String(p[1])
+
+    def p_regex_literal(self, p):
+        """regex_literal : REGEX"""
+        p[0] = ast.Regex(p[1])
+
+    ###########################################
+    # Expressions
+    ###########################################
+    def p_primary_expr(self, p):
+        """primary_expr : primary_expr_no_brace
+                        | object_literal
+        """
+        p[0] = p[1]
+
+    def p_primary_expr_no_brace(self, p):
+        """primary_expr_no_brace : THIS
+                                 | ID
+                                 | literal
+                                 | array_literal
+                                 | LPAREN expr RPAREN
+        """
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = p[2]
+
+    def p_array_literal_1(self, p):
+        """array_literal : LBRACKET elision_opt RBRACKET"""
+        p[0] = ast.Array()
+
+    def p_array_literal_2(self, p):
+        """array_literal : LBRACKET element_list RBRACKET
+                         | LBRACKET element_list COMMA elision_opt RBRACKET
+        """
+        p[0] = ast.Array(p[2])
+
+
+    def p_element_list(self, p):
+        """element_list : elision_opt assignment_expr
+                        | element_list COMMA elision_opt assignment_expr
+        """
+        if len(p) == 3:
+            p[0] = [p[2]]
+        else:
+            p[1].append(p[4])
+            p[0] = p[1]
+
+    def p_elision_opt(self, p):
+        """elision_opt : empty
+                       | elision
+        """
+        p[0] = p[1]
+
+    def p_elision(self, p):
+        """elision : COMMA
+                   | elision COMMA
+        """
+        p[0] = p[1]
+
+    def p_object_literal(self, p):
+        """object_literal : LBRACE RBRACE
+                          | LBRACE property_list RBRACE
+                          | LBRACE property_list COMMA RBRACE
+        """
+        if len(p) == 3:
+            p[0] = ast.Object()
+        else:
+            p[0] = ast.Object(properties=p[2])
+
+    def p_property_list(self, p):
+        """property_list : property
+                         | property_list ',' property
+        """
         pass
 
     def p_property(self, p):
@@ -148,54 +221,6 @@ class Parser(object):
                     | NUMBER ':' assignment_expr
                     | ID ID '(' ')' '{' function_body '}'
                     | ID ID '(' formal_parameter_list ')' '{' function_body '}'
-        """
-        pass
-
-    def p_property_list(self, p):
-        """property_list : property
-                         | property_list ',' property
-        """
-        pass
-
-    def p_primary_expr(self, p):
-        """primary_expr : primary_expr_no_brace
-                        | '{' '}'
-                        | '{' property_list '}'
-                        | '{' property_list ',' '}'
-        """
-        pass
-
-    def p_primary_expr_no_brace(self, p):
-        """primary_expr_no_brace : THIS
-                                 | ID
-                                 | literal
-                                 | array_literal
-                                 | '(' expr ')'
-        """
-        pass
-
-    def p_array_literal(self, p):
-        """array_literal : '[' elision_opt ']'
-                         | '[' element_list ']'
-                         | '[' element_list ',' elision_opt ']'
-        """
-        pass
-
-    def p_element_list(self, p):
-        """element_list : elision_opt assignment_expr
-                        | element_list ',' elision_opt assignment_expr
-        """
-        pass
-
-    def p_elision_opt(self, p):
-        """elision_opt : empty
-                       | elision
-        """
-        pass
-
-    def p_elision(self, p):
-        """elision : ','
-                   | elision ','
         """
         pass
 
