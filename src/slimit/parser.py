@@ -51,8 +51,9 @@ class Parser(object):
         self.lexer.build(optimize=lex_optimize, lextab=lextab)
         self.tokens = self.lexer.tokens
 
-        self.parser = ply.yacc.yacc(module=self, optimize=yacc_optimize,
-                                    debug=yacc_debug, tabmodule=yacctab)
+        self.parser = ply.yacc.yacc(
+            module=self, optimize=yacc_optimize,
+            debug=yacc_debug, tabmodule=yacctab, start='program')
 
     def parse(self, text, debug=False):
         return self.parser.parse(text, lexer=self.lexer, debug=debug)
@@ -61,6 +62,10 @@ class Parser(object):
         ('nonassoc', 'IF_WITHOUT_ELSE'),
         ('nonassoc', 'ELSE'),
         )
+
+    def p_program(self, p):
+        """program : source_elements"""
+        p[0] = p[1]
 
     def p_source_elements(self, p):
         """source_elements : empty
