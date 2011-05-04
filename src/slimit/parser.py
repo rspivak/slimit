@@ -59,7 +59,6 @@ class Parser(object):
         return self.parser.parse(text, lexer=self.lexer, debug=debug)
 
     precedence = (
-        ('nonassoc', 'IF_WITHOUT_ELSE'),
         ('nonassoc', 'ELSE'),
         )
 
@@ -155,6 +154,10 @@ class Parser(object):
     def p_regex_literal(self, p):
         """regex_literal : REGEX"""
         p[0] = ast.Regex(p[1])
+
+    def p_identifier(self, p):
+        """identifier : ID"""
+        p[0] = ast.Identifier(p[1])
 
     ###########################################
     # Expressions
@@ -388,7 +391,7 @@ class Parser(object):
                              | MINUSMINUS unary_expr
                              | PLUS unary_expr
                              | MINUS unary_expr
-                             | BNEG unary_expr
+                             | BNOT unary_expr
                              | NOT unary_expr
         """
         p[0] = ast.UnaryOp(p[1], p[2])
@@ -561,7 +564,7 @@ class Parser(object):
             p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_and_expr_nobf(self, p):
-        """bitwise_and_expr_nobf
+        """bitwise_and_expr_nobf \
             : equality_expr_nobf
             | bitwise_and_expr_nobf BAND equality_expr_nobf
         """
@@ -623,7 +626,7 @@ class Parser(object):
 
     def p_bitwise_or_expr_nobf(self, p):
         """
-        bitwise_or_expr_nobf
+        bitwise_or_expr_nobf \
             : bitwise_xor_expr_nobf
             | bitwise_or_expr_nobf BOR bitwise_xor_expr_nobf
         """
@@ -694,7 +697,7 @@ class Parser(object):
         """
         conditional_expr \
             : logical_or_expr
-            | logical_or_expr QM assignment_expr COLON assignment_expr
+            | logical_or_expr CONDOP assignment_expr COLON assignment_expr
         """
         if len(p) == 2:
             p[0] = p[1]
@@ -706,7 +709,7 @@ class Parser(object):
         """
         conditional_expr_noin \
             : logical_or_expr_noin
-            | logical_or_expr_noin QM assignment_expr_noin COLON \
+            | logical_or_expr_noin CONDOP assignment_expr_noin COLON \
                   assignment_expr_noin
         """
         if len(p) == 2:
@@ -719,7 +722,7 @@ class Parser(object):
         """
         conditional_expr_nobf \
             : logical_or_expr_nobf
-            | logical_or_expr_nobf QM assignment_expr COLON assignment_expr
+            | logical_or_expr_nobf CONDOP assignment_expr COLON assignment_expr
         """
         if len(p) == 2:
             p[0] = p[1]
@@ -919,11 +922,11 @@ class Parser(object):
         """
         p[0] = ast.ForIn(item=p[3], iterable=p[5], statement=p[7])
 
-    def p_iteration_statement_4(self, p):
+    def p_iteration_statement_5(self, p):
         """iteration_statement : FOR LPAREN VAR ID IN expr RPAREN statement"""
         p[0] = ast.ForIn(item=ast.VarDecl(p[4]), iterable=p[6], statement=p[8])
 
-    def p_iteration_statement_4(self, p):
+    def p_iteration_statement_6(self, p):
         """
         iteration_statement \
             : FOR LPAREN VAR ID initializer_noin IN expr RPAREN statement
@@ -957,13 +960,13 @@ class Parser(object):
         p[0] = ast.Continue(p[2])
 
     # 12.8 The break Statement
-    def p_break_statement(self, p):
+    def p_break_statement_1(self, p):
         """break_statement : BREAK SEMI
                            | BREAK auto_semi
         """
         p[0] = ast.Break()
 
-    def p_break_statement(self, p):
+    def p_break_statement_2(self, p):
         """break_statement : BREAK ID SEMI
                            | BREAK ID auto_semi
         """
@@ -971,13 +974,13 @@ class Parser(object):
 
 
     # 12.9 The return Statement
-    def p_return_statement(self, p):
+    def p_return_statement_1(self, p):
         """return_statement : RETURN SEMI
                             | RETURN auto_semi
         """
         p[0] = ast.Return()
 
-    def p_return_statement(self, p):
+    def p_return_statement_2(self, p):
         """return_statement : RETURN expr SEMI
                             | RETURN expr auto_semi
         """
@@ -1036,52 +1039,98 @@ class Parser(object):
 
     # 12.12 Labelled Statements
     def p_labelled_statement(self, p):
-        """labelled_statement : ID ':' statement"""
-        pass
+        """labelled_statement : identifier COLON statement"""
+        p[0] = ast.Label(identifier=p[1], statement=p[3])
 
+    # 12.13 The throw Statement
     def p_throw_statement(self, p):
-        """throw_statement : THROW expr ';'
-                           | THROW expr error
+        """throw_statement : THROW expr SEMI
+                           | THROW expr auto_semi
         """
-        pass
+        p[0] = ast.Throw(expr=p[2])
 
-    def p_try_statement(self, p):
-        """try_statement : TRY block FINALLY block
-                         | TRY block CATCH '(' ID ')' block
-                         | TRY block CATCH '(' ID ')' block FINALLY block
-        """
-        pass
+    # 12.14 The try Statement
+    def p_try_statement_1(self, p):
+        """try_statement : TRY block catch"""
+        p[0] = ast.Try(statements=p[2], catch=p[3])
 
+    def p_try_statement_2(self, p):
+        """try_statement : TRY block finally"""
+        p[0] = ast.Try(statements=p[2], fin=p[3])
+
+    def p_try_statement_3(self, p):
+        """try_statement : TRY block catch finally"""
+        p[0] = ast.Try(statements=p[2], catch=p[3], fin=p[4])
+
+    def p_catch(self, p):
+        """catch : CATCH LPAREN identifier RPAREN block"""
+        p[0] = ast.Catch(identifier=p[3], elements=p[5])
+
+    def p_finally(self, p):
+        """finally : FINALLY block"""
+        p[0] = ast.Finally(elements=p[2])
+
+    # 12.15 The debugger statement
     def p_debugger_statement(self, p):
-        """debugger_statement : DEBUGGER ';'
-                              | DEBUGGER error
+        """debugger_statement : DEBUGGER SEMI
+                              | DEBUGGER auto_semi
         """
-        pass
+        p[0] = ast.Debugger(p[1])
 
+    # 13 Function Definition
     def p_function_declaration(self, p):
         """
         function_declaration \
-            : FUNCTION ID '(' ')' '{' function_body '}'
-            | FUNCTION ID '(' formal_parameter_list ')' '{' function_body '}'
+            : FUNCTION identifier LPAREN RPAREN LBRACE function_body RBRACE
+            | FUNCTION identifier LPAREN formal_parameter_list RPAREN LBRACE \
+                 function_body RBRACE
         """
-        pass
+        if len(p) == 8:
+            p[0] = ast.FuncDecl(
+                identifier=p[2], parameters=None, elements=p[6])
+        else:
+            p[0] = ast.FuncDecl(
+                identifier=p[2], parameters=p[4], elements=p[7])
 
-    def p_function_expr(self, p):
+    def p_function_expr_1(self, p):
         """
         function_expr \
-            : FUNCTION '(' ')' '{' function_body '}'
-            | FUNCTION '(' formal_parameter_list ')' '{' function_body '}'
-            | FUNCTION ID '(' ')' '{' function_body '}'
-            | FUNCTION ID '(' formal_parameter_list ')' '{' function_body '}'
+            : FUNCTION LPAREN RPAREN LBRACE function_body RBRACE
+            | FUNCTION LPAREN formal_parameter_list RPAREN \
+                LBRACE function_body RBRACE
         """
-        pass
+        if len(p) == 7:
+            p[0] = ast.FuncExpr(
+                identifier=None, parameters=None, elements=p[5])
+        else:
+            p[0] = ast.FuncExpr(
+                identifier=None, parameters=p[3], elements=p[6])
+
+    def p_function_expr_2(self, p):
+        """
+        function_expr \
+            : FUNCTION identifier LPAREN RPAREN LBRACE function_body RBRACE
+            | FUNCTION identifier LPAREN formal_parameter_list RPAREN \
+                LBRACE function_body RBRACE
+        """
+        if len(p) == 8:
+            p[0] = ast.FuncExpr(
+                identifier=p[2], parameters=None, elements=p[6])
+        else:
+            p[0] = ast.FuncExpr(
+                identifier=p[2], parameters=p[4], elements=p[7])
+
 
     def p_formal_parameter_list(self, p):
-        """formal_parameter_list : ID
-                                 | formal_parameter_list ',' ID
+        """formal_parameter_list : identifier
+                                 | formal_parameter_list COMMA identifier
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_function_body(self, p):
         """function_body : source_elements"""
-        pass
+        p[0] = p[1]
