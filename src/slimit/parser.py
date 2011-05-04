@@ -393,43 +393,61 @@ class Parser(object):
         """
         p[0] = ast.UnaryOp(p[1], p[2])
 
+    # 11.5 Multiplicative Operators
     def p_multiplicative_expr(self, p):
         """multiplicative_expr : unary_expr
-                               | multiplicative_expr '*' unary_expr
-                               | multiplicative_expr '/' unary_expr
-                               | multiplicative_expr '%' unary_expr
+                               | multiplicative_expr MULT unary_expr
+                               | multiplicative_expr DIV unary_expr
+                               | multiplicative_expr MOD unary_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_multiplicative_expr_nobf(self, p):
         """multiplicative_expr_nobf : unary_expr_nobf
-                                    | multiplicative_expr_nobf '*' unary_expr
-                                    | multiplicative_expr_nobf '/' unary_expr
-                                    | multiplicative_expr_nobf '%' unary_expr
+                                    | multiplicative_expr_nobf MULT unary_expr
+                                    | multiplicative_expr_nobf DIV unary_expr
+                                    | multiplicative_expr_nobf MOD unary_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.6 Additive Operators
     def p_additive_expr(self, p):
         """additive_expr : multiplicative_expr
-                         | additive_expr '+' multiplicative_expr
-                         | additive_expr '-' multiplicative_expr
+                         | additive_expr PLUS multiplicative_expr
+                         | additive_expr MINUS multiplicative_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_additive_expr_nobf(self, p):
         """additive_expr_nobf : multiplicative_expr_nobf
-                              | additive_expr_nobf '+' multiplicative_expr
-                              | additive_expr_nobf '-' multiplicative_expr
+                              | additive_expr_nobf PLUS multiplicative_expr
+                              | additive_expr_nobf MINUS multiplicative_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.7 Bitwise Shift Operators
     def p_shift_expr(self, p):
         """shift_expr : additive_expr
                       | shift_expr LSHIFT additive_expr
                       | shift_expr RSHIFT additive_expr
                       | shift_expr URSHIFT additive_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_shift_expr_nobf(self, p):
         """shift_expr_nobf : additive_expr_nobf
@@ -437,8 +455,13 @@ class Parser(object):
                            | shift_expr_nobf RSHIFT additive_expr
                            | shift_expr_nobf URSHIFT additive_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+
+    # 11.8 Relational Operators
     def p_relational_expr(self, p):
         """relational_expr : shift_expr
                            | relational_expr LT shift_expr
@@ -448,7 +471,10 @@ class Parser(object):
                            | relational_expr INSTANCEOF shift_expr
                            | relational_expr IN shift_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_relational_expr_noin(self, p):
         """relational_expr_noin : shift_expr
@@ -458,7 +484,10 @@ class Parser(object):
                                 | relational_expr_noin GE shift_expr
                                 | relational_expr_noin INSTANCEOF shift_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_relational_expr_nobf(self, p):
         """relational_expr_nobf : shift_expr_nobf
@@ -469,8 +498,12 @@ class Parser(object):
                                 | relational_expr_nobf INSTANCEOF shift_expr
                                 | relational_expr_nobf IN shift_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.9 Equality Operators
     def p_equality_expr(self, p):
         """equality_expr : relational_expr
                          | equality_expr EQEQ relational_expr
@@ -478,7 +511,10 @@ class Parser(object):
                          | equality_expr STREQ relational_expr
                          | equality_expr STRNEQ relational_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_equality_expr_noin(self, p):
         """equality_expr_noin : relational_expr_noin
@@ -487,7 +523,10 @@ class Parser(object):
                               | equality_expr_noin STREQ relational_expr
                               | equality_expr_noin STRNEQ relational_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_equality_expr_nobf(self, p):
         """equality_expr_nobf : relational_expr_nobf
@@ -496,128 +535,197 @@ class Parser(object):
                               | equality_expr_nobf STREQ relational_expr
                               | equality_expr_nobf STRNEQ relational_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.10 Binary Bitwise Operators
     def p_bitwise_and_expr(self, p):
         """bitwise_and_expr : equality_expr
-                            | bitwise_and_expr '&' equality_expr
+                            | bitwise_and_expr BAND equality_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_and_expr_noin(self, p):
-        """bitwise_and_expr_noin : equality_expr_noin
-                                 | bitwise_and_expr_noin '&' equality_expr_noin
+        """bitwise_and_expr_noin \
+            : equality_expr_noin
+            | bitwise_and_expr_noin BAND equality_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_and_expr_nobf(self, p):
-        """bitwise_and_expr_nobf : equality_expr_nobf
-                                 | bitwise_and_expr_nobf '&' equality_expr_nobf
+        """bitwise_and_expr_nobf
+            : equality_expr_nobf
+            | bitwise_and_expr_nobf BAND equality_expr_nobf
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_xor_expr(self, p):
         """bitwise_xor_expr : bitwise_and_expr
-                            | bitwise_xor_expr '^' bitwise_and_expr
+                            | bitwise_xor_expr BXOR bitwise_and_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_xor_expr_noin(self, p):
         """
         bitwise_xor_expr_noin \
             : bitwise_and_expr_noin
-            | bitwise_xor_expr_noin '^' bitwise_and_expr_noin
+            | bitwise_xor_expr_noin BXOR bitwise_and_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_xor_expr_nobf(self, p):
         """
         bitwise_xor_expr_nobf \
             : bitwise_and_expr_nobf
-            | bitwise_xor_expr_nobf '^' bitwise_and_expr_nobf
+            | bitwise_xor_expr_nobf BXOR bitwise_and_expr_nobf
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_or_expr(self, p):
         """bitwise_or_expr : bitwise_xor_expr
-                           | bitwise_or_expr '|' bitwise_xor_expr
+                           | bitwise_or_expr BOR bitwise_xor_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_or_expr_noin(self, p):
-        """bitwise_or_expr_noin : bitwise_xor_expr_noin
-                                | bitwise_or_expr_noin '|' bitwise_xor_expr_noin
         """
-        pass
+        bitwise_or_expr_noin \
+            : bitwise_xor_expr_noin
+            | bitwise_or_expr_noin BOR bitwise_xor_expr_noin
+        """
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_bitwise_or_expr_nobf(self, p):
-        """bitwise_or_expr_nobf : bitwise_xor_expr_nobf
-                                | bitwise_or_expr_nobf '|' bitwise_xor_expr_nobf
         """
-        pass
+        bitwise_or_expr_nobf
+            : bitwise_xor_expr_nobf
+            | bitwise_or_expr_nobf BOR bitwise_xor_expr_nobf
+        """
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.11 Binary Logical Operators
     def p_logical_and_expr(self, p):
         """logical_and_expr : bitwise_or_expr
                             | logical_and_expr AND bitwise_or_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_logical_and_expr_noin(self, p):
         """
         logical_and_expr_noin : bitwise_or_expr_noin
                               | logical_and_expr_noin AND bitwise_or_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_logical_and_expr_nobf(self, p):
         """
         logical_and_expr_nobf : bitwise_or_expr_nobf
                               | logical_and_expr_nobf AND bitwise_or_expr_nobf
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_logical_or_expr(self, p):
         """logical_or_expr : logical_and_expr
                            | logical_or_expr OR logical_and_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_logical_or_expr_noin(self, p):
         """logical_or_expr_noin : logical_and_expr_noin
                                 | logical_or_expr_noin OR logical_and_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
     def p_logical_or_expr_nobf(self, p):
         """logical_or_expr_nobf : logical_and_expr_nobf
                                 | logical_or_expr_nobf OR logical_and_expr_nobf
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.BinOp(op=p[2], left=p[1], right=p[3])
 
+    # 11.12 Conditional Operator ( ? : )
     def p_conditional_expr(self, p):
         """
         conditional_expr \
             : logical_or_expr
-            | logical_or_expr '?' assignment_expr ':' assignment_expr
+            | logical_or_expr QM assignment_expr COLON assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Conditional(
+                predicate=p[1], consequent=p[3], alternative=p[5])
 
     def p_conditional_expr_noin(self, p):
         """
         conditional_expr_noin \
             : logical_or_expr_noin
-            | logical_or_expr_noin '?' assignment_expr_noin ':' \
+            | logical_or_expr_noin QM assignment_expr_noin COLON \
                   assignment_expr_noin
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Conditional(
+                predicate=p[1], consequent=p[3], alternative=p[5])
 
     def p_conditional_expr_nobf(self, p):
         """
         conditional_expr_nobf \
             : logical_or_expr_nobf
-            | logical_or_expr_nobf '?' assignment_expr ':' assignment_expr
+            | logical_or_expr_nobf QM assignment_expr COLON assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.Conditional(
+                predicate=p[1], consequent=p[3], alternative=p[5])
 
     # 11.13 Assignment Operators
     def p_assignment_expr(self, p):
