@@ -100,7 +100,7 @@ class LexerTestCase(unittest.TestCase):
         ('. , ; : + - * % & | ^ ~ ? ! ( ) { } [ ]',
          ['PERIOD .', 'COMMA ,', 'SEMI ;', 'COLON :', 'PLUS +', 'MINUS -',
           'MULT *', 'MOD %', 'BAND &', 'BOR |', 'BXOR ^', 'BNOT ~',
-          'QM ?', 'NOT !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
+          'CONDOP ?', 'NOT !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
           'LBRACKET [', 'RBRACKET ]']
          ),
         ('a / b', ['ID a', 'DIV /', 'ID b']),
@@ -156,7 +156,7 @@ class LexerTestCase(unittest.TestCase):
         # http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
         ("""for (var x = a in foo && "</x>" || mot ? z:/x:3;x<5;y</g/i) {xyz(x++);}""",
          ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "CONDOP ?",
           "ID z", "COLON :", "REGEX /x:3;x<5;y</g", "DIV /", "ID i", "RPAREN )",
           "LBRACE {",  "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++", "RPAREN )",
           "SEMI ;", "RBRACE }"]
@@ -164,7 +164,7 @@ class LexerTestCase(unittest.TestCase):
 
         ("""for (var x = a in foo && "</x>" || mot ? z/x:3;x<5;y</g/i) {xyz(x++);}""",
          ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "CONDOP ?",
           "ID z", "DIV /", "ID x", "COLON :", "NUMBER 3", "SEMI ;", "ID x",
           "LT <", "NUMBER 5", "SEMI ;", "ID y", "LT <", "REGEX /g/i",
           "RPAREN )", "LBRACE {", "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++",

@@ -174,7 +174,8 @@ class Lexer(object):
         'PERIOD', 'COMMA', 'SEMI', 'COLON',     # . , ; :
         'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD',  # + - * / %
         'BAND', 'BOR', 'BXOR', 'BNOT',          # & | ^ ~
-        'QM', 'NOT',                            # ? and !
+        'CONDOP',                               # conditional operator ?
+        'NOT',                                  # !
         'LPAREN', 'RPAREN',                     # ( and )
         'LBRACE', 'RBRACE',                     # { and }
         'LBRACKET', 'RBRACKET',                 # [ and ]
@@ -251,7 +252,7 @@ class Lexer(object):
     t_BOR           = r'\|'
     t_BXOR          = r'\^'
     t_BNOT          = r'~'
-    t_QM            = r'\?'
+    t_CONDOP        = r'\?'
     t_NOT           = r'!'
     t_LPAREN        = r'\('
     t_RPAREN        = r'\)'
