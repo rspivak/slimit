@@ -100,7 +100,7 @@ class LexerTestCase(unittest.TestCase):
         ('. , ; : + - * % & | ^ ~ ? ! ( ) { } [ ]',
          ['PERIOD .', 'COMMA ,', 'SEMI ;', 'COLON :', 'PLUS +', 'MINUS -',
           'MULT *', 'MOD %', 'BAND &', 'BOR |', 'BXOR ^', 'BNEG ~',
-          'QM ?', 'EM !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
+          'QM ?', 'NOT !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
           'LBRACKET [', 'RBRACKET ]']
          ),
         ('a / b', ['ID a', 'DIV /', 'ID b']),
