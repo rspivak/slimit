@@ -241,75 +241,112 @@ class Parser(object):
         """
         pass
 
+    # 11.2 Left-Hand-Side Expressions
     def p_member_expr(self, p):
         """member_expr : primary_expr
                        | function_expr
-                       | member_expr '[' expr ']'
-                       | member_expr '.' ID
+                       | member_expr RBRACKET expr RBRACKET
+                       | member_expr PERIOD ID
                        | NEW member_expr arguments
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        elif p[1] == 'new':
+            p[0] = ast.NewExpr(p[2], p[3])
+        elif p[2] == '.':
+            p[0] = ast.DotAccessor(p[1], p[3])
+        else:
+            p[0] = ast.BracketAccessor(p[1], p[3])
 
     def p_member_expr_nobf(self, p):
         """member_expr_nobf : primary_expr_no_brace
-                            | member_expr_nobf '[' expr ']'
-                            | member_expr_nobf '.' ID
+                            | member_expr_nobf LBRACKET expr RBRACKET
+                            | member_expr_nobf PERIOD ID
                             | NEW member_expr arguments
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        elif p[1] == 'new':
+            p[0] = ast.NewExpr(p[2], p[3])
+        elif p[2] == '.':
+            p[0] = ast.DotAccessor(p[1], p[3])
+        else:
+            p[0] = ast.BracketAccessor(p[1], p[3])
 
     def p_new_expr(self, p):
         """new_expr : member_expr
                     | NEW new_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.NewExpr(p[2])
 
     def p_new_expr_nobf(self, p):
         """new_expr_nobf : member_expr_nobf
                          | NEW new_expr_nobf
         """
-        pass
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = ast.NewExpr(p[2])
 
     def p_call_expr(self, p):
         """call_expr : member_expr arguments
                      | call_expr arguments
-                     | call_expr '[' expr ']'
-                     | call_expr '.' ID
+                     | call_expr LBRACKET expr RBRACKET
+                     | call_expr PERIOD ID
         """
-        pass
+        if len(p) == 3:
+            p[0] = ast.FunctionCall(p[1], p[2])
+        elif len(p) == 4:
+            p[0] = ast.DotAccessor(p[1], p[3])
+        else:
+            p[0] = ast.BracketAccessor(p[1], p[3])
 
     def p_call_expr_nobf(self, p):
         """call_expr_nobf : member_expr_nobf arguments
                           | call_expr_nobf arguments
-                          | call_expr_nobf '[' expr ']'
-                          | call_expr_nobf '.' ID
+                          | call_expr_nobf  LBRACKET expr RBRACKET
+                          | call_expr_nobf PERIOD ID
         """
-        pass
+        if len(p) == 3:
+            p[0] = ast.FunctionCall(p[1], p[2])
+        elif len(p) == 4:
+            p[0] = ast.DotAccessor(p[1], p[3])
+        else:
+            p[0] = ast.BracketAccessor(p[1], p[3])
 
     def p_arguments(self, p):
-        """arguments : '(' ')'
-                     | '(' argument_list ')'
+        """arguments : LPAREN RPAREN
+                     | LPAREN argument_list RPAREN
         """
-        pass
+        if len(p) == 4:
+            p[0] = p[2]
 
     def p_argument_list(self, p):
         """argument_list : assignment_expr
-                         | argument_list ',' assignment_expr
+                         | argument_list COMMA assignment_expr
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_lef_hand_side_expr(self, p):
         """left_hand_side_expr : new_expr
                                | call_expr
         """
-        pass
+        p[0] = p[1]
 
     def p_lef_hand_side_expr_nobf(self, p):
         """left_hand_side_expr_nobf : new_expr_nobf
                                     | call_expr_nobf
         """
-        pass
+        p[0] = p[1]
 
+    # 11.3 Postfix Expressions
     def p_postfix_expr(self, p):
         """postfix_expr : left_hand_side_expr
                         | left_hand_side_expr PLUSPLUS
