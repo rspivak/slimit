@@ -790,7 +790,7 @@ class Parser(object):
 
     def p_expr_noin(self, p):
         """expr_noin : assignment_expr_noin
-                     | expr_noin ',' assignment_expr_noin
+                     | expr_noin COMMA assignment_expr_noin
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -800,7 +800,7 @@ class Parser(object):
 
     def p_expr_nobf(self, p):
         """expr_nobf : assignment_expr_nobf
-                     | expr_nobf ',' assignment_expr
+                     | expr_nobf COMMA assignment_expr
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -867,108 +867,174 @@ class Parser(object):
 
     # 12.3 Empty Statement
     def p_empty_statement(self, p):
-        """empty_statement : ';'"""
+        """empty_statement : SEMI"""
         pass
 
+    # 12.4 Expression Statement
     def p_expr_statement(self, p):
-        """expr_statement : expr_nobf ';'
-                          | expr_nobf error
+        """expr_statement : expr_nobf SEMI
+                          | expr_nobf auto_semi
         """
-        pass
+        p[0] = p[1]
 
-    def p_if_statement(self, p):
-        """if_statement : IF '(' expr ')' statement %prec IF_WITHOUT_ELSE
-                        | IF '(' expr ')' statement ELSE statement
-        """
-        pass
+    # 12.5 The if Statement
+    def p_if_statement_1(self, p):
+        """if_statement : IF LPAREN expr RPAREN statement"""
+        p[0] = ast.If(predicate=p[3], consequent=p[5])
 
-    def p_iteration_statement(self, p):
+    def p_if_statement_2(self, p):
+        """if_statement : IF LPAREN expr RPAREN statement ELSE statement"""
+        p[0] = ast.If(predicate=p[3], consequent=p[5], alternative=p[7])
+
+    # 12.6 Iteration Statements
+    def p_iteration_statement_1(self, p):
         """
         iteration_statement \
-            : DO statement WHILE '(' expr ')' ';'
-            | DO statement WHILE '(' expr ')' error
-            | WHILE '(' expr ')' statement
-            | FOR '(' expr_noin_opt ';' expr_opt ';' expr_opt ')' statement
-            | FOR '(' VAR variable_declaration_list_noin ';' expr_opt ';' \
-                  expr_opt ')' statement
-            | FOR '(' left_hand_side_expr IN expr ')' statement
-            | FOR '(' VAR ID IN expr ')' statement
-            | FOR '(' VAR ID initializer_noin IN expr ')' statement
+            : DO statement WHILE LPAREN expr RPAREN SEMI
+            | DO statement WHILE LPAREN expr RPAREN auto_semi
         """
-        pass
+        p[0] = ast.DoWhile(predicate=p[5], statement=p[2])
+
+    def p_iteration_statement_2(self, p):
+        """iteration_statement : WHILE LPAREN expr RPAREN statement"""
+        p[0] = ast.DoWhile(predicate=p[3], statement=p[5])
+
+    def p_iteration_statement_3(self, p):
+        """
+        iteration_statement \
+            : FOR LPAREN expr_noin_opt SEMI expr_opt SEMI expr_opt RPAREN \
+                  statement
+            | FOR LPAREN VAR variable_declaration_list_noin SEMI expr_opt SEMI\
+                  expr_opt RPAREN statement
+        """
+        if len(p) == 10:
+            p[0] = ast.For(init=p[3], cond=p[5], count=p[7], statement=p[9])
+        else:
+            p[0] = ast.For(init=p[4], cond=p[6], count=p[8], statement=p[10])
+
+    def p_iteration_statement_4(self, p):
+        """
+        iteration_statement \
+            : FOR LPAREN left_hand_side_expr IN expr RPAREN statement
+        """
+        p[0] = ast.ForIn(item=p[3], iterable=p[5], statement=p[7])
+
+    def p_iteration_statement_4(self, p):
+        """iteration_statement : FOR LPAREN VAR ID IN expr RPAREN statement"""
+        p[0] = ast.ForIn(item=ast.VarDecl(p[4]), iterable=p[6], statement=p[8])
+
+    def p_iteration_statement_4(self, p):
+        """
+        iteration_statement \
+            : FOR LPAREN VAR ID initializer_noin IN expr RPAREN statement
+        """
+        p[0] = ast.ForIn(item=ast.VarDecl(identifier=p[4], initializer=p[5]),
+                         iterable=p[7], statement=p[9])
 
     def p_expr_opt(self, p):
         """expr_opt : empty
                     | expr
         """
-        pass
+        p[0] = p[1]
 
     def p_expr_noin_opt(self, p):
         """expr_noin_opt : empty
                          | expr_noin
         """
-        pass
+        p[0] = p[1]
 
-    def p_continue_statement(self, p):
-        """continue_statement : CONTINUE ';'
-                              | CONTINUE error
-                              | CONTINUE ID ';'
-                              | CONTINUE ID error
+    # 12.7 The continue Statement
+    def p_continue_statement_1(self, p):
+        """continue_statement : CONTINUE SEMI
+                              | CONTINUE auto_semi
         """
-        pass
+        p[0] = ast.Continue()
+
+    def p_continue_statement_2(self, p):
+        """continue_statement : CONTINUE ID SEMI
+                              | CONTINUE ID auto_semi
+        """
+        p[0] = ast.Continue(p[2])
+
+    # 12.8 The break Statement
+    def p_break_statement(self, p):
+        """break_statement : BREAK SEMI
+                           | BREAK auto_semi
+        """
+        p[0] = ast.Break()
 
     def p_break_statement(self, p):
-        """break_statement : BREAK ';'
-                           | BREAK error
-                           | BREAK ID ';'
-                           | BREAK ID error
+        """break_statement : BREAK ID SEMI
+                           | BREAK ID auto_semi
         """
-        pass
+        p[0] = ast.Break(p[2])
+
+
+    # 12.9 The return Statement
+    def p_return_statement(self, p):
+        """return_statement : RETURN SEMI
+                            | RETURN auto_semi
+        """
+        p[0] = ast.Return()
 
     def p_return_statement(self, p):
-        """return_statement : RETURN ';'
-                            | RETURN error
-                            | RETURN expr ';'
-                            | RETURN expr error
+        """return_statement : RETURN expr SEMI
+                            | RETURN expr auto_semi
         """
-        pass
+        p[0] = ast.Return(expr=p[2])
 
+    # 12.10 The with Statement
     def p_with_statement(self, p):
-        """with_statement : WITH '(' expr ')' statement"""
-        pass
+        """with_statement : WITH LPAREN expr RPAREN statement"""
+        p[0] = ast.With(expr=p[3], statement=p[5])
 
+    # 12.11 The switch Statement
     def p_switch_statement(self, p):
-        """switch_statement : SWITCH '(' expr ')' case_block"""
-        pass
+        """switch_statement : SWITCH LPAREN expr RPAREN case_block"""
+        cases = []
+        default = None
+        # iterate over return values from case_block
+        for item in p[5]:
+            if isinstance(item, ast.Default):
+                default = item
+            elif isinstance(item, list):
+                cases.extend(item)
+
+        p[0] = ast.Switch(expr=p[3], cases=case, default=default)
 
     def p_case_block(self, p):
         """
         case_block \
-            : '{' case_clauses_opt '}'
-            | '{' case_clauses_opt default_clause case_clauses_opt '}'
+            : LBRACE case_clauses_opt RBRACE
+            | LBRACE case_clauses_opt default_clause case_clauses_opt RBRACE
         """
-        pass
+        p[0] = p[2:-1]
 
     def p_case_clauses_opt(self, p):
         """case_clauses_opt : empty
                             | case_clauses
         """
+        p[0] = p[1]
 
     def p_case_clauses(self, p):
         """case_clauses : case_clause
                         | case_clauses case_clause
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[2])
+            p[0] = p[1]
 
     def p_case_clause(self, p):
-        """case_clause : CASE expr ':' source_elements"""
-        pass
+        """case_clause : CASE expr COLON source_elements"""
+        p[0] = ast.Case(expr=p[2], elements=p[4])
 
     def p_default_clause(self, p):
-        """default_clause : DEFAULT ':' source_elements
-        """
-        pass
+        """default_clause : DEFAULT COLON source_elements"""
+        p[0] = ast.Default(elements=p[3])
 
+    # 12.12 Labelled Statements
     def p_labelled_statement(self, p):
         """labelled_statement : ID ':' statement"""
         pass
