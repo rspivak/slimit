@@ -63,6 +63,17 @@ class Parser(object):
         ('nonassoc', 'ELSE'),
         )
 
+    def p_empty(self, p):
+        """empty :"""
+
+    def p_auto_semi(self, p):
+        """auto_semi : error"""
+
+    def p_error(self, p):
+        pass
+
+    # Main rules
+
     def p_program(self, p):
         """program : source_elements"""
         p[0] = ast.Program(p[1])
@@ -625,7 +636,7 @@ class Parser(object):
     # 12.2 Variable Statement
     def p_variable_statement(self, p):
         """variable_statement : VAR variable_declaration_list SEMI
-                              | VAR variable_declaration_list error
+                              | VAR variable_declaration_list auto_semi
         """
         pass
 
@@ -817,12 +828,4 @@ class Parser(object):
 
     def p_function_body(self, p):
         """function_body : source_elements"""
-        pass
-
-    # Denotes an empty production according to PLY documentation
-    def p_empty(self, p):
-        """empty :"""
-        pass
-
-    def p_error(self, p):
         pass
