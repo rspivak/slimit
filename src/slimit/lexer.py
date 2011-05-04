@@ -173,7 +173,7 @@ class Lexer(object):
         # Punctuators
         'PERIOD', 'COMMA', 'SEMI', 'COLON',     # . , ; :
         'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD',  # + - * / %
-        'BAND', 'BOR', 'BXOR', 'BNEG',          # & | ^ ~
+        'BAND', 'BOR', 'BXOR', 'BNOT',          # & | ^ ~
         'QM', 'NOT',                            # ? and !
         'LPAREN', 'RPAREN',                     # ( and )
         'LBRACE', 'RBRACE',                     # { and }
@@ -250,7 +250,7 @@ class Lexer(object):
     t_BAND          = r'&'
     t_BOR           = r'\|'
     t_BXOR          = r'\^'
-    t_BNEG          = r'~'
+    t_BNOT          = r'~'
     t_QM            = r'\?'
     t_NOT           = r'!'
     t_LPAREN        = r'\('
