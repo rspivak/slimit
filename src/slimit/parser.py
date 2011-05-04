@@ -77,7 +77,7 @@ class Parser(object):
         """source_element_list : source_element
                                | source_element_list source_element
         """
-        if len(p[0]) == 2: # single source element
+        if len(p) == 2: # single source element
             p[0] = [p[1]]
         else:
             p[1].append(p[2])
@@ -211,16 +211,22 @@ class Parser(object):
 
     def p_property_list(self, p):
         """property_list : property
-                         | property_list ',' property
+                         | property_list COMMA property
         """
-        pass
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[1].append(p[3])
+            p[0] = p[1]
 
     def p_property(self, p):
-        """property : ID ':' assignment_expr
-                    | STRING ':' assignment_expr
-                    | NUMBER ':' assignment_expr
-                    | ID ID '(' ')' '{' function_body '}'
-                    | ID ID '(' formal_parameter_list ')' '{' function_body '}'
+        """
+        property \
+        : ID COLON assignment_expr
+        | STRING COLON assignment_expr
+        | NUMBER COLON assignment_expr
+        | ID ID LPAREN RPAREN LBRACE function_body RBRACE
+        | ID ID LPAREN formal_parameter_list RPAREN LBRACE function_body RBRACE
         """
         pass
 
@@ -583,7 +589,7 @@ class Parser(object):
         pass
 
     def p_assignment_operator(self, p):
-        """assignment_operator : '='
+        """assignment_operator : EQ
                                | MULTEQUAL
                                | DIVEQUAL
                                | MODEQUAL
@@ -596,7 +602,7 @@ class Parser(object):
                                | XOREQUAL
                                | OREQUAL
         """
-        pass
+        p[0] = p[1]
 
     def p_expr(self, p):
         """expr : assignment_expr
@@ -616,8 +622,9 @@ class Parser(object):
         """
         pass
 
+    # 12.2 Variable Statement
     def p_variable_statement(self, p):
-        """variable_statement : VAR variable_declaration_list ';'
+        """variable_statement : VAR variable_declaration_list SEMI
                               | VAR variable_declaration_list error
         """
         pass
@@ -819,4 +826,3 @@ class Parser(object):
 
     def p_error(self, p):
         pass
-
