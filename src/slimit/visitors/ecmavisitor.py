@@ -218,3 +218,9 @@ class ECMAVisitor(object):
         self.indent_level -= 2
         return s
 
+    def visit_Throw(self, node):
+        s = '%sthrow %s;' % (self._make_indent(), self.visit(node.expr))
+        return s
+
+    def visit_Debugger(self, node):
+        return '%s;' % node.value

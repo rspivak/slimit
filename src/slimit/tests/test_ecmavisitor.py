@@ -222,6 +222,36 @@ class ECMAVisitorTestCase(unittest.TestCase):
             break;
         }
         """,
+
+        # test 24
+        ################################
+        # throw statement
+        ################################
+        """
+        throw 'exc';
+        """,
+
+        ################################
+        # debugger statement
+        ################################
+        'debugger;',
+
+        ################################
+        # expression statement
+        ################################
+        """
+        5 + 7 - 20 * 10;
+        ++x;
+        --x;
+        x++;
+        x--;
+        x = 17 /= 3;
+        """,
+
+        # test 27
+        ################################
+        # try statement
+        ################################
         ]
 
 def make_test_function(input, expected):
