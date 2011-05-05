@@ -50,6 +50,10 @@ class Number(Node):
     def __init__(self, value):
         self.value = value
 
+class Identifier(Node):
+    def __init__(self, value):
+        self.value = value
+
 class String(Node):
     def __init__(self, value):
         self.value = value
@@ -129,6 +133,11 @@ class DoWhile(Node):
         self.predicate = predicate
         self.statement = statement
 
+class While(Node):
+    def __init__(self, predicate, statement):
+        self.predicate = predicate
+        self.statement = statement
+
 class For(Node):
     def __init__(self, init, cond, count, statement):
         self.init = init
@@ -197,10 +206,6 @@ class Catch(Node):
 class Finally(Node):
     def __init__(self, elements):
         self.elements = elements
-
-class Identifier(Node):
-    def __init__(self, value):
-        self.value = value
 
 class Debugger(Node):
     def __init__(self, value):

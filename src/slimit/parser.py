@@ -893,7 +893,7 @@ class Parser(object):
 
     def p_iteration_statement_2(self, p):
         """iteration_statement : WHILE LPAREN expr RPAREN statement"""
-        p[0] = ast.DoWhile(predicate=p[3], statement=p[5])
+        p[0] = ast.While(predicate=p[3], statement=p[5])
 
     def p_iteration_statement_3(self, p):
         """

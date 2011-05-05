@@ -136,3 +136,17 @@ class ECMAVisitor(object):
 
     def visit_ExprStatement(self, node):
         return '%s;' % self.visit(node.expr)
+
+    def visit_DoWhile(self, node):
+        s = 'do '
+        s += self.visit(node.statement)
+        s += ' while (%s);' % self.visit(node.predicate)
+        return s
+
+    def visit_While(self, node):
+        s = 'while (%s) ' % self.visit(node.predicate)
+        s += self.visit(node.statement)
+        return s
+
+    def visit_Null(self, node):
+        return 'null'

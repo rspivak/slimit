@@ -128,6 +128,20 @@ class ECMAVisitorTestCase(unittest.TestCase):
           p = 1;
         }
         """,
+
+        """
+        do {
+          x += 1;
+        } while (true);
+        """,
+
+        """
+        while (false) {
+          x = null;
+        }
+        """,
+
+        # test 15
         ]
 
 def make_test_function(input, expected):
