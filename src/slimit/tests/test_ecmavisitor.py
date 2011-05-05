@@ -65,9 +65,7 @@ class ECMAVisitorTestCase(unittest.TestCase):
         ################################
         # if
         ################################
-        """
-        if (true) var x = 100;
-        """,
+        'if (true) var x = 100;',
 
         """
         if (true) {
@@ -76,9 +74,7 @@ class ECMAVisitorTestCase(unittest.TestCase):
         }
         """,
 
-        """
-        if (true) if (true) var x = 100; else var y = 200;
-        """,
+        'if (true) if (true) var x = 100; else var y = 200;',
 
         # test 6
         """
@@ -142,6 +138,73 @@ class ECMAVisitorTestCase(unittest.TestCase):
         """,
 
         # test 15
+        ################################
+        # continue statement
+        ################################
+        """
+        while (true) {
+          continue;
+          s = 'I am not reachable';
+        }
+        """,
+
+        """
+        while (true) {
+          continue label1;
+          s = 'I am not reachable';
+        }
+        """,
+
+        ################################
+        # break statement
+        ################################
+        """
+        while (true) {
+          break;
+          s = 'I am not reachable';
+        }
+        """,
+        # test 18
+        """
+        while (true) {
+          break label1;
+          s = 'I am not reachable';
+        }
+        """,
+
+        ################################
+        # return statement
+        ################################
+        """
+        {
+          return;
+        }
+        """,
+
+        """
+        {
+          return 1;
+        }
+        """,
+
+        # test21
+        ################################
+        # with statement
+        ################################
+        """
+        with (x) {
+          var y = x * 2;
+        }
+        """,
+
+        ################################
+        # labelled statement
+        ################################
+        """
+        label: while (true) {
+          x *= 3;
+        }
+        """,
         ]
 
 def make_test_function(input, expected):

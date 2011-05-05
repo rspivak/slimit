@@ -150,3 +150,42 @@ class ECMAVisitor(object):
 
     def visit_Null(self, node):
         return 'null'
+
+    def visit_String(self, node):
+        return node.value
+
+    def visit_Continue(self, node):
+        s = self._make_indent()
+        if node.identifier is not None:
+            s += 'continue %s;' % self.visit_Identifier(node.identifier)
+        else:
+            s += 'continue;'
+        return s
+
+    def visit_Break(self, node):
+        s = self._make_indent()
+        if node.identifier is not None:
+            s += 'break %s;' % self.visit_Identifier(node.identifier)
+        else:
+            s += 'break;'
+        return s
+
+    def visit_Return(self, node):
+        s = self._make_indent()
+        if node.expr is None:
+            return s + 'return;'
+        else:
+            return '%sreturn %s;' % (s, self.visit(node.expr))
+
+    def visit_With(self, node):
+        s = self._make_indent()
+        s += 'with (%s) ' % self.visit(node.expr)
+        s += self.visit(node.statement)
+        return s
+
+    def visit_Label(self, node):
+        s = '%s%s: %s' % (
+            self._make_indent(),
+            self.visit(node.identifier), self.visit(node.statement))
+        return s
+
