@@ -252,6 +252,33 @@ class ECMAVisitorTestCase(unittest.TestCase):
         ################################
         # try statement
         ################################
+        """
+        try {
+          x = 3;
+        } catch (exc) {
+          x = exc;
+        }
+        """,
+
+        """
+        try {
+          x = 3;
+        } finally {
+          x = null;
+        }
+        """,
+
+        """
+        try {
+          x = 5;
+        } catch (exc) {
+          x = exc;
+        } finally {
+          y = null;
+        }
+        """,
+
+        # test 30
         ]
 
 def make_test_function(input, expected):

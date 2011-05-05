@@ -224,3 +224,25 @@ class ECMAVisitor(object):
 
     def visit_Debugger(self, node):
         return '%s;' % node.value
+
+    def visit_Try(self, node):
+        s = self._make_indent() + 'try '
+        s += self.visit(node.statements)
+        if node.catch is not None:
+            s += ' ' + self.visit(node.catch)
+        if node.fin is not None:
+            s += ' ' + self.visit(node.fin)
+        return s
+
+    def visit_Catch(self, node):
+        s = self._make_indent()
+        s += 'catch (%s) %s' % (
+            self.visit(node.identifier), self.visit(node.elements))
+        return s
+
+    def visit_Finally(self, node):
+        s = self._make_indent()
+        s += 'finally %s' % self.visit(node.elements)
+        return s
+
+
