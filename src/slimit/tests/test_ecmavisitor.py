@@ -205,6 +205,23 @@ class ECMAVisitorTestCase(unittest.TestCase):
           x *= 3;
         }
         """,
+
+        ################################
+        # switch statement
+        ################################
+        """
+        switch (day_of_week) {
+          case 6:
+          case 7:
+            x = 'Weekend';
+            break;
+          case 1:
+            x = 'Monday';
+            break;
+          default:
+            break;
+        }
+        """,
         ]
 
 def make_test_function(input, expected):

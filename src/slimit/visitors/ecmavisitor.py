@@ -189,3 +189,32 @@ class ECMAVisitor(object):
             self.visit(node.identifier), self.visit(node.statement))
         return s
 
+    def visit_Switch(self, node):
+        s = self._make_indent()
+        s += 'switch (%s) {\n' % self.visit(node.expr)
+        self.indent_level += 2
+        for case in node.cases:
+            s += self.visit_Case(case)
+        if node.default is not None:
+            s += self.visit_Default(node.default)
+        self.indent_level -= 2
+        s += '\n}'
+        return s
+
+    def visit_Case(self, node):
+        s = self._make_indent()
+        s += 'case %s:\n' % self.visit(node.expr)
+        self.indent_level += 2
+        elements = '\n'.join(self.visit(element) for element in node.elements)
+        if elements:
+            s += elements + '\n'
+        self.indent_level -= 2
+        return s
+
+    def visit_Default(self, node):
+        s = self._make_indent() + 'default:\n'
+        self.indent_level += 2
+        s += '\n'.join(self.visit(element) for element in node.elements)
+        self.indent_level -= 2
+        return s
+

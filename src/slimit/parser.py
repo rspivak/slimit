@@ -1000,7 +1000,7 @@ class Parser(object):
             elif isinstance(item, list):
                 cases.extend(item)
 
-        p[0] = ast.Switch(expr=p[3], cases=case, default=default)
+        p[0] = ast.Switch(expr=p[3], cases=cases, default=default)
 
     def p_case_block(self, p):
         """

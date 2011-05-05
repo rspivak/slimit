@@ -177,11 +177,11 @@ class Switch(Node):
 class Case(Node):
     def __init__(self, expr, elements):
         self.expr = expr
-        self.elements = elements
+        self.elements = elements if elements is not None else []
 
 class Default(Node):
     def __init__(self, elements):
-        self.elements = elements
+        self.elements = elements if elements is not None else []
 
 class Label(Node):
     def __init__(self, identifier, statement):
