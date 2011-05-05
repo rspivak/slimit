@@ -1,0 +1,138 @@
+###############################################################################
+#
+# Copyright (c) 2011 Ruslan Spivak
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+###############################################################################
+
+__author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
+
+from slimit import ast
+
+
+class ECMAVisitor(object):
+
+    def __init__(self):
+        self.indent_level = 0
+
+    def _make_indent(self):
+        return ' ' * self.indent_level
+
+    def visit(self, node):
+        method = 'visit_%s' % node.__class__.__name__
+        return getattr(self, method, self.generic_visit)(node)
+
+    def generic_visit(self, node):
+        return 'GEN: %r' % node
+
+    def visit_Program(self, node):
+        return '\n'.join(self.visit(child) for child in node.children)
+
+    def visit_Block(self, node):
+        s = self._make_indent() + '{\n'
+        self.indent_level += 2
+        s += '\n'.join(
+            self.visit(child) for child in node.children)
+        self.indent_level -= 2
+        s += self._make_indent() + '\n}'
+        return s
+
+    def visit_VarStatement(self, node):
+        s = self._make_indent()
+        s += 'var %s;' % ', '.join(
+            self.visit(child) for child in node.children)
+        return s
+
+    def visit_VarDecl(self, node):
+        output = []
+        output.append(self.visit(node.identifier))
+        if node.initializer is not None:
+            output.append(' = %s' % self.visit(node.initializer))
+        return ''.join(output)
+
+    def visit_Identifier(self, node):
+        return node.value
+
+    def visit_Assign(self, node):
+        s = self._make_indent()
+        return s + '%s %s %s' % (
+            self.visit(node.left), node.op, self.visit(node.right))
+
+    def visit_Number(self, node):
+        return node.value
+
+    def visit_Comma(self, node):
+        return '%s, %s' % (self.visit(node.left), self.visit(node.right))
+
+    def visit_EmptyStatement(self, node):
+        return self._make_indent() + node.value
+
+    def visit_If(self, node):
+        s = 'if ('
+        if node.predicate is not None:
+            s += self.visit(node.predicate)
+        s += ') '
+        s += self.visit(node.consequent)
+        if node.alternative is not None:
+            s += ' else '
+            s += self.visit(node.alternative)
+        return s
+
+    def visit_Boolean(self, node):
+        return node.value
+
+    def visit_For(self, node):
+        s = 'for ('
+        s += self.visit(node.init)
+        if isinstance(node.init, (ast.Assign, ast.Comma)):
+            s += '; '
+        else:
+            s += ' '
+        if node.cond is not None:
+            s += self.visit(node.cond)
+        s += '; '
+        if node.count is not None:
+            s += self.visit(node.count)
+        s += ') ' + self.visit(node.statement)
+        return s
+
+    def visit_ForIn(self, node):
+        if isinstance(node.item, ast.VarDecl):
+            template = 'for (var %s in %s) '
+        else:
+            template = 'for (%s in %s) '
+        s = template % (self.visit(node.item), self.visit(node.iterable))
+        s += self.visit(node.statement)
+        return s
+
+    def visit_BinOp(self, node):
+        return '%s %s %s' % (
+            self.visit(node.left), node.op, self.visit(node.right))
+
+    def visit_UnaryOp(self, node):
+        s = self.visit(node.value)
+        if node.postfix:
+            s += node.op
+        else:
+            s = node.op + s
+        return s
+
+    def visit_ExprStatement(self, node):
+        return '%s;' % self.visit(node.expr)

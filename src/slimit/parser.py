@@ -58,10 +58,6 @@ class Parser(object):
     def parse(self, text, debug=False):
         return self.parser.parse(text, lexer=self.lexer, debug=debug)
 
-    precedence = (
-        ('nonassoc', 'ELSE'),
-        )
-
     def p_empty(self, p):
         """empty :"""
 
@@ -170,7 +166,7 @@ class Parser(object):
 
     def p_primary_expr_no_brace(self, p):
         """primary_expr_no_brace : THIS
-                                 | ID
+                                 | identifier
                                  | literal
                                  | array_literal
                                  | LPAREN expr RPAREN
@@ -249,7 +245,7 @@ class Parser(object):
         """member_expr : primary_expr
                        | function_expr
                        | member_expr RBRACKET expr RBRACKET
-                       | member_expr PERIOD ID
+                       | member_expr PERIOD identifier
                        | NEW member_expr arguments
         """
         if len(p) == 2:
@@ -264,7 +260,7 @@ class Parser(object):
     def p_member_expr_nobf(self, p):
         """member_expr_nobf : primary_expr_no_brace
                             | member_expr_nobf LBRACKET expr RBRACKET
-                            | member_expr_nobf PERIOD ID
+                            | member_expr_nobf PERIOD identifier
                             | NEW member_expr arguments
         """
         if len(p) == 2:
@@ -298,7 +294,7 @@ class Parser(object):
         """call_expr : member_expr arguments
                      | call_expr arguments
                      | call_expr LBRACKET expr RBRACKET
-                     | call_expr PERIOD ID
+                     | call_expr PERIOD identifier
         """
         if len(p) == 3:
             p[0] = ast.FunctionCall(p[1], p[2])
@@ -311,7 +307,7 @@ class Parser(object):
         """call_expr_nobf : member_expr_nobf arguments
                           | call_expr_nobf arguments
                           | call_expr_nobf  LBRACKET expr RBRACKET
-                          | call_expr_nobf PERIOD ID
+                          | call_expr_nobf PERIOD identifier
         """
         if len(p) == 3:
             p[0] = ast.FunctionCall(p[1], p[2])
@@ -786,30 +782,27 @@ class Parser(object):
                 | expr COMMA assignment_expr
         """
         if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[1].append(p[3])
             p[0] = p[1]
+        else:
+            p[0] = ast.Comma(left=p[1], right=p[3])
 
     def p_expr_noin(self, p):
         """expr_noin : assignment_expr_noin
                      | expr_noin COMMA assignment_expr_noin
         """
         if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[1].append(p[3])
             p[0] = p[1]
+        else:
+            p[0] = ast.Comma(left=p[1], right=p[3])
 
     def p_expr_nobf(self, p):
         """expr_nobf : assignment_expr_nobf
                      | expr_nobf COMMA assignment_expr
         """
         if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[1].append(p[3])
             p[0] = p[1]
+        else:
+            p[0] = ast.Comma(left=p[1], right=p[3])
 
     # 12.2 Variable Statement
     def p_variable_statement(self, p):
@@ -843,8 +836,8 @@ class Parser(object):
             p[0] = p[1]
 
     def p_variable_declaration(self, p):
-        """variable_declaration : ID
-                                | ID initializer
+        """variable_declaration : identifier
+                                | identifier initializer
         """
         if len(p) == 2:
             p[0] = ast.VarDecl(p[1])
@@ -852,8 +845,8 @@ class Parser(object):
             p[0] = ast.VarDecl(p[1], p[2])
 
     def p_variable_declaration_noin(self, p):
-        """variable_declaration_noin : ID
-                                     | ID initializer_noin
+        """variable_declaration_noin : identifier
+                                     | identifier initializer_noin
         """
         if len(p) == 2:
             p[0] = ast.VarDecl(p[1])
@@ -871,14 +864,14 @@ class Parser(object):
     # 12.3 Empty Statement
     def p_empty_statement(self, p):
         """empty_statement : SEMI"""
-        pass
+        p[0] = ast.EmptyStatement(p[1])
 
     # 12.4 Expression Statement
     def p_expr_statement(self, p):
         """expr_statement : expr_nobf SEMI
                           | expr_nobf auto_semi
         """
-        p[0] = p[1]
+        p[0] = ast.ExprStatement(p[1])
 
     # 12.5 The if Statement
     def p_if_statement_1(self, p):
@@ -913,7 +906,8 @@ class Parser(object):
         if len(p) == 10:
             p[0] = ast.For(init=p[3], cond=p[5], count=p[7], statement=p[9])
         else:
-            p[0] = ast.For(init=p[4], cond=p[6], count=p[8], statement=p[10])
+            init = ast.VarStatement(p[4])
+            p[0] = ast.For(init=init, cond=p[6], count=p[8], statement=p[10])
 
     def p_iteration_statement_4(self, p):
         """
@@ -923,13 +917,16 @@ class Parser(object):
         p[0] = ast.ForIn(item=p[3], iterable=p[5], statement=p[7])
 
     def p_iteration_statement_5(self, p):
-        """iteration_statement : FOR LPAREN VAR ID IN expr RPAREN statement"""
+        """
+        iteration_statement : \
+            FOR LPAREN VAR identifier IN expr RPAREN statement
+        """
         p[0] = ast.ForIn(item=ast.VarDecl(p[4]), iterable=p[6], statement=p[8])
 
     def p_iteration_statement_6(self, p):
         """
         iteration_statement \
-            : FOR LPAREN VAR ID initializer_noin IN expr RPAREN statement
+          : FOR LPAREN VAR identifier initializer_noin IN expr RPAREN statement
         """
         p[0] = ast.ForIn(item=ast.VarDecl(identifier=p[4], initializer=p[5]),
                          iterable=p[7], statement=p[9])
@@ -954,8 +951,8 @@ class Parser(object):
         p[0] = ast.Continue()
 
     def p_continue_statement_2(self, p):
-        """continue_statement : CONTINUE ID SEMI
-                              | CONTINUE ID auto_semi
+        """continue_statement : CONTINUE identifier SEMI
+                              | CONTINUE identifier auto_semi
         """
         p[0] = ast.Continue(p[2])
 
@@ -967,8 +964,8 @@ class Parser(object):
         p[0] = ast.Break()
 
     def p_break_statement_2(self, p):
-        """break_statement : BREAK ID SEMI
-                           | BREAK ID auto_semi
+        """break_statement : BREAK identifier SEMI
+                           | BREAK identifier auto_semi
         """
         p[0] = ast.Break(p[2])
 
