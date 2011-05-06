@@ -215,13 +215,13 @@ class FuncDecl(Node):
     def __init__(self, identifier, parameters, elements):
         self.identifier = identifier
         self.parameters = parameters if parameters is not None else []
-        self.elements = elements
+        self.elements = elements if elements is not None else []
 
 class FuncExpr(Node):
     def __init__(self, identifier, parameters, elements):
         self.identifier = identifier
         self.parameters = parameters if parameters is not None else []
-        self.elements = elements
+        self.elements = elements if elements is not None else []
 
 class Comma(Node):
     def __init__(self, left, right):

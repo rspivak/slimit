@@ -249,14 +249,14 @@ class ECMAVisitor(object):
         s = self._make_indent()
         self.indent_level += 2
         elements = '\n'.join(self.visit(element) for element in node.elements)
-        self.indent_level += 2
+        self.indent_level -= 2
 
         s += 'function %s(%s) {\n%s' % (
             self.visit(node.identifier),
             ', '.join(self.visit(param) for param in node.parameters),
             elements,
             )
-        s += '\n}'
+        s += '\n' + self._make_indent() + '}'
         return s
 
     def visit_FuncExpr(self, node):

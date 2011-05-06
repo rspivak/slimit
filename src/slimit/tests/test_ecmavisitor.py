@@ -280,6 +280,9 @@ class ECMAVisitorTestCase(unittest.TestCase):
         """,
 
         # test 30
+        ################################
+        # function
+        ################################
         """
         function foo(x, y) {
           z = 10;
@@ -304,6 +307,25 @@ class ECMAVisitorTestCase(unittest.TestCase):
           return x + y;
         };
         """,
+        # nested function declaration
+        """
+        function foo() {
+          function bar() {
+
+          }
+        }
+        """,
+
+        """
+        var mult = function(x) {
+          return x * 10;
+        }();
+        """,
+
+        # function call
+        # test 36
+        'foo();',
+        'foo(x, 7);',
 
         ################################
         # misc
@@ -311,17 +333,12 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # new
         'var foo = new Foo();',
+        # test 39
         # dot accessor
         'var bar = new Foo.Bar();',
 
-        # test 36
         # bracket accessor
         'var bar = new Foo.Bar()[7];',
-
-        # function call
-        'foo();',
-        'foo(x, 7);',
-
         ]
 
 def make_test_function(input, expected):
