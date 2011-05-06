@@ -228,8 +228,8 @@ class Parser(object):
             p[0] = ast.Object(properties=p[2])
 
     def p_property_list(self, p):
-        """property_list : property
-                         | property_list COMMA property
+        """property_list : property_assignment
+                         | property_list COMMA property_assignment
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -237,16 +237,18 @@ class Parser(object):
             p[1].append(p[3])
             p[0] = p[1]
 
-    def p_property(self, p):
+    # XXX: GET / SET
+    def p_property_assignment(self, p):
+        """property_assignment : property_name COLON assignment_expr"""
+        if len(p) == 4:
+            p[0] = ast.Assign(left=p[1], op=p[2], right=p[3])
+
+    def p_property_name(self, p):
+        """property_name : identifier
+                         | string_literal
+                         | numeric_literal
         """
-        property \
-        : ID COLON assignment_expr
-        | STRING COLON assignment_expr
-        | NUMBER COLON assignment_expr
-        | ID ID LPAREN RPAREN LBRACE function_body RBRACE
-        | ID ID LPAREN formal_parameter_list RPAREN LBRACE function_body RBRACE
-        """
-        pass
+        p[0] = p[1]
 
     # 11.2 Left-Hand-Side Expressions
     def p_member_expr(self, p):

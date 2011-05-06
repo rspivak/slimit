@@ -72,7 +72,11 @@ class ECMAVisitor(object):
 
     def visit_Assign(self, node):
         s = self._make_indent()
-        return s + '%s %s %s' % (
+        if node.op == ':':
+            template = '%s%s %s'
+        else:
+            template = '%s %s %s'
+        return s + template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
     def visit_Number(self, node):
@@ -263,7 +267,7 @@ class ECMAVisitor(object):
         s = self._make_indent()
         self.indent_level += 2
         elements = '\n'.join(self.visit(element) for element in node.elements)
-        self.indent_level += 2
+        self.indent_level -= 2
 
         ident = node.identifier
         ident = '' if ident is None else ' %s' % self.visit(ident)
@@ -310,4 +314,11 @@ class ECMAVisitor(object):
                          ', '.join(self.visit(arg) for arg in node.args))
         return s
 
-
+    def visit_Object(self, node):
+        s = self._make_indent()
+        s += '{\n'
+        self.indent_level += 2
+        s += ',\n'.join(self.visit(prop) for prop in node.properties)
+        self.indent_level -= 2
+        s += '\n}'
+        return s

@@ -339,6 +339,14 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # bracket accessor
         'var bar = new Foo.Bar()[7];',
+
+        # object literal
+        """
+        var obj = {
+          foo: 10,
+          bar: 20
+        };
+        """,
         ]
 
 def make_test_function(input, expected):
