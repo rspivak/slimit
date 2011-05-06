@@ -283,7 +283,7 @@ class Parser(object):
 
     def p_new_expr_nobf(self, p):
         """new_expr_nobf : member_expr_nobf
-                         | NEW new_expr_nobf
+                         | NEW new_expr
         """
         if len(p) == 2:
             p[0] = p[1]
@@ -306,7 +306,7 @@ class Parser(object):
     def p_call_expr_nobf(self, p):
         """call_expr_nobf : member_expr_nobf arguments
                           | call_expr_nobf arguments
-                          | call_expr_nobf  LBRACKET expr RBRACKET
+                          | call_expr_nobf LBRACKET expr RBRACKET
                           | call_expr_nobf PERIOD identifier
         """
         if len(p) == 3:
