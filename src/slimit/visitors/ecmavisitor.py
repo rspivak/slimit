@@ -277,10 +277,31 @@ class ECMAVisitor(object):
         return s
 
     def visit_Conditional(self, node):
-        s = '%s ? %s : %s' % (
+        s = self._make_indent()
+        s += '%s ? %s : %s' % (
             self.visit(node.predicate),
             self.visit(node.consequent), self.visit(node.alternative))
         return s
 
     def visit_Regex(self, node):
         return node.value
+
+    def visit_NewExpr(self, node):
+        s = self._make_indent()
+        s += 'new %s(%s)' % (
+            self.visit(node.identifier),
+            ', '.join(self.visit(arg) for arg in node.args)
+            )
+        return s
+
+    def visit_DotAccessor(self, node):
+        s = self._make_indent()
+        s += '%s.%s' % (self.visit(node.node), self.visit(node.identifier))
+        return s
+
+    def visit_BracketAccessor(self, node):
+        s = self._make_indent()
+        s += '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
+        return s
+
+

@@ -304,6 +304,20 @@ class ECMAVisitorTestCase(unittest.TestCase):
           return x + y;
         };
         """,
+
+        ################################
+        # misc
+        ################################
+
+        # new
+        'var foo = new Foo();',
+        # dot accessor
+        'var bar = new Foo.Bar();',
+
+        # test 36
+        # bracket accessor
+        'var bar = new Foo.Bar()[7];',
+
         ]
 
 def make_test_function(input, expected):

@@ -80,14 +80,14 @@ class FunctionCall(Node):
         self.args = [] if args is None else args
 
 class BracketAccessor(Node):
-    def __init__(self, node, el):
+    def __init__(self, node, expr):
         self.node = node
-        self.el = el
+        self.expr = expr
 
 class DotAccessor(Node):
-    def __init__(self, node, el):
+    def __init__(self, node, identifier):
         self.node = node
-        self.el = el
+        self.identifier = identifier
 
 class Assign(Node):
     def __init__(self, left, op, right):
