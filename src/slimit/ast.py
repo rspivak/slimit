@@ -63,7 +63,8 @@ class Regex(Node):
         self.value = value
 
 class Array(Node):
-    pass
+    def __init__(self, items):
+        self.items = items
 
 class Object(Node):
     def __init__(self, properties=None):

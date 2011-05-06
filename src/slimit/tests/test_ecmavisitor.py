@@ -347,6 +347,25 @@ class ECMAVisitorTestCase(unittest.TestCase):
           bar: 20
         };
         """,
+        # test 42
+        """
+        var obj = {
+          1: 'a',
+          2: 'b'
+        };
+        """,
+        """
+        var obj = {
+          'a': 100,
+          'b': 200
+        };
+        """,
+
+        # array
+        """
+        var a = [1, 2, 3, 4, 5];
+        var res = a[3];
+        """,
         ]
 
 def make_test_function(input, expected):

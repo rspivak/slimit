@@ -322,3 +322,8 @@ class ECMAVisitor(object):
         self.indent_level -= 2
         s += '\n}'
         return s
+
+    def visit_Array(self, node):
+        s = self._make_indent()
+        s += '[%s]' % ', '.join(self.visit(item) for item in node.items)
+        return s
