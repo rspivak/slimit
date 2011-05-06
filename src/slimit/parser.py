@@ -186,13 +186,16 @@ class Parser(object):
 
     def p_array_literal_1(self, p):
         """array_literal : LBRACKET elision_opt RBRACKET"""
-        p[0] = ast.Array()
+        p[0] = ast.Array(items=p[2])
 
     def p_array_literal_2(self, p):
         """array_literal : LBRACKET element_list RBRACKET
                          | LBRACKET element_list COMMA elision_opt RBRACKET
         """
-        p[0] = ast.Array(p[2])
+        items = p[2]
+        if len(p) == 6:
+            items.extend(p[4])
+        p[0] = ast.Array(items=items)
 
 
     def p_element_list(self, p):
@@ -200,22 +203,29 @@ class Parser(object):
                         | element_list COMMA elision_opt assignment_expr
         """
         if len(p) == 3:
-            p[0] = [p[2]]
+            p[0] = p[1] + [p[2]]
         else:
+            p[1].extend(p[3])
             p[1].append(p[4])
             p[0] = p[1]
 
-    def p_elision_opt(self, p):
-        """elision_opt : empty
-                       | elision
-        """
+    def p_elision_opt_1(self, p):
+        """elision_opt : empty"""
+        p[0] = []
+
+    def p_elision_opt_2(self, p):
+        """elision_opt : elision"""
         p[0] = p[1]
 
     def p_elision(self, p):
         """elision : COMMA
                    | elision COMMA
         """
-        p[0] = p[1]
+        if len(p) == 2:
+            p[0] = [ast.Elision(p[1])]
+        else:
+            p[1].append(ast.Elision(p[2]))
+            p[0] = p[1]
 
     def p_object_literal(self, p):
         """object_literal : LBRACE RBRACE

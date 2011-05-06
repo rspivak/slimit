@@ -325,5 +325,14 @@ class ECMAVisitor(object):
 
     def visit_Array(self, node):
         s = self._make_indent()
-        s += '[%s]' % ', '.join(self.visit(item) for item in node.items)
+        s += '['
+        length = len(node.items) - 1
+        for index, item in enumerate(node.items):
+            if isinstance(item, ast.Elision):
+                s += ','
+            elif index != length:
+                s += self.visit(item) + ','
+            else:
+                s += self.visit(item)
+        s += ']'
         return s

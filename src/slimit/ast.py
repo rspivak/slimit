@@ -237,3 +237,7 @@ class ExprStatement(Node):
     def __init__(self, expr):
         self.expr = expr
 
+class Elision(Node):
+    def __init__(self, value):
+        self.value = value
+

@@ -363,9 +363,15 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # array
         """
-        var a = [1, 2, 3, 4, 5];
+        var a = [1,2,3,4,5];
         var res = a[3];
         """,
+        # test 45
+        # elision
+        'var a = [,,,];',
+        'var a = [1,,,4];',
+        'var a = [1,,3,,5];',
+
         ]
 
 def make_test_function(input, expected):
