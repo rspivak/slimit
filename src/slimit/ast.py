@@ -214,13 +214,13 @@ class Debugger(Node):
 class FuncDecl(Node):
     def __init__(self, identifier, parameters, elements):
         self.identifier = identifier
-        self.parameters = parameters
+        self.parameters = parameters if parameters is not None else []
         self.elements = elements
 
 class FuncExpr(Node):
     def __init__(self, identifier, parameters, elements):
         self.identifier = identifier
-        self.parameters = parameters
+        self.parameters = parameters if parameters is not None else []
         self.elements = elements
 
 class Comma(Node):

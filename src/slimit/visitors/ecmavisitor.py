@@ -245,4 +245,35 @@ class ECMAVisitor(object):
         s += 'finally %s' % self.visit(node.elements)
         return s
 
+    def visit_FuncDecl(self, node):
+        s = self._make_indent()
+        self.indent_level += 2
+        elements = '\n'.join(self.visit(element) for element in node.elements)
+        self.indent_level += 2
+
+        s += 'function %s(%s) {\n%s' % (
+            self.visit(node.identifier),
+            ', '.join(self.visit(param) for param in node.parameters),
+            elements,
+            )
+        s += '\n}'
+        return s
+
+    def visit_FuncExpr(self, node):
+        s = self._make_indent()
+        self.indent_level += 2
+        elements = '\n'.join(self.visit(element) for element in node.elements)
+        self.indent_level += 2
+
+        ident = node.identifier
+        ident = '' if ident is None else ' %s' % self.visit(ident)
+
+        s += 'function%s(%s) {\n%s' % (
+            ident,
+            ', '.join(self.visit(param) for param in node.parameters),
+            elements,
+            )
+        s += '\n}'
+        return s
+
 

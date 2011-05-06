@@ -279,6 +279,30 @@ class ECMAVisitorTestCase(unittest.TestCase):
         """,
 
         # test 30
+        """
+        function foo(x, y) {
+          z = 10;
+          return x + y + z;
+        }
+        """,
+
+        """
+        function foo() {
+          return 10;
+        }
+        """,
+
+        """
+        var a = function() {
+          return 10;
+        };
+        """,
+        # test 33
+        """
+        var a = function foo(x, y) {
+          return x + y;
+        };
+        """,
         ]
 
 def make_test_function(input, expected):
