@@ -49,14 +49,13 @@ class ECMAVisitor(object):
         s = self._make_indent() + '{\n'
         self.indent_level += 2
         s += '\n'.join(
-            self.visit(child) for child in node.children)
+            self._make_indent() + self.visit(child) for child in node.children)
         self.indent_level -= 2
         s += self._make_indent() + '\n}'
         return s
 
     def visit_VarStatement(self, node):
-        s = self._make_indent()
-        s += 'var %s;' % ', '.join(
+        s = 'var %s;' % ', '.join(
             self.visit(child) for child in node.children)
         return s
 
@@ -71,12 +70,11 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_Assign(self, node):
-        s = self._make_indent()
         if node.op == ':':
             template = '%s%s %s'
         else:
             template = '%s %s %s'
-        return s + template % (
+        return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
     def visit_Number(self, node):
@@ -159,31 +157,27 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_Continue(self, node):
-        s = self._make_indent()
         if node.identifier is not None:
-            s += 'continue %s;' % self.visit_Identifier(node.identifier)
+            s = 'continue %s;' % self.visit_Identifier(node.identifier)
         else:
-            s += 'continue;'
+            s = 'continue;'
         return s
 
     def visit_Break(self, node):
-        s = self._make_indent()
         if node.identifier is not None:
-            s += 'break %s;' % self.visit_Identifier(node.identifier)
+            s = 'break %s;' % self.visit_Identifier(node.identifier)
         else:
-            s += 'break;'
+            s = 'break;'
         return s
 
     def visit_Return(self, node):
-        s = self._make_indent()
         if node.expr is None:
-            return s + 'return;'
+            return 'return;'
         else:
-            return '%sreturn %s;' % (s, self.visit(node.expr))
+            return 'return %s;' % self.visit(node.expr)
 
     def visit_With(self, node):
-        s = self._make_indent()
-        s += 'with (%s) ' % self.visit(node.expr)
+        s = 'with (%s) ' % self.visit(node.expr)
         s += self.visit(node.statement)
         return s
 
@@ -194,22 +188,21 @@ class ECMAVisitor(object):
         return s
 
     def visit_Switch(self, node):
-        s = self._make_indent()
-        s += 'switch (%s) {\n' % self.visit(node.expr)
+        s = 'switch (%s) {\n' % self.visit(node.expr)
         self.indent_level += 2
         for case in node.cases:
-            s += self.visit_Case(case)
+            s += self._make_indent() + self.visit_Case(case)
         if node.default is not None:
             s += self.visit_Default(node.default)
         self.indent_level -= 2
-        s += '\n}'
+        s += '\n' + self._make_indent() + '}'
         return s
 
     def visit_Case(self, node):
-        s = self._make_indent()
-        s += 'case %s:\n' % self.visit(node.expr)
+        s = 'case %s:\n' % self.visit(node.expr)
         self.indent_level += 2
-        elements = '\n'.join(self.visit(element) for element in node.elements)
+        elements = '\n'.join(self._make_indent() + self.visit(element)
+                             for element in node.elements)
         if elements:
             s += elements + '\n'
         self.indent_level -= 2
@@ -218,7 +211,8 @@ class ECMAVisitor(object):
     def visit_Default(self, node):
         s = self._make_indent() + 'default:\n'
         self.indent_level += 2
-        s += '\n'.join(self.visit(element) for element in node.elements)
+        s += '\n'.join(self._make_indent() + self.visit(element)
+                       for element in node.elements)
         self.indent_level -= 2
         return s
 
@@ -230,7 +224,7 @@ class ECMAVisitor(object):
         return '%s;' % node.value
 
     def visit_Try(self, node):
-        s = self._make_indent() + 'try '
+        s = 'try '
         s += self.visit(node.statements)
         if node.catch is not None:
             s += ' ' + self.visit(node.catch)
@@ -239,23 +233,21 @@ class ECMAVisitor(object):
         return s
 
     def visit_Catch(self, node):
-        s = self._make_indent()
-        s += 'catch (%s) %s' % (
+        s = 'catch (%s) %s' % (
             self.visit(node.identifier), self.visit(node.elements))
         return s
 
     def visit_Finally(self, node):
-        s = self._make_indent()
-        s += 'finally %s' % self.visit(node.elements)
+        s = 'finally %s' % self.visit(node.elements)
         return s
 
     def visit_FuncDecl(self, node):
-        s = self._make_indent()
         self.indent_level += 2
-        elements = '\n'.join(self.visit(element) for element in node.elements)
+        elements = '\n'.join(self._make_indent() + self.visit(element)
+                             for element in node.elements)
         self.indent_level -= 2
 
-        s += 'function %s(%s) {\n%s' % (
+        s = 'function %s(%s) {\n%s' % (
             self.visit(node.identifier),
             ', '.join(self.visit(param) for param in node.parameters),
             elements,
@@ -264,25 +256,24 @@ class ECMAVisitor(object):
         return s
 
     def visit_FuncExpr(self, node):
-        s = self._make_indent()
         self.indent_level += 2
-        elements = '\n'.join(self.visit(element) for element in node.elements)
+        elements = '\n'.join(self._make_indent() + self.visit(element)
+                             for element in node.elements)
         self.indent_level -= 2
 
         ident = node.identifier
         ident = '' if ident is None else ' %s' % self.visit(ident)
 
-        s += 'function%s(%s) {\n%s' % (
+        s = 'function%s(%s) {\n%s' % (
             ident,
             ', '.join(self.visit(param) for param in node.parameters),
             elements,
             )
-        s += '\n}'
+        s += '\n' + self._make_indent() + '}'
         return s
 
     def visit_Conditional(self, node):
-        s = self._make_indent()
-        s += '%s ? %s : %s' % (
+        s = '%s ? %s : %s' % (
             self.visit(node.predicate),
             self.visit(node.consequent), self.visit(node.alternative))
         return s
@@ -291,41 +282,36 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_NewExpr(self, node):
-        s = self._make_indent()
-        s += 'new %s(%s)' % (
+        s = 'new %s(%s)' % (
             self.visit(node.identifier),
             ', '.join(self.visit(arg) for arg in node.args)
             )
         return s
 
     def visit_DotAccessor(self, node):
-        s = self._make_indent()
-        s += '%s.%s' % (self.visit(node.node), self.visit(node.identifier))
+        s = '%s.%s' % (self.visit(node.node), self.visit(node.identifier))
         return s
 
     def visit_BracketAccessor(self, node):
-        s = self._make_indent()
-        s += '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
+        s = '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
         return s
 
     def visit_FunctionCall(self, node):
-        s = self._make_indent()
-        s += '%s(%s)' % (self.visit(node.identifier),
+        s = '%s(%s)' % (self.visit(node.identifier),
                          ', '.join(self.visit(arg) for arg in node.args))
         return s
 
     def visit_Object(self, node):
-        s = self._make_indent()
-        s += '{\n'
+        s = '{\n'
         self.indent_level += 2
-        s += ',\n'.join(self.visit(prop) for prop in node.properties)
+        s += ',\n'.join(self._make_indent() + self.visit(prop)
+                        for prop in node.properties)
         self.indent_level -= 2
         s += '\n}'
         return s
 
     def visit_Array(self, node):
-        s = self._make_indent()
-        s += '['
+        s = '['
         length = len(node.items) - 1
         for index, item in enumerate(node.items):
             if isinstance(item, ast.Elision):

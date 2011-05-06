@@ -33,6 +33,9 @@ from slimit.visitors.ecmavisitor import ECMAVisitor
 
 class ECMAVisitorTestCase(unittest.TestCase):
 
+    def setUp(self):
+        self.maxDiff = 2000
+
     TEST_CASES = [
         ################################
         # block
@@ -372,6 +375,19 @@ class ECMAVisitorTestCase(unittest.TestCase):
         'var a = [1,,,4];',
         'var a = [1,,3,,5];',
 
+        # test 48
+        """
+        String.prototype.foo = function(data) {
+          var tmpl = this.toString();
+          return tmpl.replace(/{{\s*(.*?)\s*}}/g, function(a, b) {
+            var node = data;
+            $.each(n.split('.'), function(i, sym) {
+              node = node[sym];
+            });
+            return node;
+          });
+        };
+        """,
         ]
 
 def make_test_function(input, expected):
