@@ -244,7 +244,7 @@ class Parser(object):
     def p_member_expr(self, p):
         """member_expr : primary_expr
                        | function_expr
-                       | member_expr RBRACKET expr RBRACKET
+                       | member_expr LBRACKET expr RBRACKET
                        | member_expr PERIOD identifier
                        | NEW member_expr arguments
         """
