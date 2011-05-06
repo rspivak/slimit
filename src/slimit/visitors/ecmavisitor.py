@@ -195,7 +195,7 @@ class ECMAVisitor(object):
         if node.default is not None:
             s += self.visit_Default(node.default)
         self.indent_level -= 2
-        s += '\n' + self._make_indent() + '}'
+        s += self._make_indent() + '}'
         return s
 
     def visit_Case(self, node):
@@ -213,6 +213,8 @@ class ECMAVisitor(object):
         self.indent_level += 2
         s += '\n'.join(self._make_indent() + self.visit(element)
                        for element in node.elements)
+        if node.elements is not None:
+            s += '\n'
         self.indent_level -= 2
         return s
 

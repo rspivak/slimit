@@ -104,31 +104,36 @@ class Lexer(object):
 
     def token(self):
         lexer = self.lexer
-        pos = lexer.lexpos
-        try:
-            char = lexer.lexdata[pos]
-            while char.isspace():
-                pos += 1
+        while True:
+            pos = lexer.lexpos
+            try:
                 char = lexer.lexdata[pos]
-            next_char = lexer.lexdata[pos + 1]
-        except IndexError:
-            return self._get_update_token()
+                while char in (' ', '\t'):
+                    pos += 1
+                    char = lexer.lexdata[pos]
+                next_char = lexer.lexdata[pos + 1]
+            except IndexError:
+                return self._get_update_token()
 
-        if char != '/' or (char == '/' and next_char in ('/', '*')):
-            return self._get_update_token()
+            if char != '/' or (char == '/' and next_char in ('/', '*')):
+                token = self._get_update_token()
+                if token.type == 'LINE_TERMINATOR':
+                    continue
+                else:
+                    return token
 
-        # current character is '/' which is either division or regex
-        cur_token = self.cur_token
-        is_division_allowed = (
-            cur_token is not None and
-            cur_token.type in TOKENS_THAT_IMPLY_DIVISON
-            )
-        if is_division_allowed:
-            return self._get_update_token()
-        else:
-            self.prev_token = self.cur_token
-            self.cur_token = self._read_regex()
-            return self.cur_token
+            # current character is '/' which is either division or regex
+            cur_token = self.cur_token
+            is_division_allowed = (
+                cur_token is not None and
+                cur_token.type in TOKENS_THAT_IMPLY_DIVISON
+                )
+            if is_division_allowed:
+                return self._get_update_token()
+            else:
+                self.prev_token = self.cur_token
+                self.cur_token = self._read_regex()
+                return self.cur_token
 
     def _read_regex(self):
         self.lexer.begin('regex')
@@ -139,7 +144,28 @@ class Lexer(object):
     def _get_update_token(self):
         self.prev_token = self.cur_token
         self.cur_token = self.lexer.token()
+        # insert semicolon before restricted tokens
+        # See section 7.9.1 ECMA262
+        if (self.cur_token is not None
+            and self.cur_token.type == 'LINE_TERMINATOR'
+            and self.prev_token is not None
+            and self.prev_token.type in ['BREAK', 'CONTINUE',
+                                         'RETURN', 'THROW']
+            ):
+            return self._create_semi_token(self.cur_token)
         return self.cur_token
+
+    def _create_semi_token(self, orig_token):
+        token = ply.lex.LexToken()
+        token.type = 'SEMI'
+        token.value = ';'
+        if orig_token is not None:
+            token.lineno = orig_token.lineno
+            token.lexpos = orig_token.lexpos
+        else:
+            token.lineno = 0
+            token.lexpos = 0
+        return token
 
     # iterator protocol
     def __iter__(self):
@@ -200,8 +226,7 @@ class Lexer(object):
         # Comments
         'LINE_COMMENT', 'BLOCK_COMMENT',
 
-        # Automatically inserted semicolon
-        # 'AUTOPLUSPLUS', 'AUTOMINUSMINUS', 'IF_WITHOUT_ELSE',
+        'LINE_TERMINATOR',
         ) + keywords
 
     # adapted from https://bitbucket.org/ned/jslex
@@ -291,7 +316,9 @@ class Lexer(object):
     t_LINE_COMMENT  = r'//[^\r\n]*'
     t_BLOCK_COMMENT = r'/\*[^*]*\*+([^/*][^*]*\*+)*/'
 
-    t_ignore = ' \t\n'
+    t_LINE_TERMINATOR = r'[\n\r]+'
+
+    t_ignore = ' \t'
 
     t_NUMBER = r"""
     (?:
