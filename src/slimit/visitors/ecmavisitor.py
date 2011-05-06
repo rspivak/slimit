@@ -304,4 +304,10 @@ class ECMAVisitor(object):
         s += '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
         return s
 
+    def visit_FunctionCall(self, node):
+        s = self._make_indent()
+        s += '%s(%s)' % (self.visit(node.identifier),
+                         ', '.join(self.visit(arg) for arg in node.args))
+        return s
+
 
