@@ -132,6 +132,11 @@ class LexerTestCase(unittest.TestCase):
         (ur'"тест строки\""', [ur'STRING "тест строки\""']),
 
         # Comments
+        ("""
+        //comment
+        a = 5;
+        """, ['LINE_COMMENT //comment', 'ID a', 'EQ =', 'NUMBER 5', 'SEMI ;']
+         ),
         ('a//comment', ['ID a', 'LINE_COMMENT //comment']),
         ('/***/b/=3//line',
          ['BLOCK_COMMENT /***/', 'ID b', 'DIVEQUAL /=',

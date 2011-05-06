@@ -288,8 +288,8 @@ class Lexer(object):
     t_XOREQUAL      = r'\^='
     t_OREQUAL       = r'\|='
 
-    t_LINE_COMMENT  = r'//.*?$'
-    t_BLOCK_COMMENT = r'/\*(.|\n|\r)*?\*/'
+    t_LINE_COMMENT  = r'//[^\r\n]*'
+    t_BLOCK_COMMENT = r'/\*[^*]*\*+([^/*][^*]*\*+)*/'
 
     t_ignore = ' \t\n'
 
