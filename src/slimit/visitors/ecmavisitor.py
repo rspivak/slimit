@@ -336,3 +336,7 @@ class ECMAVisitor(object):
                 s += self.visit(item)
         s += ']'
         return s
+
+    def visit_This(self, node):
+        return 'this'
+

@@ -179,7 +179,9 @@ class Parser(object):
                                  | array_literal
                                  | LPAREN expr RPAREN
         """
-        if len(p) == 2:
+        if p[1] == 'this':
+            p[0] = ast.This()
+        elif len(p) == 2:
             p[0] = p[1]
         else:
             p[0] = p[2]

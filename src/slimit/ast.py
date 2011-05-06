@@ -241,3 +241,6 @@ class Elision(Node):
     def __init__(self, value):
         self.value = value
 
+class This(Node):
+    def __init__(self):
+        pass
