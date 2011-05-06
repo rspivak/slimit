@@ -246,6 +246,7 @@ class ECMAVisitorTestCase(unittest.TestCase):
         x++;
         x--;
         x = 17 /= 3;
+        s = mot ? z : /x:3;x<5;y</g / i;
         """,
 
         # test 27

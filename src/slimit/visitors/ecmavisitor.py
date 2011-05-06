@@ -276,4 +276,11 @@ class ECMAVisitor(object):
         s += '\n}'
         return s
 
+    def visit_Conditional(self, node):
+        s = '%s ? %s : %s' % (
+            self.visit(node.predicate),
+            self.visit(node.consequent), self.visit(node.alternative))
+        return s
 
+    def visit_Regex(self, node):
+        return node.value
