@@ -10,7 +10,29 @@ Welcome to SlimIt
 It compiles JavaScript into more compact code so that it downloads
 and runs faster.
 
-At version `0.1` it provides only a JavaScript lexer.
+At version `0.2` it provides a library that includes a JavaScript
+parser, lexer, pretty printer and a tree visitor.
+
+Iterate over, modify a JavaScript AST and pretty print it
+---------------------------------------------------------
+
+>>> from slimit.parser import Parser
+>>> from slimit.visitors import nodevisitor
+>>> from slimit import ast
+>>>
+>>> parser = Parser()
+>>> tree = parser.parse('for(var i=0; i<10; i++) {var x=5+i;}')
+>>> for node in nodevisitor.visit(tree):
+...     if isinstance(node, ast.Identifier) and node.value == 'i':
+...         node.value = 'hello'
+...
+>>> print tree.to_ecma() # print awesome javascript :)
+for (var hello = 0; hello < 10; hello++) {
+  var x = 5 + hello;
+}
+>>>
+
+
 
 Using lexer in your project
 ---------------------------
@@ -47,6 +69,7 @@ LexToken(SEMI,';',1,5)
 >>> token.type, token.value, token.lineno, token.lexpos
 ('ID', 'a', 1, 0)
 
+
 Installation
 ------------
 
@@ -57,7 +80,6 @@ Using ``pip``::
 Using ``easy_install``::
 
     $ sudo easy_install slimit
-
 
 .. toctree::
    :maxdepth: 2
