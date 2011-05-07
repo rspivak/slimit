@@ -43,20 +43,20 @@ class ECMAVisitor(object):
         return 'GEN: %r' % node
 
     def visit_Program(self, node):
-        return '\n'.join(self.visit(child) for child in node.children)
+        return '\n'.join(self.visit(child) for child in node)
 
     def visit_Block(self, node):
         s = '{\n'
         self.indent_level += 2
         s += '\n'.join(
-            self._make_indent() + self.visit(child) for child in node.children)
+            self._make_indent() + self.visit(child) for child in node)
         self.indent_level -= 2
         s += '\n' + self._make_indent() + '}'
         return s
 
     def visit_VarStatement(self, node):
         s = 'var %s;' % ', '.join(
-            self.visit(child) for child in node.children)
+            self.visit(child) for child in node)
         return s
 
     def visit_VarDecl(self, node):

@@ -27,14 +27,36 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 import textwrap
 import unittest
 
+from slimit import ast
 from slimit.parser import Parser
-from slimit.visitors.ecmavisitor import ECMAVisitor
+from slimit.visitors import nodevisitor
+
 
 class ParserTestCase(unittest.TestCase):
 
     def test_line_terminator_at_the_end_of_file(self):
         parser = Parser()
         parser.parse('var $_ = function(x){}(window);\n')
+
+    def test_modify_tree(self):
+        text = """
+        for (var i = 0; i < 10; i++) {
+          var x = 5 + i;
+        }
+        """
+        parser = Parser()
+        tree = parser.parse(text)
+        for node in nodevisitor.visit(tree):
+            if isinstance(node, ast.Identifier) and node.value == 'i':
+                node.value = 'hello'
+        self.assertMultiLineEqual(
+            tree.to_ecma(),
+            textwrap.dedent("""
+            for (var hello = 0; hello < 10; hello++) {
+              var x = 5 + hello;
+            }
+            """).strip()
+            )
 
 
 class ASITestCase(unittest.TestCase):
@@ -153,8 +175,7 @@ def make_test_function(input, expected):
 
     def test_func(self):
         parser = Parser()
-        visitor = ECMAVisitor()
-        result = visitor.visit(parser.parse(input))
+        result = parser.parse(input).to_ecma()
         self.assertMultiLineEqual(result, expected)
 
     return test_func

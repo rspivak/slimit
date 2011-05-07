@@ -774,7 +774,7 @@ class Parser(object):
         if len(p) == 2:
             p[0] = p[1]
         else:
-            p[0] = ast.Assign(p[1], p[2], p[3])
+            p[0] = ast.Assign(left=p[1], op=p[2], right=p[3])
 
     def p_assignment_expr_noin(self, p):
         """
@@ -785,7 +785,7 @@ class Parser(object):
         if len(p) == 2:
             p[0] = p[1]
         else:
-            p[0] = ast.Assign(p[1], p[2], p[3])
+            p[0] = ast.Assign(left=p[1], op=p[2], right=p[3])
 
     def p_assignment_expr_nobf(self, p):
         """
@@ -796,7 +796,7 @@ class Parser(object):
         if len(p) == 2:
             p[0] = p[1]
         else:
-            p[0] = ast.Assign(p[1], p[2], p[3])
+            p[0] = ast.Assign(left=p[1], op=p[2], right=p[3])
 
     def p_assignment_operator(self, p):
         """assignment_operator : EQ

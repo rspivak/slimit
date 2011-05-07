@@ -28,7 +28,6 @@ import textwrap
 import unittest
 
 from slimit.parser import Parser
-from slimit.visitors.ecmavisitor import ECMAVisitor
 
 
 class ECMAVisitorTestCase(unittest.TestCase):
@@ -432,8 +431,7 @@ def make_test_function(input, expected):
 
     def test_func(self):
         parser = Parser()
-        visitor = ECMAVisitor()
-        result = visitor.visit(parser.parse(input))
+        result = parser.parse(input).to_ecma()
         self.assertMultiLineEqual(result, expected)
 
     return test_func
