@@ -388,6 +388,11 @@ class ECMAVisitorTestCase(unittest.TestCase):
           var tmpl = this.toString();
           return tmpl.replace(/{{\s*(.*?)\s*}}/g, function(a, b) {
             var node = data;
+            if (true) {
+              var value = true;
+            } else {
+              var value = false;
+            }
             $.each(n.split('.'), function(i, sym) {
               node = node[sym];
             });

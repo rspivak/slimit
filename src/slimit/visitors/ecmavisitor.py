@@ -46,12 +46,12 @@ class ECMAVisitor(object):
         return '\n'.join(self.visit(child) for child in node.children)
 
     def visit_Block(self, node):
-        s = self._make_indent() + '{\n'
+        s = '{\n'
         self.indent_level += 2
         s += '\n'.join(
             self._make_indent() + self.visit(child) for child in node.children)
         self.indent_level -= 2
-        s += self._make_indent() + '\n}'
+        s += '\n' + self._make_indent() + '}'
         return s
 
     def visit_VarStatement(self, node):
@@ -84,7 +84,7 @@ class ECMAVisitor(object):
         return '%s, %s' % (self.visit(node.left), self.visit(node.right))
 
     def visit_EmptyStatement(self, node):
-        return self._make_indent() + node.value
+        return node.value
 
     def visit_If(self, node):
         s = 'if ('
@@ -182,8 +182,7 @@ class ECMAVisitor(object):
         return s
 
     def visit_Label(self, node):
-        s = '%s%s: %s' % (
-            self._make_indent(),
+        s = '%s: %s' % (
             self.visit(node.identifier), self.visit(node.statement))
         return s
 
@@ -219,7 +218,7 @@ class ECMAVisitor(object):
         return s
 
     def visit_Throw(self, node):
-        s = '%sthrow %s;' % (self._make_indent(), self.visit(node.expr))
+        s = 'throw %s;' % self.visit(node.expr)
         return s
 
     def visit_Debugger(self, node):
