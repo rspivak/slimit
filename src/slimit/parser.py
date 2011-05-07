@@ -70,8 +70,11 @@ class Parser(object):
         if token is None or token.type != 'SEMI':
             next_token = self.lexer.auto_semi(token)
             if next_token is not None:
-                ply.yacc.errok()
+                self.parser.errok()
                 return next_token
+            elif token is not None and token.type == 'LINE_TERMINATOR':
+                # handle last LINE_TERMINATOR at the end of file
+                return self.lexer.token()
 
         raise SyntaxError(
             'Unexpected token (%s, %r) at %s:%s between %s and %s' % (
