@@ -149,7 +149,7 @@ class Lexer(object):
             return self._create_semi_token(token)
 
     def _is_prev_token_lt(self):
-        return self.prev_token.type == 'LINE_TERMINATOR'
+        return self.prev_token and self.prev_token.type == 'LINE_TERMINATOR'
 
     def _read_regex(self):
         self.lexer.begin('regex')
