@@ -423,6 +423,9 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # test 57
         'var el = (elem ? elem.ownerDocument || elem : 0).documentElement;',
+
+        # typeof
+        'typeof second.length === "number";',
         ]
 
 def make_test_function(input, expected):

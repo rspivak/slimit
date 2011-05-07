@@ -141,8 +141,10 @@ class ECMAVisitor(object):
         s = self.visit(node.value)
         if node.postfix:
             s += node.op
+        elif node.op in ('delete', 'void', 'typeof'):
+            s = '%s %s' % (node.op, s)
         else:
-            s = node.op + s
+            s = '%s%s' % (node.op, s)
         if getattr(node, '_parens', False):
             s = '(%s)' % s
         return s
