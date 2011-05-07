@@ -121,7 +121,8 @@ class Lexer(object):
 
             if char != '/' or (char == '/' and next_char in ('/', '*')):
                 token = self._get_update_token()
-                if token.type == 'LINE_TERMINATOR':
+                if token.type in ('LINE_TERMINATOR',
+                                  'LINE_COMMENT', 'BLOCK_COMMENT'):
                     continue
                 else:
                     return token
