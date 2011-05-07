@@ -71,15 +71,63 @@ class ASITestCase(unittest.TestCase):
          a;
         """),
 
-        # expression is not optional in throw statement
         ("""
-        throw
-          'exc';
+        x = 5
         """,
          """
-         'exc';
+         x = 5;
+         """),
+
+        ("""
+        var a, b
+        var x
+        """,
+         """
+         var a, b;
+         var x;
+         """),
+
+        ("""
+        var a, b
+        var x
+        """,
+         """
+         var a, b;
+         var x;
+         """),
+
+        ("""
+        return
+        a + b
+        """,
+         """
+         return;
+         a + b;
+         """),
+
+        ('while (true) ;', 'while (true) ;'),
+
+        ("""
+        if (x) {
+          y()
+        }
+        """,
+         """
+         if (x) {
+           y();
+         }
          """),
         ]
+
+    def test_throw_statement(self):
+        # expression is not optional in throw statement
+        input = textwrap.dedent("""
+        throw
+          'exc';
+        """)
+        parser = Parser()
+        # ASI at lexer level should insert ';' after throw
+        self.assertRaises(SyntaxError, parser.parse, input)
 
 def make_test_function(input, expected):
 

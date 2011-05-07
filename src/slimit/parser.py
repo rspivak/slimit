@@ -60,12 +60,24 @@ class Parser(object):
 
     def p_empty(self, p):
         """empty :"""
+        pass
 
     def p_auto_semi(self, p):
         """auto_semi : error"""
-
-    def p_error(self, p):
         pass
+
+    def p_error(self, token):
+        if token is None or token.type != 'SEMI':
+            next_token = self.lexer.auto_semi(token)
+            if next_token is not None:
+                ply.yacc.errok()
+                return next_token
+
+        raise SyntaxError(
+            'Unexpected token (%s, %r) at %s:%s between %s and %s' % (
+                token.type, token.value, token.lineno, token.lexpos,
+                self.lexer.prev_token, self.lexer.token())
+            )
 
     def p_single_line_comment(self, p):
         """single_line_comment : LINE_COMMENT"""

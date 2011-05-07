@@ -93,6 +93,7 @@ class Lexer(object):
     def __init__(self):
         self.prev_token = None
         self.cur_token = None
+        self.next_tokens = []
         self.build()
 
     def build(self, **kwargs):
@@ -103,6 +104,9 @@ class Lexer(object):
         self.lexer.input(text)
 
     def token(self):
+        if self.next_tokens:
+            return self.next_tokens.pop()
+
         lexer = self.lexer
         while True:
             pos = lexer.lexpos
@@ -134,6 +138,17 @@ class Lexer(object):
                 self.prev_token = self.cur_token
                 self.cur_token = self._read_regex()
                 return self.cur_token
+
+    def auto_semi(self, token):
+        if (token is None or token.type == 'RBRACE'
+            or self._is_prev_token_lt()
+            ):
+            if token:
+                self.next_tokens.append(token)
+            return self._create_semi_token(token)
+
+    def _is_prev_token_lt(self):
+        return self.prev_token.type == 'LINE_TERMINATOR'
 
     def _read_regex(self):
         self.lexer.begin('regex')
