@@ -102,8 +102,11 @@ class ECMAVisitor(object):
 
     def visit_For(self, node):
         s = 'for ('
-        s += self.visit(node.init)
-        if isinstance(node.init, (ast.Assign, ast.Comma)):
+        if node.init is not None:
+            s += self.visit(node.init)
+        if node.init is None:
+            s += ' ; '
+        elif isinstance(node.init, (ast.Assign, ast.Comma)):
             s += '; '
         else:
             s += ' '

@@ -76,7 +76,7 @@ class ASITestCase(unittest.TestCase):
          return;
          a;
         """),
-
+        # test 3
         ("""
         x = 5
         """,
@@ -102,6 +102,7 @@ class ASITestCase(unittest.TestCase):
          var x;
          """),
 
+        # test 6
         ("""
         return
         a + b
@@ -121,6 +122,17 @@ class ASITestCase(unittest.TestCase):
          """
          if (x) {
            y();
+         }
+         """),
+
+        # test 9
+        ("""
+        for ( ; i < length; i++) {
+        }
+        """,
+         """
+         for ( ; i < length; i++) {
+
          }
          """),
         ]
