@@ -204,7 +204,7 @@ class Lexer(object):
         'INSTANCEOF', 'NEW', 'RETURN', 'SWITCH', 'THIS', 'THROW', 'TRY',
         'TYPEOF', 'VAR', 'VOID', 'WHILE', 'WITH',
         # future reserved words
-        'CLASS', 'CONST', 'ENUM', 'EXPORT', 'EXTENDS', 'IMPORT', 'SUPER',
+        # 'CLASS', 'CONST', 'ENUM', 'EXPORT', 'EXTENDS', 'IMPORT', 'SUPER',
         )
     keywords_dict = dict((key.lower(), key) for key in keywords)
 

@@ -82,13 +82,14 @@ class Parser(object):
                 self.lexer.prev_token, self.lexer.token())
             )
 
-    def p_single_line_comment(self, p):
-        """single_line_comment : LINE_COMMENT"""
-        pass
+    # Comment rules
+    # def p_single_line_comment(self, p):
+    #     """single_line_comment : LINE_COMMENT"""
+    #     pass
 
-    def p_multi_line_comment(self, p):
-        """multi_line_comment : BLOCK_COMMENT"""
-        pass
+    # def p_multi_line_comment(self, p):
+    #     """multi_line_comment : BLOCK_COMMENT"""
+    #     pass
 
     # Main rules
 
