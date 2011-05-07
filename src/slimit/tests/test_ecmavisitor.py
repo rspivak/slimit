@@ -329,6 +329,9 @@ class ECMAVisitorTestCase(unittest.TestCase):
         # test 36
         'foo();',
         'foo(x, 7);',
+        'foo()[10];',
+        # test 39
+        'foo().foo;',
 
         ################################
         # misc
@@ -336,10 +339,10 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # new
         'var foo = new Foo();',
-        # test 39
         # dot accessor
         'var bar = new Foo.Bar();',
 
+        # test 42
         # bracket accessor
         'var bar = new Foo.Bar()[7];',
 
@@ -350,17 +353,21 @@ class ECMAVisitorTestCase(unittest.TestCase):
           bar: 20
         };
         """,
-        # test 42
         """
         var obj = {
           1: 'a',
           2: 'b'
         };
         """,
+        # test 45
         """
         var obj = {
           'a': 100,
           'b': 200
+        };
+        """,
+        """
+        var obj = {
         };
         """,
 
@@ -369,13 +376,13 @@ class ECMAVisitorTestCase(unittest.TestCase):
         var a = [1,2,3,4,5];
         var res = a[3];
         """,
-        # test 45
+        # test 48
         # elision
         'var a = [,,,];',
         'var a = [1,,,4];',
         'var a = [1,,3,,5];',
 
-        # test 48
+        # test 51
         """
         String.prototype.foo = function(data) {
           var tmpl = this.toString();
@@ -445,6 +452,15 @@ class ASITestCase(unittest.TestCase):
          return;
          a;
         """),
+
+        # expression is not optional in throw statement
+        ("""
+        throw
+          'exc';
+        """,
+         """
+         'exc';
+         """),
         ]
 
 for index, (input, expected) in enumerate(ASITestCase.TEST_CASES):

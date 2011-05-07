@@ -309,7 +309,9 @@ class ECMAVisitor(object):
         s += ',\n'.join(self._make_indent() + self.visit(prop)
                         for prop in node.properties)
         self.indent_level -= 2
-        s += '\n}'
+        if node.properties:
+            s += '\n'
+        s += self._make_indent() + '}'
         return s
 
     def visit_Array(self, node):
