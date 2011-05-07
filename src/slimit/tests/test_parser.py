@@ -24,12 +24,75 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
+import textwrap
 import unittest
 
 from slimit.parser import Parser
+from slimit.visitors.ecmavisitor import ECMAVisitor
 
-class ParserTestCase(unittest.TestCase):
 
-    def test_decl(self):
-        parser = Parser(yacc_debug=True)
-        tree = parser.parse('var p = 5;')
+class ASITestCase(unittest.TestCase):
+    TEST_CASES = [
+        ("""
+        switch (day) {
+          case 1:
+            result = 'Mon';
+            break
+          case 2:
+            break
+        }
+        """,
+         """
+         switch (day) {
+           case 1:
+             result = 'Mon';
+             break;
+           case 2:
+             break;
+         }
+         """),
+
+        ("""
+        while (true)
+          continue
+        a = 1;
+        """,
+         """
+         while (true) continue;
+         a = 1;
+         """),
+
+        ("""
+        return
+        a;
+        """,
+        """
+         return;
+         a;
+        """),
+
+        # expression is not optional in throw statement
+        ("""
+        throw
+          'exc';
+        """,
+         """
+         'exc';
+         """),
+        ]
+
+def make_test_function(input, expected):
+
+    def test_func(self):
+        parser = Parser()
+        visitor = ECMAVisitor()
+        result = visitor.visit(parser.parse(input))
+        self.assertMultiLineEqual(result, expected)
+
+    return test_func
+
+for index, (input, expected) in enumerate(ASITestCase.TEST_CASES):
+    input = textwrap.dedent(input).strip()
+    expected = textwrap.dedent(expected).strip()
+    func = make_test_function(input, expected)
+    setattr(ASITestCase, 'test_case_%d' % index, func)

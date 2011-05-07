@@ -108,7 +108,7 @@ class Lexer(object):
             pos = lexer.lexpos
             try:
                 char = lexer.lexdata[pos]
-                while char in (' ', '\t'):
+                while char in ' \t':
                     pos += 1
                     char = lexer.lexdata[pos]
                 next_char = lexer.lexdata[pos + 1]
