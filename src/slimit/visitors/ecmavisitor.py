@@ -74,6 +74,8 @@ class ECMAVisitor(object):
             template = '%s%s %s'
         else:
             template = '%s %s %s'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
         return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
@@ -268,12 +270,17 @@ class ECMAVisitor(object):
         ident = node.identifier
         ident = '' if ident is None else ' %s' % self.visit(ident)
 
-        s = 'function%s(%s) {\n%s' % (
+        header = 'function%s(%s)'
+        if getattr(node, '_parens', False):
+            header = '(' + header
+        s = (header + ' {\n%s') % (
             ident,
             ', '.join(self.visit(param) for param in node.parameters),
             elements,
             )
         s += '\n' + self._make_indent() + '}'
+        if getattr(node, '_parens', False):
+            s += ')'
         return s
 
     def visit_Conditional(self, node):
@@ -283,7 +290,10 @@ class ECMAVisitor(object):
         return s
 
     def visit_Regex(self, node):
-        return node.value
+        if getattr(node, '_parens', False):
+            return '(%s)' % node.value
+        else:
+            return node.value
 
     def visit_NewExpr(self, node):
         s = 'new %s(%s)' % (

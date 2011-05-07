@@ -199,6 +199,7 @@ class Parser(object):
         elif len(p) == 2:
             p[0] = p[1]
         else:
+            p[2]._parens = True
             p[0] = p[2]
 
     def p_array_literal_1(self, p):

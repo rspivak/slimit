@@ -135,6 +135,26 @@ class ASITestCase(unittest.TestCase):
 
          }
          """),
+
+        ('(options = arguments[i]) != null;',
+         '(options = arguments[i]) != null;'),
+
+        ("""
+        (function() {
+          x = 5;
+        })();
+        """,
+         """
+         (function() {
+           x = 5;
+         })();
+         """,
+         ),
+
+        # test 12
+        ('return (/h\d/i).test(elem.nodeName);',
+         'return (/h\d/i).test(elem.nodeName);'),
+
         ]
 
     def test_throw_statement(self):
