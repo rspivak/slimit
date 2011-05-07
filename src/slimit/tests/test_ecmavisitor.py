@@ -400,6 +400,29 @@ class ECMAVisitorTestCase(unittest.TestCase):
           });
         };
         """,
+
+        #######################################
+        # Make sure parentheses are not removed
+        #######################################
+
+        # ... Expected an identifier and instead saw '/'
+        'Expr.match[type].source + (/(?![^\[]*\])(?![^\(]*\))/.source);',
+
+        '(options = arguments[i]) != null;',
+
+        # test 54
+        'return (/h\d/i).test(elem.nodeName);',
+
+        """
+        (function() {
+          x = 5;
+        })();
+        """,
+
+        'return !(match === true || elem.getAttribute("classid") !== match);',
+
+        # test 57
+        'var el = (elem ? elem.ownerDocument || elem : 0).documentElement;',
         ]
 
 def make_test_function(input, expected):

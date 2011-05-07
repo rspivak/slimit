@@ -130,7 +130,11 @@ class ECMAVisitor(object):
         return s
 
     def visit_BinOp(self, node):
-        return '%s %s %s' % (
+        if getattr(node, '_parens', False):
+            template = '(%s %s %s)'
+        else:
+            template = '%s %s %s'
+        return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
     def visit_UnaryOp(self, node):
@@ -139,6 +143,8 @@ class ECMAVisitor(object):
             s += node.op
         else:
             s = node.op + s
+        if getattr(node, '_parens', False):
+            s = '(%s)' % s
         return s
 
     def visit_ExprStatement(self, node):
@@ -284,7 +290,12 @@ class ECMAVisitor(object):
         return s
 
     def visit_Conditional(self, node):
-        s = '%s ? %s : %s' % (
+        if getattr(node, '_parens', False):
+            template = '(%s ? %s : %s)'
+        else:
+            template = '%s ? %s : %s'
+
+        s = template % (
             self.visit(node.predicate),
             self.visit(node.consequent), self.visit(node.alternative))
         return s
@@ -303,7 +314,11 @@ class ECMAVisitor(object):
         return s
 
     def visit_DotAccessor(self, node):
-        s = '%s.%s' % (self.visit(node.node), self.visit(node.identifier))
+        if getattr(node, '_parens', False):
+            template = '(%s.%s)'
+        else:
+            template = '%s.%s'
+        s = template % (self.visit(node.node), self.visit(node.identifier))
         return s
 
     def visit_BracketAccessor(self, node):
