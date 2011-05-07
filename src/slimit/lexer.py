@@ -394,7 +394,7 @@ class Lexer(object):
     # XXX: <ZWNJ> <ZWJ> ?
     identifier_start = r'(?:' + r'[a-zA-Z_$]' + r'|' + LETTER + r')+'
     identifier_part = (
-        r'(?:' + COMBINING_MARK + r'|' + DIGIT +
+        r'(?:' + COMBINING_MARK + r'|' + r'[0-9a-zA-Z_$]' + r'|' + DIGIT +
         r'|' + CONNECTOR_PUNCTUATION + r')*'
         )
     identifier = identifier_start + identifier_part
