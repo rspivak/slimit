@@ -17,7 +17,7 @@ def read(*rel_names):
 
 setup(
     name='slimit',
-    version='0.2',
+    version='0.3dev',
     url='http://slimit.org',
     license='MIT',
     description='SlimIt - JavaScript minifier',
