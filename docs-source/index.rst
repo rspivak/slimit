@@ -6,12 +6,11 @@
 Welcome to SlimIt
 ==================================
 
-`SlimIt` is a JavaScript minifier written in Python.
-It compiles JavaScript into more compact code so that it downloads
-and runs faster.
+`SlimIt` is a Python library that parses JavaScript and returns AST.
 
-At version `0.2` it provides a library that includes a JavaScript
-parser, lexer, pretty printer and a tree visitor.
+At version `0.2` it includes a JavaScript parser, lexer, pretty
+printer and a tree visitor.
+
 
 Iterate over, modify a JavaScript AST and pretty print it
 ---------------------------------------------------------
@@ -86,8 +85,9 @@ Using ``easy_install``::
 
     $ sudo easy_install slimit
 
+Roadmap
+-------
+- Add JavaScript minification
+
 .. toctree::
    :maxdepth: 2
-
-
-
