@@ -31,6 +31,6 @@ setup(
     [console_scripts]
     """,
     classifiers=filter(None, classifiers.split('\n')),
-    long_description=read('README.rst'),
+    long_description=read('README.rst') + '\n\n' + read('CHANGES'),
     extras_require={'test': []}
     )
