@@ -1,0 +1,12 @@
+Change History
+**************
+
+0.2 (2011-05-07)
+================
+- Added a JavaScript parser
+- Added pretty printer
+- Added node visitor
+
+0.1 (2011-05-02)
+================
+- Initial public version. It contains only a JavaScript lexer
