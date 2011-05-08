@@ -65,9 +65,9 @@ class LexerTestCase(unittest.TestCase):
 
     TEST_CASES = [
         # Identifiers
-        ('i my_variable_name c17 _dummy $str $ _ CamelCase',
-         ['ID i', 'ID my_variable_name', 'ID c17',
-          'ID _dummy', 'ID $str', 'ID $', 'ID _', 'ID CamelCase']
+        ('i my_variable_name c17 _dummy $str $ _ CamelCase class2type',
+         ['ID i', 'ID my_variable_name', 'ID c17', 'ID _dummy',
+          'ID $str', 'ID $', 'ID _', 'ID CamelCase', 'ID class2type']
          ),
         (ur'\u03c0 \u03c0_tail var\ua67c',
          [ur'ID \u03c0', ur'ID \u03c0_tail', ur'ID var\ua67c']),
@@ -99,8 +99,8 @@ class LexerTestCase(unittest.TestCase):
          ),
         ('. , ; : + - * % & | ^ ~ ? ! ( ) { } [ ]',
          ['PERIOD .', 'COMMA ,', 'SEMI ;', 'COLON :', 'PLUS +', 'MINUS -',
-          'MULT *', 'MOD %', 'BAND &', 'BOR |', 'BXOR ^', 'BNEG ~',
-          'QM ?', 'EM !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
+          'MULT *', 'MOD %', 'BAND &', 'BOR |', 'BXOR ^', 'BNOT ~',
+          'CONDOP ?', 'NOT !', 'LPAREN (', 'RPAREN )', 'LBRACE {', 'RBRACE }',
           'LBRACKET [', 'RBRACKET ]']
          ),
         ('a / b', ['ID a', 'DIV /', 'ID b']),
@@ -131,16 +131,21 @@ class LexerTestCase(unittest.TestCase):
          ),
         (ur'"тест строки\""', [ur'STRING "тест строки\""']),
 
-        # Comments
-        ('a//comment', ['ID a', 'LINE_COMMENT //comment']),
-        ('/***/b/=3//line',
-         ['BLOCK_COMMENT /***/', 'ID b', 'DIVEQUAL /=',
-          'NUMBER 3', 'LINE_COMMENT //line']
-         ),
-        ('/*\n * Copyright LGPL 2011 \n*/\na = 1;',
-         ['BLOCK_COMMENT /*\n * Copyright LGPL 2011 \n*/',
-          'ID a', 'EQ =', 'NUMBER 1', 'SEMI ;']
-         ),
+        # # Comments
+        # ("""
+        # //comment
+        # a = 5;
+        # """, ['LINE_COMMENT //comment', 'ID a', 'EQ =', 'NUMBER 5', 'SEMI ;']
+        #  ),
+        # ('a//comment', ['ID a', 'LINE_COMMENT //comment']),
+        # ('/***/b/=3//line',
+        #  ['BLOCK_COMMENT /***/', 'ID b', 'DIVEQUAL /=',
+        #   'NUMBER 3', 'LINE_COMMENT //line']
+        #  ),
+        # ('/*\n * Copyright LGPL 2011 \n*/\na = 1;',
+        #  ['BLOCK_COMMENT /*\n * Copyright LGPL 2011 \n*/',
+        #   'ID a', 'EQ =', 'NUMBER 1', 'SEMI ;']
+        #  ),
 
         # regex
         (r'a=/a*/,1', ['ID a', 'EQ =', 'REGEX /a*/', 'COMMA ,', 'NUMBER 1']),
@@ -156,7 +161,7 @@ class LexerTestCase(unittest.TestCase):
         # http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
         ("""for (var x = a in foo && "</x>" || mot ? z:/x:3;x<5;y</g/i) {xyz(x++);}""",
          ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "CONDOP ?",
           "ID z", "COLON :", "REGEX /x:3;x<5;y</g", "DIV /", "ID i", "RPAREN )",
           "LBRACE {",  "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++", "RPAREN )",
           "SEMI ;", "RBRACE }"]
@@ -164,7 +169,7 @@ class LexerTestCase(unittest.TestCase):
 
         ("""for (var x = a in foo && "</x>" || mot ? z/x:3;x<5;y</g/i) {xyz(x++);}""",
          ["FOR for", "LPAREN (", "VAR var", "ID x", "EQ =", "ID a", "IN in",
-          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "QM ?",
+          "ID foo", "AND &&", 'STRING "</x>"', "OR ||", "ID mot", "CONDOP ?",
           "ID z", "DIV /", "ID x", "COLON :", "NUMBER 3", "SEMI ;", "ID x",
           "LT <", "NUMBER 5", "SEMI ;", "ID y", "LT <", "REGEX /g/i",
           "RPAREN )", "LBRACE {", "ID xyz", "LPAREN (", "ID x", "PLUSPLUS ++",
