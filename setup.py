@@ -25,7 +25,7 @@ setup(
     author_email='ruslan.spivak@gmail.com',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    install_requires=['distribute', 'ply'],
+    install_requires=['distribute', 'ply>=3.4'],
     zip_safe=False,
     entry_points="""\
     [console_scripts]
