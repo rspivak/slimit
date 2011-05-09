@@ -38,6 +38,19 @@ class ParserTestCase(unittest.TestCase):
         parser = Parser()
         parser.parse('var $_ = function(x){}(window);\n')
 
+    # XXX: function expression ?
+    def _test_function_expression(self):
+        text = """
+        if (true) {
+          function() {
+            foo;
+            location = 'http://anywhere.com';
+          }
+        }
+        """
+        parser = Parser()
+        parser.parse(text)
+
     def test_modify_tree(self):
         text = """
         for (var i = 0; i < 10; i++) {
