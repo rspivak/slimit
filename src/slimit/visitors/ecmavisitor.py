@@ -55,8 +55,7 @@ class ECMAVisitor(object):
         return s
 
     def visit_VarStatement(self, node):
-        s = 'var %s;' % ', '.join(
-            self.visit(child) for child in node)
+        s = 'var %s;' % ', '.join(self.visit(child) for child in node)
         return s
 
     def visit_VarDecl(self, node):
