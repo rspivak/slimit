@@ -24,4 +24,34 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
-from minifier import minify
+import sys
+import optparse
+import textwrap
+
+from slimit.parser import Parser
+from slimit.visitors.minvisitor import ECMAMinifier
+
+
+def minify(text):
+    parser = Parser()
+    tree = parser.parse(text)
+    minified = ECMAMinifier().visit(tree)
+    return minified
+
+def main():
+    usage = textwrap.dedent("""\
+    %prog [input file]
+
+    If no input file is provided STDIN is used by default.
+    Minified JavaScript code is printed to STDOUT.
+    """)
+    parser = optparse.OptionParser(usage=usage)
+    options, args = parser.parse_args()
+
+    if len(args) == 1:
+        text = open(args[1]).read()
+    else:
+        text = sys.stdin.read()
+
+    minified = minify(text)
+    sys.stdout.write(minified)

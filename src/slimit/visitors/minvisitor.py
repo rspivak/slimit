@@ -27,13 +27,7 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 from slimit import ast
 
 
-class ECMAVisitor(object):
-
-    def __init__(self):
-        self.indent_level = 0
-
-    def _make_indent(self):
-        return ' ' * self.indent_level
+class ECMAMinifier(object):
 
     def visit(self, node):
         method = 'visit_%s' % node.__class__.__name__
@@ -43,36 +37,28 @@ class ECMAVisitor(object):
         return 'GEN: %r' % node
 
     def visit_Program(self, node):
-        return '\n'.join(self.visit(child) for child in node)
+        return ''.join(self.visit(child) for child in node)
 
     def visit_Block(self, node):
-        s = '{\n'
-        self.indent_level += 2
-        s += '\n'.join(
-            self._make_indent() + self.visit(child) for child in node)
-        self.indent_level -= 2
-        s += '\n' + self._make_indent() + '}'
+        s = '{%s}' % ''.join(self.visit(child) for child in node)
         return s
 
     def visit_VarStatement(self, node):
-        s = 'var %s;' % ', '.join(self.visit(child) for child in node)
+        s = 'var %s;' % ','.join(self.visit(child) for child in node)
         return s
 
     def visit_VarDecl(self, node):
         output = []
         output.append(self.visit(node.identifier))
         if node.initializer is not None:
-            output.append(' = %s' % self.visit(node.initializer))
+            output.append('=%s' % self.visit(node.initializer))
         return ''.join(output)
 
     def visit_Identifier(self, node):
         return node.value
 
     def visit_Assign(self, node):
-        if node.op == ':':
-            template = '%s%s %s'
-        else:
-            template = '%s %s %s'
+        template = '%s%s%s'
         if getattr(node, '_parens', False):
             template = '(%s)' % template
         return template % (
@@ -82,19 +68,19 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_Comma(self, node):
-        return '%s, %s' % (self.visit(node.left), self.visit(node.right))
+        return '%s,%s' % (self.visit(node.left), self.visit(node.right))
 
     def visit_EmptyStatement(self, node):
         return node.value
 
     def visit_If(self, node):
-        s = 'if ('
+        s = 'if('
         if node.predicate is not None:
             s += self.visit(node.predicate)
-        s += ') '
+        s += ')'
         s += self.visit(node.consequent)
         if node.alternative is not None:
-            s += ' else '
+            s += 'else '
             s += self.visit(node.alternative)
         return s
 
@@ -102,37 +88,39 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_For(self, node):
-        s = 'for ('
+        s = 'for('
         if node.init is not None:
             s += self.visit(node.init)
         if node.init is None:
-            s += ' ; '
+            s += ';'
         elif isinstance(node.init, (ast.Assign, ast.Comma)):
-            s += '; '
+            s += ';'
         else:
-            s += ' '
+            s += ''
         if node.cond is not None:
             s += self.visit(node.cond)
-        s += '; '
+        s += ';'
         if node.count is not None:
             s += self.visit(node.count)
-        s += ') ' + self.visit(node.statement)
+        s += ')' + self.visit(node.statement)
         return s
 
     def visit_ForIn(self, node):
         if isinstance(node.item, ast.VarDecl):
-            template = 'for (var %s in %s) '
+            template = 'for(var %s in %s)'
         else:
-            template = 'for (%s in %s) '
+            template = 'for(%s in %s)'
         s = template % (self.visit(node.item), self.visit(node.iterable))
         s += self.visit(node.statement)
         return s
 
     def visit_BinOp(self, node):
-        if getattr(node, '_parens', False):
-            template = '(%s %s %s)'
-        else:
+        if node.op in ('instanceof', 'in'):
             template = '%s %s %s'
+        else:
+            template = '%s%s%s'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
         return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
@@ -152,13 +140,13 @@ class ECMAVisitor(object):
         return '%s;' % self.visit(node.expr)
 
     def visit_DoWhile(self, node):
-        s = 'do '
+        s = 'do'
         s += self.visit(node.statement)
-        s += ' while (%s);' % self.visit(node.predicate)
+        s += 'while(%s);' % self.visit(node.predicate)
         return s
 
     def visit_While(self, node):
-        s = 'while (%s) ' % self.visit(node.predicate)
+        s = 'while(%s)' % self.visit(node.predicate)
         s += self.visit(node.statement)
         return s
 
@@ -185,48 +173,44 @@ class ECMAVisitor(object):
     def visit_Return(self, node):
         if node.expr is None:
             return 'return;'
+
+        expr_text = self.visit(node.expr)
+        if expr_text.startswith(('(', '{')):
+            return 'return%s;' % expr_text
         else:
-            return 'return %s;' % self.visit(node.expr)
+            return 'return %s;' % expr_text
 
     def visit_With(self, node):
-        s = 'with (%s) ' % self.visit(node.expr)
+        s = 'with(%s)' % self.visit(node.expr)
         s += self.visit(node.statement)
         return s
 
     def visit_Label(self, node):
-        s = '%s: %s' % (
+        s = '%s:%s' % (
             self.visit(node.identifier), self.visit(node.statement))
         return s
 
     def visit_Switch(self, node):
-        s = 'switch (%s) {\n' % self.visit(node.expr)
-        self.indent_level += 2
+        s = 'switch(%s){' % self.visit(node.expr)
         for case in node.cases:
-            s += self._make_indent() + self.visit_Case(case)
+            s += self.visit_Case(case)
         if node.default is not None:
             s += self.visit_Default(node.default)
-        self.indent_level -= 2
-        s += self._make_indent() + '}'
+        s += '}'
         return s
 
     def visit_Case(self, node):
-        s = 'case %s:\n' % self.visit(node.expr)
-        self.indent_level += 2
-        elements = '\n'.join(self._make_indent() + self.visit(element)
-                             for element in node.elements)
+        s = 'case %s:' % self.visit(node.expr)
+        elements = ''.join(self.visit(element) for element in node.elements)
         if elements:
-            s += elements + '\n'
-        self.indent_level -= 2
+            s += elements
         return s
 
     def visit_Default(self, node):
-        s = self._make_indent() + 'default:\n'
-        self.indent_level += 2
-        s += '\n'.join(self._make_indent() + self.visit(element)
-                       for element in node.elements)
+        s = 'default:'
+        s += ''.join(self.visit(element) for element in node.elements)
         if node.elements is not None:
-            s += '\n'
-        self.indent_level -= 2
+            s += ''
         return s
 
     def visit_Throw(self, node):
@@ -246,7 +230,7 @@ class ECMAVisitor(object):
         return s
 
     def visit_Catch(self, node):
-        s = 'catch (%s) %s' % (
+        s = 'catch(%s)%s' % (
             self.visit(node.identifier), self.visit(node.elements))
         return s
 
@@ -255,24 +239,17 @@ class ECMAVisitor(object):
         return s
 
     def visit_FuncDecl(self, node):
-        self.indent_level += 2
-        elements = '\n'.join(self._make_indent() + self.visit(element)
-                             for element in node.elements)
-        self.indent_level -= 2
-
-        s = 'function %s(%s) {\n%s' % (
+        elements = ''.join(self.visit(element) for element in node.elements)
+        s = 'function %s(%s){%s' % (
             self.visit(node.identifier),
-            ', '.join(self.visit(param) for param in node.parameters),
+            ','.join(self.visit(param) for param in node.parameters),
             elements,
             )
-        s += '\n' + self._make_indent() + '}'
+        s += '}'
         return s
 
     def visit_FuncExpr(self, node):
-        self.indent_level += 2
-        elements = '\n'.join(self._make_indent() + self.visit(element)
-                             for element in node.elements)
-        self.indent_level -= 2
+        elements = ''.join(self.visit(element) for element in node.elements)
 
         ident = node.identifier
         ident = '' if ident is None else ' %s' % self.visit(ident)
@@ -280,21 +257,21 @@ class ECMAVisitor(object):
         header = 'function%s(%s)'
         if getattr(node, '_parens', False):
             header = '(' + header
-        s = (header + ' {\n%s') % (
+        s = (header + '{%s') % (
             ident,
-            ', '.join(self.visit(param) for param in node.parameters),
+            ','.join(self.visit(param) for param in node.parameters),
             elements,
             )
-        s += '\n' + self._make_indent() + '}'
+        s += '}'
         if getattr(node, '_parens', False):
             s += ')'
         return s
 
     def visit_Conditional(self, node):
         if getattr(node, '_parens', False):
-            template = '(%s ? %s : %s)'
+            template = '(%s?%s:%s)'
         else:
-            template = '%s ? %s : %s'
+            template = '%s?%s:%s'
 
         s = template % (
             self.visit(node.predicate),
@@ -310,7 +287,7 @@ class ECMAVisitor(object):
     def visit_NewExpr(self, node):
         s = 'new %s(%s)' % (
             self.visit(node.identifier),
-            ', '.join(self.visit(arg) for arg in node.args)
+            ','.join(self.visit(arg) for arg in node.args)
             )
         return s
 
@@ -328,18 +305,11 @@ class ECMAVisitor(object):
 
     def visit_FunctionCall(self, node):
         s = '%s(%s)' % (self.visit(node.identifier),
-                        ', '.join(self.visit(arg) for arg in node.args))
+                        ','.join(self.visit(arg) for arg in node.args))
         return s
 
     def visit_Object(self, node):
-        s = '{\n'
-        self.indent_level += 2
-        s += ',\n'.join(self._make_indent() + self.visit(prop)
-                        for prop in node.properties)
-        self.indent_level -= 2
-        if node.properties:
-            s += '\n'
-        s += self._make_indent() + '}'
+        s = '{%s}' % ','.join(self.visit(prop) for prop in node.properties)
         return s
 
     def visit_Array(self, node):
