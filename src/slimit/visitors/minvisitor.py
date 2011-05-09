@@ -297,7 +297,7 @@ class ECMAMinifier(object):
 
     def visit_FunctionCall(self, node):
         s = '%s(%s)' % (self.visit(node.identifier),
-                         ','.join(self.visit(arg) for arg in node.args))
+                        ','.join(self.visit(arg) for arg in node.args))
         return s
 
     def visit_Object(self, node):
