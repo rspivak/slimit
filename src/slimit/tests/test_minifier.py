@@ -72,6 +72,17 @@ class MinifierTestCase(unittest.TestCase):
          'if(elem&&elem.parentNode){if(elem.id!==match[2]){return rootjQuery.find(selector);}this.length=1;this[0]=elem;}'
          ),
 
+        ("""
+        var a = function( obj ) {
+                for ( var name in obj ) {
+                        return false;
+                }
+                return true;
+        };
+        """,
+         'var a=function(obj){for(var name in obj){return false;}return true;};'
+         ),
+
         ]
 
 
