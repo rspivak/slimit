@@ -24,6 +24,8 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
+from slimit import ast
+
 
 class ECMAMinifier(object):
 
