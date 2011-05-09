@@ -1,6 +1,10 @@
 Change History
 --------------
 
+0.3.1 (2011-05-09)
+******************
+- Use pre-generated lex and yacc tables when called from the command line
+
 0.3 (2011-05-09)
 ****************
 - Added minifier
