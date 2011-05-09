@@ -17,7 +17,7 @@ def read(*rel_names):
 
 setup(
     name='slimit',
-    version='0.2',
+    version='0.3',
     url='http://slimit.org',
     license='MIT',
     description='SlimIt - JavaScript minifier',
@@ -29,6 +29,7 @@ setup(
     zip_safe=False,
     entry_points="""\
     [console_scripts]
+    slimit = slimit.minifier:main
     """,
     classifiers=filter(None, classifiers.split('\n')),
     long_description=read('README.rst') + '\n\n' + read('CHANGES'),
