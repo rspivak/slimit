@@ -13,22 +13,25 @@ Let's minify some code
 
 From the command line:
 
-$ slimit -h
-Usage: slimit [input file]
+::
 
-If no input file is provided STDIN is used by default.
-Minified JavaScript code is printed to STDOUT.
+    $ slimit -h
+    Usage: slimit [input file]
 
-$ cat test.js
-var a = function( obj ) {
-        for ( var name in obj ) {
-                return false;
-        }
-        return true;
-};
-$
-$ slimit < test.js
-var a=function(obj){for(var name in obj){return false;}return true;};
+    If no input file is provided STDIN is used by default.
+    Minified JavaScript code is printed to STDOUT.
+
+    $ cat test.js
+    var a = function( obj ) {
+            for ( var name in obj ) {
+                    return false;
+            }
+            return true;
+    };
+    $
+    $ slimit < test.js
+    var a=function(obj){for(var name in obj){return false;}return true;};
+
 
 Or using library API:
 
