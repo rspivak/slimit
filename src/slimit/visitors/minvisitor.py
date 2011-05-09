@@ -169,8 +169,12 @@ class ECMAMinifier(object):
     def visit_Return(self, node):
         if node.expr is None:
             return 'return;'
+
+        expr_text = self.visit(node.expr)
+        if expr_text.startswith(('(', '{')):
+            return 'return%s;' % expr_text
         else:
-            return 'return %s;' % self.visit(node.expr)
+            return 'return %s;' % expr_text
 
     def visit_With(self, node):
         s = 'with(%s)' % self.visit(node.expr)
