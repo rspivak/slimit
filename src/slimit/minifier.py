@@ -51,11 +51,12 @@ def main():
     # Hack to load lextab and yacctab when installed via pip/easy_install
     # and used from the command line via call to 'slimit'
     try:
-        lextab = __import__('lextab')
-        yacctab = __import__('yacctab')
+        __import__('slimit.lextab')
+        __import__('slimit.yacctab')
     except ImportError:
-        lextab = 'lextab'
-        yacctab = 'yacctab'
+        pass
+    lextab = sys.modules.get('slimit.lextab', 'lextab')
+    yacctab = sys.modules.get('slimit.yacctab', 'yacctab')
 
     if len(args) == 1:
         text = open(args[1]).read()
