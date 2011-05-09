@@ -115,10 +115,12 @@ class ECMAMinifier(object):
         return s
 
     def visit_BinOp(self, node):
-        if getattr(node, '_parens', False):
-            template = '(%s%s%s)'
+        if node.op in ('instanceof', 'in'):
+            template = '%s %s %s'
         else:
             template = '%s%s%s'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
         return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
