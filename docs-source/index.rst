@@ -129,6 +129,7 @@ Using ``easy_install``::
 Roadmap
 -------
 - More minifications
+- Speed improvements
 
 .. toctree::
    :maxdepth: 2
