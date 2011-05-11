@@ -33,6 +33,7 @@ class MinifierTestCase(unittest.TestCase):
 
     def assertMinified(self, source, expected):
         minified = minify(source)
+        self.maxDiff = None
         self.assertSequenceEqual(minified, expected)
 
     TEST_CASES = [
@@ -83,6 +84,93 @@ class MinifierTestCase(unittest.TestCase):
          'var a=function(obj){for(var name in obj){return false;}return true;};'
          ),
 
+        ("""
+        x = "string", y = 5;
+
+        (x = 5) ? true : false;
+
+        for (p in obj)
+        ;
+
+        if (true)
+          val = null;
+        else
+          val = false;
+
+        """,
+         'x="string",y=5;(x=5)?true:false;for(p in obj);if(true)val=null;else val=false;'
+         ),
+
+        ("""
+        for (x = 0; true; x++)
+        ;
+        for (; true; x++)
+        ;
+        for (x = 0, y = 5; true; x++)
+        ;
+
+        y = (x + 5) * 20;
+
+        """,
+         'for(x=0;true;x++);for(;true;x++);for(x=0,y=5;true;x++);y=(x+5)*20;'),
+
+        ("""
+        delete x;
+        typeof x;
+        void x;
+        x += (!y)++;
+
+        label: while (i <= 7) {
+          if ( i == 3 )
+              continue;
+          if ( i == 0 )
+              continue label;
+          switch (day) {
+            case 5:
+                x = 'Friday';
+                break ;
+            default:
+                break label;
+          }
+        }
+        """,
+
+         "delete x;typeof x;void x;x+=(!y)++;label:while(i<=7){if(i==3)continue;if(i==0)continue label;switch(day){case 5:x='Friday';break;default:break label;}}"
+         ),
+
+        ("""
+        do { x += 1; } while(true);
+
+        var a = [1, 2, 3, ,,,5];
+
+        with (obj) {
+          a = b;
+        }
+
+
+        function a(x, y) {
+         var re = /ab+c/;
+         if (x == 1)
+           return x + y;
+         if (x == 3)
+           return {x: 1};
+         else
+           return;
+        }
+
+        try {
+          throw "myException"; // generates an exception
+        }
+        catch (e) {
+          // statements to handle any exceptions
+          logMyErrors(e); // pass exception object to error handler
+        }
+        finally {
+          closeMyFile(); // always close the resource
+        }
+        """,
+         'do{x+=1;}while(true);var a=[1,2,3,,,,5];with(obj){a=b;}function a(x,y){var re=/ab+c/;if(x==1)return x+y;if(x==3)return{x:1};else return;}try {throw "myException";} catch(e){logMyErrors(e);} finally {closeMyFile();}'
+         ),
         ]
 
 
