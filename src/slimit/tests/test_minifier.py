@@ -176,6 +176,28 @@ class MinifierTestCase(unittest.TestCase):
         ('return new jQuery.fn.init( selector, context, rootjQuery );',
          'return new jQuery.fn.init(selector,context,rootjQuery);'
          ),
+
+        # no space after 'else' when the next token is (, {
+        ("""
+        if (true) {
+          x = true;
+          y = 3;
+        } else {
+          x = false
+          y = 5
+        }
+        """,
+         'if(true){x=true;y=3;}else{x=false;y=5;}'),
+
+        ("""
+        if (true) {
+          x = true;
+          y = 3;
+        } else
+          (x + ' qw').split(' ');
+        """,
+         "if(true){x=true;y=3;}else(x+' qw').split(' ');"),
+
         ]
 
 

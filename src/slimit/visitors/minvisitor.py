@@ -80,8 +80,11 @@ class ECMAMinifier(object):
         s += ')'
         s += self.visit(node.consequent)
         if node.alternative is not None:
-            s += 'else '
-            s += self.visit(node.alternative)
+            alternative = self.visit(node.alternative)
+            if alternative.startswith(('(', '{')):
+                s += 'else%s' % alternative
+            else:
+                s += 'else %s' % alternative
         return s
 
     def visit_Boolean(self, node):
