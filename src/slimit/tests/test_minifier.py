@@ -171,6 +171,11 @@ class MinifierTestCase(unittest.TestCase):
         """,
          'do{x+=1;}while(true);var a=[1,2,3,,,,5];with(obj){a=b;}function a(x,y){var re=/ab+c/;if(x==1)return x+y;if(x==3)return{x:1};else return;}try {throw "myException";} catch(e){logMyErrors(e);} finally {closeMyFile();}'
          ),
+
+        # new
+        ('return new jQuery.fn.init( selector, context, rootjQuery );',
+         'return new jQuery.fn.init(selector,context,rootjQuery);'
+         ),
         ]
 
 
