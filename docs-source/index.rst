@@ -35,7 +35,7 @@ From the command line:
     };
     $
     $ slimit < test.js
-    var a=function(obj){for(var name in obj){return false;}return true;};
+    var a=function(obj){for(var name in obj)return false;return true;};
 
 Or using library API:
 
@@ -51,7 +51,7 @@ Or using library API:
     ... };
     ... """
     >>> print minify(text)
-    var a=function(obj){for(var name in obj){return false;}return true;};
+    var a=function(obj){for(var name in obj)return false;return true;};
 
 Iterate over, modify a JavaScript AST and pretty print it
 ---------------------------------------------------------
@@ -71,13 +71,6 @@ for (var hello = 0; hello < 10; hello++) {
   var x = 5 + hello;
 }
 >>>
-
-`N.B.` First time you invoke ``parse`` method it will generate the
-``lextab.py`` and ``yacctab.py`` LALR tables in current directory and
-you may see some warnings - that's OK. Previously generated tables
-are cached and reused if possible. For more details visit `PLY's
-official site <http://www.dabeaz.com/ply/ply.html>`_.
-
 
 Using lexer in your project
 ---------------------------
@@ -129,6 +122,7 @@ Using ``easy_install``::
 Roadmap
 -------
 - More minifications
+- Speed improvements
 
 .. toctree::
    :maxdepth: 2
