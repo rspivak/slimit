@@ -30,7 +30,7 @@ From the command line:
     };
     $
     $ slimit < test.js
-    var a=function(obj){for(var name in obj){return false;}return true;};
+    var a=function(obj){for(var name in obj)return false;return true;};
 
 
 Or using library API:
@@ -45,7 +45,7 @@ Or using library API:
 ... };
 ... """
 >>> print minify(text)
-var a=function(obj){for(var name in obj){return false;}return true;};
+var a=function(obj){for(var name in obj)return false;return true;};
 
 Iterate over, modify a JavaScript AST and pretty print it
 ---------------------------------------------------------
