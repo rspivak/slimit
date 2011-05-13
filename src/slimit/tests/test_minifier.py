@@ -70,7 +70,7 @@ class MinifierTestCase(unittest.TestCase):
         }
         """,
 
-         'if(elem&&elem.parentNode){if(elem.id!==match[2]){return rootjQuery.find(selector);}this.length=1;this[0]=elem;}'
+         'if(elem&&elem.parentNode){if(elem.id!==match[2])return rootjQuery.find(selector);this.length=1;this[0]=elem;}'
          ),
 
         ("""
@@ -81,7 +81,7 @@ class MinifierTestCase(unittest.TestCase):
                 return true;
         };
         """,
-         'var a=function(obj){for(var name in obj){return false;}return true;};'
+         'var a=function(obj){for(var name in obj)return false;return true;};'
          ),
 
         ("""
@@ -101,6 +101,7 @@ class MinifierTestCase(unittest.TestCase):
          'x="string",y=5;(x=5)?true:false;for(p in obj);if(true)val=null;else val=false;'
          ),
 
+        # for loops + empty statement in loop body
         ("""
         for (x = 0; true; x++)
         ;
@@ -114,40 +115,43 @@ class MinifierTestCase(unittest.TestCase):
         """,
          'for(x=0;true;x++);for(;true;x++);for(x=0,y=5;true;x++);y=(x+5)*20;'),
 
+
+        # unary expressions
         ("""
         delete x;
         typeof x;
         void x;
         x += (!y)++;
+        """,
+         'delete x;typeof x;void x;x+=(!y)++;'),
 
-        label: while (i <= 7) {
+        # label + break label + continue label
+        ("""
+        label:
+        if ( i == 0 )
+          continue label;
+        switch (day) {
+        case 5:
+          break ;
+        default:
+          break label;
+        }
+        """,
+         'label:if(i==0)continue label;switch(day){case 5:break;default:break label;}'),
+
+        # break + continue: no labels
+        ("""
+        while (i <= 7) {
           if ( i == 3 )
               continue;
           if ( i == 0 )
-              continue label;
-          switch (day) {
-            case 5:
-                x = 'Friday';
-                break ;
-            default:
-                break label;
-          }
+              break;
         }
         """,
+         'while(i<=7){if(i==3)continue;if(i==0)break;}'),
 
-         "delete x;typeof x;void x;x+=(!y)++;label:while(i<=7){if(i==3)continue;if(i==0)continue label;switch(day){case 5:x='Friday';break;default:break label;}}"
-         ),
-
+        # regex + one line statements in if and if .. else
         ("""
-        do { x += 1; } while(true);
-
-        var a = [1, 2, 3, ,,,5];
-
-        with (obj) {
-          a = b;
-        }
-
-
         function a(x, y) {
          var re = /ab+c/;
          if (x == 1)
@@ -157,20 +161,8 @@ class MinifierTestCase(unittest.TestCase):
          else
            return;
         }
-
-        try {
-          throw "myException"; // generates an exception
-        }
-        catch (e) {
-          // statements to handle any exceptions
-          logMyErrors(e); // pass exception object to error handler
-        }
-        finally {
-          closeMyFile(); // always close the resource
-        }
         """,
-         'do{x+=1;}while(true);var a=[1,2,3,,,,5];with(obj){a=b;}function a(x,y){var re=/ab+c/;if(x==1)return x+y;if(x==3)return{x:1};else return;}try {throw "myException";} catch(e){logMyErrors(e);} finally {closeMyFile();}'
-         ),
+         'function a(x,y){var re=/ab+c/;if(x==1)return x+y;if(x==3)return{x:1};else return;}'),
 
         # new
         ('return new jQuery.fn.init( selector, context, rootjQuery );',
@@ -197,6 +189,145 @@ class MinifierTestCase(unittest.TestCase):
           (x + ' qw').split(' ');
         """,
          "if(true){x=true;y=3;}else(x+' qw').split(' ');"),
+
+
+        ##############################################################
+        # Block braces removal
+        ##############################################################
+
+        # do while
+        ('do { x += 1; } while(true);', 'do x+=1;while(true);'),
+        # do while: multiple statements
+        ('do { x += 1; y += 1;} while(true);', 'do{x+=1;y+=1;}while(true);'),
+
+        # elision
+        ('var a = [1, 2, 3, ,,,5];', 'var a=[1,2,3,,,,5];'),
+
+        # with
+        ("""
+        with (obj) {
+          a = b;
+        }
+        """,
+         'with(obj)a=b;'),
+
+        # with: multiple statements
+        ("""
+        with (obj) {
+          a = b;
+          c = d;
+        }
+        """,
+         'with(obj){a=b;c=d;}'),
+
+        # if else
+        ("""
+        if (true) {
+          x = true;
+        } else {
+          x = false
+        }
+        """,
+         'if(true)x=true;else x=false;'),
+
+        # if: multiple statements
+        ("""
+        if (true) {
+          x = true;
+          y = false;
+        } else {
+          x = false;
+          y = true;
+        }
+        """,
+         'if(true){x=true;y=false;}else{x=false;y=true;}'),
+
+        # try catch finally: one statement
+        ("""
+        try {
+          throw "my_exception"; // generates an exception
+        }
+        catch (e) {
+          // statements to handle any exceptions
+          log(e); // pass exception object to error handler
+        }
+        finally {
+          closefiles(); // always close the resource
+        }
+        """,
+         'try{throw "my_exception";}catch(e){log(e);}finally{closefiles();}'
+         ),
+
+        # try catch finally: no statements
+        ("""
+        try {
+        }
+        catch (e) {
+        }
+        finally {
+        }
+        """,
+         'try{}catch(e){}finally{}'
+         ),
+
+        # try catch finally: multiple statements
+        ("""
+        try {
+          x = 3;
+          y = 5;
+        }
+        catch (e) {
+          log(e);
+          log('e');
+        }
+        finally {
+          z = 7;
+          log('z');
+        }
+        """,
+         "try{x=3;y=5;}catch(e){log(e);log('e');}finally{z=7;log('z');}"
+         ),
+
+        # tricky case with an 'if' nested in 'if .. else'
+        # We need to preserve braces in the first 'if' otherwise
+        # 'else' might get associated with nested 'if' instead
+        ("""
+        if ( obj ) {
+                for ( n in obj ) {
+                        if ( v === false) {
+                                break;
+                        }
+                }
+        } else {
+                for ( ; i < l; ) {
+                        if ( nv === false ) {
+                                break;
+                        }
+                }
+        }
+        """,
+         'if(obj){for(n in obj)if(v===false)break;}else for(;i<l;)if(nv===false)break;'),
+
+        # We don't care about nested 'if' when enclosing 'if' block
+        # contains multiple statements because braces won't be removed
+        # by visit_Block when there are multiple statements in the block
+        ("""
+        if ( obj ) {
+                for ( n in obj ) {
+                        if ( v === false) {
+                                break;
+                        }
+                }
+                x = 5;
+        } else {
+                for ( ; i < l; ) {
+                        if ( nv === false ) {
+                                break;
+                        }
+                }
+        }
+        """,
+         'if(obj){for(n in obj)if(v===false)break;x=5;}else for(;i<l;)if(nv===false)break;'),
 
         ]
 

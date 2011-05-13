@@ -29,6 +29,10 @@ from slimit import ast
 
 class ECMAMinifier(object):
 
+    def __init__(self):
+        self.in_block = 0
+        self.ifelse_stack = []
+
     def visit(self, node):
         method = 'visit_%s' % node.__class__.__name__
         return getattr(self, method, self.generic_visit)(node)
@@ -40,8 +44,11 @@ class ECMAMinifier(object):
         return ''.join(self.visit(child) for child in node)
 
     def visit_Block(self, node):
-        s = '{%s}' % ''.join(self.visit(child) for child in node)
-        return s
+        children = [self.visit(child) for child in node]
+        if len(children) == 1:
+            return children[0]
+        else:
+            return '{%s}' % ''.join(children)
 
     def visit_VarStatement(self, node):
         s = 'var %s;' % ','.join(self.visit(child) for child in node)
@@ -74,12 +81,38 @@ class ECMAMinifier(object):
         return node.value
 
     def visit_If(self, node):
+        has_alternative = node.alternative is not None
+
+        def _is_singleline_block(n):
+            return isinstance(n, ast.Block) and (len(n.children()) == 1)
+
         s = 'if('
         if node.predicate is not None:
             s += self.visit(node.predicate)
         s += ')'
-        s += self.visit(node.consequent)
-        if node.alternative is not None:
+
+        # if we are an 'if..else' statement and 'if' part contains only
+        # one statement
+        if has_alternative and _is_singleline_block(node.consequent):
+            self.ifelse_stack.append({'if_in_ifelse': False})
+            consequent = self.visit(node.consequent)
+            record = self.ifelse_stack.pop()
+            if record['if_in_ifelse']:
+                s += '{%s}' % consequent
+            else:
+                s += consequent
+        elif has_alternative:
+            # we are an 'if..else' statement and 'if' part contains
+            # myltiple statements
+            s += self.visit(node.consequent)
+        else:
+            # 'if' without alternative - mark it so that an enclosing
+            # 'if..else' can act on it and add braces around 'if' part
+            if self.ifelse_stack:
+                self.ifelse_stack[-1]['if_in_ifelse'] = True
+            s += self.visit(node.consequent)
+
+        if has_alternative:
             alternative = self.visit(node.alternative)
             if alternative.startswith(('(', '{')):
                 s += 'else%s' % alternative
@@ -143,8 +176,11 @@ class ECMAMinifier(object):
         return '%s;' % self.visit(node.expr)
 
     def visit_DoWhile(self, node):
-        s = 'do'
-        s += self.visit(node.statement)
+        statement = self.visit(node.statement)
+        if statement.startswith(('{', '(')):
+            s = 'do%s' % statement
+        else:
+            s = 'do %s' % statement
         s += 'while(%s);' % self.visit(node.predicate)
         return s
 
@@ -224,21 +260,32 @@ class ECMAMinifier(object):
         return '%s;' % node.value
 
     def visit_Try(self, node):
-        s = 'try '
-        s += self.visit(node.statements)
+        result = self.visit(node.statements)
+        if result.startswith('{'):
+            s = 'try%s' % result
+        else:
+            s = 'try{%s}' % result
         if node.catch is not None:
-            s += ' ' + self.visit(node.catch)
+            s += self.visit(node.catch)
         if node.fin is not None:
-            s += ' ' + self.visit(node.fin)
+            s += self.visit(node.fin)
         return s
 
     def visit_Catch(self, node):
-        s = 'catch(%s)%s' % (
-            self.visit(node.identifier), self.visit(node.elements))
+        ident = self.visit(node.identifier)
+        result = self.visit(node.elements)
+        if result.startswith('{'):
+            s = 'catch(%s)%s' % (ident, result)
+        else:
+            s = 'catch(%s){%s}' % (ident, result)
         return s
 
     def visit_Finally(self, node):
-        s = 'finally %s' % self.visit(node.elements)
+        result = self.visit(node.elements)
+        if result.startswith('{'):
+            s = 'finally%s' % result
+        else:
+            s = 'finally{%s}' % result
         return s
 
     def visit_FuncDecl(self, node):
