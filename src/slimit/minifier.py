@@ -31,9 +31,8 @@ import textwrap
 from slimit.parser import Parser
 from slimit.visitors.minvisitor import ECMAMinifier
 
-
-def minify(text, lextab='lextab', yacctab='yacctab'):
-    parser = Parser(lextab=lextab, yacctab=yacctab)
+def minify(text):
+    parser = Parser()
     tree = parser.parse(text)
     minified = ECMAMinifier().visit(tree)
     return minified
@@ -48,20 +47,10 @@ def main():
     parser = optparse.OptionParser(usage=usage)
     options, args = parser.parse_args()
 
-    # Hack to load lextab and yacctab when installed via pip/easy_install
-    # and used from the command line via call to 'slimit'
-    try:
-        __import__('slimit.lextab')
-        __import__('slimit.yacctab')
-    except ImportError:
-        pass
-    lextab = sys.modules.get('slimit.lextab', 'lextab')
-    yacctab = sys.modules.get('slimit.yacctab', 'yacctab')
-
     if len(args) == 1:
         text = open(args[1]).read()
     else:
         text = sys.stdin.read()
 
-    minified = minify(text, lextab=lextab, yacctab=yacctab)
+    minified = minify(text)
     sys.stdout.write(minified)
