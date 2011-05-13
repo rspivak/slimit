@@ -1,25 +1,30 @@
 Change History
---------------
+==============
+
+0.4 (2011-05-12)
+----------------
+- Minify more by removing block braces { }
+- More tests
 
 0.3.2 (2011-05-09)
-******************
+------------------
 - More hacks to use pre-generated lex and yacc tables when called from
   the command line
 
 0.3.1 (2011-05-09)
-******************
+------------------
 - Use pre-generated lex and yacc tables when called from the command line
 
 0.3 (2011-05-09)
-****************
+----------------
 - Added minifier
 
 0.2 (2011-05-07)
-****************
+----------------
 - Added a JavaScript parser
 - Added pretty printer
 - Added node visitor
 
 0.1 (2011-05-02)
-****************
+----------------
 - Initial public version. It contains only a JavaScript lexer

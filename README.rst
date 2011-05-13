@@ -66,13 +66,6 @@ for (var hello = 0; hello < 10; hello++) {
 }
 >>>
 
-`N.B.` First time you invoke ``parse`` method it will generate the
-``lextab.py`` and ``yacctab.py`` LALR tables in current directory and
-you may see some warnings - that's OK. Previously generated tables
-are cached and reused if possible. For more details visit `PLY's
-official site <http://www.dabeaz.com/ply/ply.html>`_.
-
-
 Using lexer in your project
 ---------------------------
 
