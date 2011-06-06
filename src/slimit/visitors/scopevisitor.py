@@ -118,6 +118,10 @@ class RefVisitor(Visitor):
     # alias
     visit_FuncExpr = visit_FuncDecl
 
+    def visit_DotAccessor(self, node):
+        # we skip identifier
+        self.visit(node.node)
+
     def visit_Identifier(self, node):
         if getattr(node, 'scope', None) is not None:
             self._fill_scope_refs(node.value, node.scope)

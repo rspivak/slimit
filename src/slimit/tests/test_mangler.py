@@ -81,9 +81,9 @@ class ManglerTestCase(unittest.TestCase):
            var b = 'indeed', c = 5;
            global_x = 56;
            console.log(a + b);
-           new_result = function(d, e) {
-             var e = 'qwerty';
-             console.log(a + b + d + e + global_x);
+           new_result = function(c, d) {
+             var d = 'qwerty';
+             console.log(a + b + c + d + global_x);
            };
          };
          """),
