@@ -51,7 +51,7 @@ def main():
     """)
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-m', '--mangle', action='store_true',
-                      dest='mangle', default=False, help='Mangle names.')
+                      dest='mangle', default=False, help='mangle names')
     options, args = parser.parse_args()
 
     if len(args) == 1:
