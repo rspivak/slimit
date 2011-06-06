@@ -202,16 +202,13 @@ class Lexer(object):
         'BREAK', 'CASE', 'CATCH', 'CONTINUE', 'DEBUGGER', 'DEFAULT', 'DELETE',
         'DO', 'ELSE', 'FINALLY', 'FOR', 'FUNCTION', 'IF', 'IN',
         'INSTANCEOF', 'NEW', 'RETURN', 'SWITCH', 'THIS', 'THROW', 'TRY',
-        'TYPEOF', 'VAR', 'VOID', 'WHILE', 'WITH',
+        'TYPEOF', 'VAR', 'VOID', 'WHILE', 'WITH', 'NULL', 'TRUE', 'FALSE',
         # future reserved words
         # 'CLASS', 'CONST', 'ENUM', 'EXPORT', 'EXTENDS', 'IMPORT', 'SUPER',
         )
     keywords_dict = dict((key.lower(), key) for key in keywords)
 
     tokens = (
-        # Literals
-        'NULL', 'TRUE', 'FALSE',
-
         # Punctuators
         'PERIOD', 'COMMA', 'SEMI', 'COLON',     # . , ; :
         'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD',  # + - * / %
@@ -378,18 +375,6 @@ class Lexer(object):
     )
     """  # "
 
-    # Literals
-    def t_NULL(self, token):
-        r'null'
-        return token
-
-    def t_TRUE(self, token):
-        r'true'
-        return token
-
-    def t_FALSE(self, token):
-        r'false'
-        return token
 
     # XXX: <ZWNJ> <ZWJ> ?
     identifier_start = r'(?:' + r'[a-zA-Z_$]' + r'|' + LETTER + r')+'
