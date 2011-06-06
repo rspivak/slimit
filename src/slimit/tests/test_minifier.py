@@ -329,6 +329,27 @@ class MinifierTestCase(unittest.TestCase):
         """,
          'if(obj){for(n in obj)if(v===false)break;x=5;}else for(;i<l;)if(nv===false)break;'),
 
+
+        # No dangling 'else' - remove braces
+        ("""
+        if ( obj ) {
+                for ( n in obj ) {
+                        if ( v === false) {
+                                break;
+                        } else {
+                                n = 3;
+                        }
+                }
+        } else {
+                for ( ; i < l; ) {
+                        if ( nv === false ) {
+                                break;
+                        }
+                }
+        }
+        """,
+         'if(obj)for(n in obj)if(v===false)break;else n=3;else for(;i<l;)if(nv===false)break;'),
+
         ]
 
 

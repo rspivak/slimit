@@ -140,6 +140,7 @@ class Parser(object):
                      | throw_statement
                      | try_statement
                      | debugger_statement
+                     | function_declaration
         """
         p[0] = p[1]
 

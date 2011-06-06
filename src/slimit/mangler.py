@@ -24,40 +24,22 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
-import sys
-import optparse
-import textwrap
-
-from slimit import mangler
-from slimit.parser import Parser
-from slimit.visitors.minvisitor import ECMAMinifier
-
-
-def minify(text, mangle=False):
-    parser = Parser()
-    tree = parser.parse(text)
-    if mangle:
-        mangler.mangle(tree)
-    minified = ECMAMinifier().visit(tree)
-    return minified
+from slimit.scope import SymbolTable
+from slimit.visitors.scopevisitor import (
+    ScopeTreeVisitor,
+    fill_scope_references,
+    mangle_scope_tree,
+    NameManglerVisitor,
+    )
 
 
-def main():
-    usage = textwrap.dedent("""\
-    %prog [options] [input file]
+def mangle(tree):
+    sym_table = SymbolTable()
+    visitor = ScopeTreeVisitor(sym_table)
+    visitor.visit(tree)
 
-    If no input file is provided STDIN is used by default.
-    Minified JavaScript code is printed to STDOUT.
-    """)
-    parser = optparse.OptionParser(usage=usage)
-    parser.add_option('-m', '--mangle', action='store_true',
-                      dest='mangle', default=False, help='mangle names')
-    options, args = parser.parse_args()
+    fill_scope_references(tree)
+    mangle_scope_tree(sym_table.globals)
 
-    if len(args) == 1:
-        text = open(args[1]).read()
-    else:
-        text = sys.stdin.read()
-
-    minified = minify(text, mangle=options.mangle)
-    sys.stdout.write(minified)
+    mangler = NameManglerVisitor()
+    mangler.visit(tree)
