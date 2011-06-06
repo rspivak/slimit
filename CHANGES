@@ -1,6 +1,10 @@
 Change History
 ==============
 
+0.5 (2011-06-06)
+----------------
+- Added name mangling
+
 0.4 (2011-05-12)
 ----------------
 - Minify more by removing block braces { }
