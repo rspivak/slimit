@@ -71,6 +71,9 @@ class LexerTestCase(unittest.TestCase):
          ),
         (ur'\u03c0 \u03c0_tail var\ua67c',
          [ur'ID \u03c0', ur'ID \u03c0_tail', ur'ID var\ua67c']),
+        # https://github.com/rspivak/slimit/issues/2
+        ('nullify truelie falsepositive',
+         ['ID nullify', 'ID truelie', 'ID falsepositive']),
 
         # Keywords
         # ('break case ...', ['BREAK break', 'CASE case', ...])
