@@ -28,23 +28,30 @@ import sys
 import optparse
 import textwrap
 
+from slimit import mangler
 from slimit.parser import Parser
 from slimit.visitors.minvisitor import ECMAMinifier
 
-def minify(text):
+
+def minify(text, mangle=False):
     parser = Parser()
     tree = parser.parse(text)
+    if mangle:
+        mangler.mangle(tree)
     minified = ECMAMinifier().visit(tree)
     return minified
 
+
 def main():
     usage = textwrap.dedent("""\
-    %prog [input file]
+    %prog [options] [input file]
 
     If no input file is provided STDIN is used by default.
     Minified JavaScript code is printed to STDOUT.
     """)
     parser = optparse.OptionParser(usage=usage)
+    parser.add_option('-m', '--mangle', action='store_true',
+                      dest='mangle', default=False, help='Mangle names.')
     options, args = parser.parse_args()
 
     if len(args) == 1:
@@ -52,5 +59,5 @@ def main():
     else:
         text = sys.stdin.read()
 
-    minified = minify(text)
+    minified = minify(text, mangle=options.mangle)
     sys.stdout.write(minified)
