@@ -21,10 +21,15 @@ From the command line:
 .. code-block:: bash
 
     $ slimit -h
-    Usage: slimit [input file]
+    Usage: slimit [options] [input file]
 
     If no input file is provided STDIN is used by default.
     Minified JavaScript code is printed to STDOUT.
+
+
+    Options:
+      -h, --help    show this help message and exit
+      -m, --mangle  mangle names
 
     $ cat test.js
     var a = function( obj ) {
@@ -34,8 +39,8 @@ From the command line:
             return true;
     };
     $
-    $ slimit < test.js
-    var a=function(obj){for(var name in obj)return false;return true;};
+    $ slimit --mangle < test.js
+    var a=function(a){for(var b in a)return false;return true;};
 
 Or using library API:
 
@@ -50,8 +55,8 @@ Or using library API:
     ...         return true;
     ... };
     ... """
-    >>> print minify(text)
-    var a=function(obj){for(var name in obj)return false;return true;};
+    >>> print minify(text, mangle=True)
+    var a=function(a){for(var b in a)return false;return true;};
 
 Iterate over, modify a JavaScript AST and pretty print it
 ---------------------------------------------------------
@@ -118,6 +123,16 @@ Using ``pip``::
 Using ``easy_install``::
 
     $ sudo easy_install slimit
+
+Benchmarks
+----------
+
++----------------------+---------+---------+--------+
+| jQuery 1.6.1 (bytes) | jsmin   | rJSmin  | SlimIt |
++======================+=========+=========+========+
+| 234,995              | 134,819 | 134,215 | 94,290 |
++----------------------+---------+---------+--------+
+
 
 Roadmap
 -------
