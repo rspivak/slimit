@@ -1,6 +1,8 @@
 *.pyc
 *.pyo
 .installed.cfg
+.coverage
+htmlcov
 bin
 build
 develop-eggs

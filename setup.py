@@ -17,7 +17,7 @@ def read(*rel_names):
 
 setup(
     name='slimit',
-    version='0.4',
+    version='0.5dev',
     url='http://slimit.org',
     license='MIT',
     description='SlimIt - JavaScript minifier',
@@ -25,7 +25,7 @@ setup(
     author_email='ruslan.spivak@gmail.com',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    install_requires=['distribute', 'ply>=3.4'],
+    install_requires=['distribute', 'ply>=3.4', 'odict'],
     zip_safe=False,
     entry_points="""\
     [console_scripts]
