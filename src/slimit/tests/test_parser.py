@@ -71,6 +71,17 @@ class ParserTestCase(unittest.TestCase):
             """).strip()
             )
 
+    def test_bug_no_semicolon_at_the_end_of_block_plus_newline_at_eof(self):
+        # https://github.com/rspivak/slimit/issues/3
+        text = textwrap.dedent("""
+        function add(x, y) {
+          return x + y;
+        }
+        """)
+        parser = Parser()
+        tree = parser.parse(text)
+        self.assertTrue(bool(tree.children()))
+
 
 class ASITestCase(unittest.TestCase):
     TEST_CASES = [
