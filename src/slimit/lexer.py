@@ -117,15 +117,19 @@ class Lexer(object):
                     char = lexer.lexdata[pos]
                 next_char = lexer.lexdata[pos + 1]
             except IndexError:
-                return self._get_update_token()
-
-            if char != '/' or (char == '/' and next_char in ('/', '*')):
-                token = self._get_update_token()
-                if token.type in ('LINE_TERMINATOR',
-                                  'LINE_COMMENT', 'BLOCK_COMMENT'):
+                tok = self._get_update_token()
+                if tok is not None and tok.type == 'LINE_TERMINATOR':
                     continue
                 else:
-                    return token
+                    return tok
+
+            if char != '/' or (char == '/' and next_char in ('/', '*')):
+                tok = self._get_update_token()
+                if tok.type in ('LINE_TERMINATOR',
+                                'LINE_COMMENT', 'BLOCK_COMMENT'):
+                    continue
+                else:
+                    return tok
 
             # current character is '/' which is either division or regex
             cur_token = self.cur_token

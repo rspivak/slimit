@@ -77,9 +77,6 @@ class Parser(object):
             if next_token is not None:
                 self.parser.errok()
                 return next_token
-            elif token is not None and token.type == 'LINE_TERMINATOR':
-                # handle last LINE_TERMINATOR at the end of file
-                return self.lexer.token()
 
         raise SyntaxError(
             'Unexpected token (%s, %r) at %s:%s between %s and %s' % (
