@@ -42,7 +42,7 @@ def minify(text, mangle=False):
     return minified
 
 
-def main():
+def main(argv=None, inp=sys.stdin, out=sys.stdout):
     usage = textwrap.dedent("""\
     %prog [options] [input file]
 
@@ -52,12 +52,15 @@ def main():
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-m', '--mangle', action='store_true',
                       dest='mangle', default=False, help='mangle names')
-    options, args = parser.parse_args()
+
+    if argv is None:
+        argv = sys.argv[1:]
+    options, args = parser.parse_args(argv)
 
     if len(args) == 1:
-        text = open(args[1]).read()
+        text = open(args[0]).read()
     else:
-        text = sys.stdin.read()
+        text = inp.read()
 
     minified = minify(text, mangle=options.mangle)
-    sys.stdout.write(minified)
+    out.write(minified)
