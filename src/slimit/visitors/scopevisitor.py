@@ -51,15 +51,6 @@ class ScopeTreeVisitor(Visitor):
         self.sym_table = sym_table
         self.current_scope = sym_table.globals
 
-    def visit_Assign(self, node):
-        # property_assignment
-        # skip identifier
-        if node.op == ':' and isinstance(node.left, ast.Identifier):
-            self.visit(node.right)
-        else:
-            self.visit(node.left)
-            self.visit(node.right)
-
     def visit_VarDecl(self, node):
         ident = node.identifier
         symbol = VarSymbol(name=ident.value)
@@ -107,26 +98,20 @@ class ScopeTreeVisitor(Visitor):
 class RefVisitor(Visitor):
     """Fill 'ref' attribute in scopes."""
 
-    def visit_VarDecl(self, node):
-        # we skip Identifier node because it's not part of an expression
-        self.visit(node.initializer)
-
-    def visit_FuncDecl(self, node):
-        # we skip all Identifier nodes because they are not part of expressions
-        for element in node.elements:
-            self.visit(element)
-    # alias
-    visit_FuncExpr = visit_FuncDecl
-
-    def visit_DotAccessor(self, node):
-        # we skip identifier
-        self.visit(node.node)
-
     def visit_Identifier(self, node):
-        if getattr(node, 'scope', None) is not None:
+        if self._is_id_in_expr(node):
             self._fill_scope_refs(node.value, node.scope)
 
-    def _fill_scope_refs(self, name, scope):
+    @staticmethod
+    def _is_id_in_expr(node):
+        """Return True if Identifier node is part of an expression."""
+        return (
+            getattr(node, 'scope', None) is not None and
+            getattr(node, '_in_expression', False)
+            )
+
+    @staticmethod
+    def _fill_scope_refs(name, scope):
         """Put referenced name in 'ref' dictionary of a scope.
 
         Walks up the scope tree and adds the name to 'ref' of every scope
@@ -172,37 +157,22 @@ class NameManglerVisitor(Visitor):
     mangled names.
     """
 
-    def visit_VarDecl(self, node):
-        self.visit(node.identifier)
-        self.visit(node.initializer)
+    @staticmethod
+    def _is_mangle_candidate(id_node):
+        """Return True if Identifier node is a candidate for mangling.
 
-    def visit_FuncDecl(self, node):
-        if node.identifier is not None:
-            self.visit(node.identifier)
-
-        for param in node.parameters:
-            self.visit(param)
-
-        for element in node.elements:
-            self.visit(element)
-
-    visit_FuncExpr = visit_FuncDecl
-
-    def visit_Assign(self, node):
-        # property_assignment
-        # skip identifier
-        if node.op == ':' and isinstance(node.left, ast.Identifier):
-            self.visit(node.right)
-        else:
-            self.visit(node.left)
-            self.visit(node.right)
-
-    def visit_DotAccessor(self, node):
-        self.visit(node.node)
+        There are 5 cases when Identifier is a mangling candidate:
+        1. Function declaration identifier
+        2. Function expression identifier
+        3. Function declaration/expression parameter
+        4. Variable declaration identifier
+        5. Identifier is a part of an expression (primary_expr_no_brace rule)
+        """
+        return getattr(id_node, '_mangle_candidate', False)
 
     def visit_Identifier(self, node):
         """Mangle names."""
-        if getattr(node, 'scope', None) is None:
+        if not self._is_mangle_candidate(node):
             return
         name = node.value
         symbol = node.scope.resolve(node.value)

@@ -153,6 +153,7 @@ class VarStatement(Node):
 class VarDecl(Node):
     def __init__(self, identifier, initializer=None):
         self.identifier = identifier
+        self.identifier._mangle_candidate = True
         self.initializer = initializer
 
     def children(self):
@@ -329,23 +330,32 @@ class Debugger(Node):
     def children(self):
         return []
 
-class FuncDecl(Node):
+
+class FuncBase(Node):
     def __init__(self, identifier, parameters, elements):
         self.identifier = identifier
         self.parameters = parameters if parameters is not None else []
         self.elements = elements if elements is not None else []
+        self._init_ids()
+
+    def _init_ids(self):
+        # function declaration/expression name and parameters are identifiers
+        # and therefore are subject to name mangling. we need to mark them.
+        if self.identifier is not None:
+            self.identifier._mangle_candidate = True
+        for param in self.parameters:
+            param._mangle_candidate = True
 
     def children(self):
         return [self.identifier] + self.parameters + self.elements
 
-class FuncExpr(Node):
-    def __init__(self, identifier, parameters, elements):
-        self.identifier = identifier
-        self.parameters = parameters if parameters is not None else []
-        self.elements = elements if elements is not None else []
+class FuncDecl(FuncBase):
+    pass
 
-    def children(self):
-        return [self.identifier] + self.parameters + self.elements
+# The only difference is that function expression might not have an identifier
+class FuncExpr(FuncBase):
+    pass
+
 
 class Comma(Node):
     def __init__(self, left, right):
