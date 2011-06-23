@@ -135,8 +135,9 @@ Roadmap
 
 Acknowledgments
 ---------------
-- The lexer and parser are built with PLY (http://www.dabeaz.com/ply/)
-- Some visitor ideas - pycparser (http://code.google.com/p/pycparser/)
-- Many grammar rules are taken from rkelly (https://github.com/tenderlove/rkelly)
-- Name mangling and different optimization ideas - UglifyJS (https://github.com/mishoo/UglifyJS)
-- ASI implementation was inspired by pyjsparser (http://bitbucket.org/mvantellingen/pyjsparser)
+- The lexer and parser are built with `PLY <http://www.dabeaz.com/ply/>`_
+- Several test cases and regexes from `jslex <https://bitbucket.org/ned/jslex>`_
+- Some visitor ideas - `pycparser <http://code.google.com/p/pycparser/>`_
+- Many grammar rules are taken from `rkelly <https://github.com/tenderlove/rkelly>`_
+- Name mangling and different optimization ideas - `UglifyJS <https://github.com/mishoo/UglifyJS>`_
+- ASI implementation was inspired by `pyjsparser <http://bitbucket.org/mvantellingen/pyjsparser>`_
