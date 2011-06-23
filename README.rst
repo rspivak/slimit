@@ -130,8 +130,21 @@ Benchmarks
 
 Roadmap
 -------
-- More minifications
-- Speed improvements
+- when doing name mangling handle cases with 'eval' and 'with'
+- foo["bar"] ==> foo.bar
+- consecutive declarations: var a = 10; var b = 20; ==> var a=10,b=20;
+- reduce simple constant expressions if the result takes less space:
+  1 +2 * 3 ==> 7
+- IF statement optimizations
+  1. if (foo) bar(); else baz(); ==> foo?bar():baz();
+  2. if (!foo) bar(); else baz(); ==> foo?baz():bar();
+  3. if (foo) bar(); ==> foo&&bar();
+  4. if (!foo) bar(); ==> foo||bar();
+  5. if (foo) return bar(); else return baz(); ==> return foo?bar():baz();
+  6. if (foo) return bar(); else something(); ==> {if(foo)return bar();something()}
+- remove unreachable code that follows a return, throw, break or
+  continue statement, except function/variable declarations
+- parsing speed improvements
 
 Acknowledgments
 ---------------
