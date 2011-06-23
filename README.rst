@@ -132,3 +132,11 @@ Roadmap
 -------
 - More minifications
 - Speed improvements
+
+Acknowledgments
+---------------
+- The lexer and parser are built with PLY (http://www.dabeaz.com/ply/)
+- Some visitor ideas - pycparser (http://code.google.com/p/pycparser/)
+- Many grammar rules are taken from rkelly (https://github.com/tenderlove/rkelly)
+- Name mangling and different optimization ideas - UglifyJS (https://github.com/mishoo/UglifyJS)
+- ASI implementation was inspired by pyjsparser (http://bitbucket.org/mvantellingen/pyjsparser)
