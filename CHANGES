@@ -1,6 +1,10 @@
 Change History
 ==============
 
+0.5.3 (2011-06-29)
+------------------
+- Bugfix: https://github.com/rspivak/slimit/issues/5
+
 0.5.2 (2011-06-14)
 ------------------
 - Bugfix: https://github.com/rspivak/slimit/issues/4
