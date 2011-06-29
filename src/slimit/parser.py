@@ -191,20 +191,26 @@ class Parser(object):
         """
         p[0] = p[1]
 
-    def p_primary_expr_no_brace(self, p):
-        """primary_expr_no_brace : THIS
-                                 | identifier
-                                 | literal
+    def p_primary_expr_no_brace_1(self, p):
+        """primary_expr_no_brace : identifier"""
+        p[1]._mangle_candidate = True
+        p[1]._in_expression = True
+        p[0] = p[1]
+
+    def p_primary_expr_no_brace_2(self, p):
+        """primary_expr_no_brace : THIS"""
+        p[0] = ast.This()
+
+    def p_primary_expr_no_brace_3(self, p):
+        """primary_expr_no_brace : literal
                                  | array_literal
-                                 | LPAREN expr RPAREN
         """
-        if p[1] == 'this':
-            p[0] = ast.This()
-        elif len(p) == 2:
-            p[0] = p[1]
-        else:
-            p[2]._parens = True
-            p[0] = p[2]
+        p[0] = p[1]
+
+    def p_primary_expr_no_brace_4(self, p):
+        """primary_expr_no_brace : LPAREN expr RPAREN"""
+        p[2]._parens = True
+        p[0] = p[2]
 
     def p_array_literal_1(self, p):
         """array_literal : LBRACKET elision_opt RBRACKET"""

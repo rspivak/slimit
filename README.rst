@@ -130,5 +130,29 @@ Benchmarks
 
 Roadmap
 -------
-- More minifications
-- Speed improvements
+- when doing name mangling handle cases with 'eval' and 'with'
+- foo["bar"] ==> foo.bar
+- consecutive declarations: var a = 10; var b = 20; ==> var a=10,b=20;
+- reduce simple constant expressions if the result takes less space:
+  1 +2 * 3 ==> 7
+- IF statement optimizations
+
+  1. if (foo) bar(); else baz(); ==> foo?bar():baz();
+  2. if (!foo) bar(); else baz(); ==> foo?baz():bar();
+  3. if (foo) bar(); ==> foo&&bar();
+  4. if (!foo) bar(); ==> foo||bar();
+  5. if (foo) return bar(); else return baz(); ==> return foo?bar():baz();
+  6. if (foo) return bar(); else something(); ==> {if(foo)return bar();something()}
+
+- remove unreachable code that follows a return, throw, break or
+  continue statement, except function/variable declarations
+- parsing speed improvements
+
+Acknowledgments
+---------------
+- The lexer and parser are built with `PLY <http://www.dabeaz.com/ply/>`_
+- Several test cases and regexes from `jslex <https://bitbucket.org/ned/jslex>`_
+- Some visitor ideas - `pycparser <http://code.google.com/p/pycparser/>`_
+- Many grammar rules are taken from `rkelly <https://github.com/tenderlove/rkelly>`_
+- Name mangling and different optimization ideas - `UglifyJS <https://github.com/mishoo/UglifyJS>`_
+- ASI implementation was inspired by `pyjsparser <http://bitbucket.org/mvantellingen/pyjsparser>`_

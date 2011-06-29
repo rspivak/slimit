@@ -133,6 +133,16 @@ class LexerTestCase(unittest.TestCase):
          [r"STRING '\u0001'", r'STRING "\uFCEF"', r"STRING 'a\\\b\n'"]
          ),
         (ur'"тест строки\""', [ur'STRING "тест строки\""']),
+        # Bug - https://github.com/rspivak/slimit/issues/5
+        (r"var tagRegExp = new RegExp('<(\/*)(FooBar)', 'gi');",
+         ['VAR var', 'ID tagRegExp', 'EQ =',
+          'NEW new', 'ID RegExp', 'LPAREN (',
+          r"STRING '<(\/*)(FooBar)'", 'COMMA ,', "STRING 'gi'",
+          'RPAREN )', 'SEMI ;']
+        ),
+        # same as above but inside double quotes
+        (r'"<(\/*)(FooBar)"', [r'STRING "<(\/*)(FooBar)"']),
+
 
         # # Comments
         # ("""
