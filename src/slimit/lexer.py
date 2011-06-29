@@ -360,22 +360,22 @@ class Lexer(object):
     t_STRING = r"""
     (?:
         # double quoted string
-        (?:"                           # opening double quote
-            (?: [^"\\\n\r]             # no escape chars, line terminators or "
-                | \\[a-zA-Z\\\'"?]     # or escaped characters
-                | \\x[0-9a-fA-F]{2}    # or hex_escape_sequence
-                | \\u[0-9a-fA-F]{4}    # or unicode_escape_sequence
-            )*?                        # zero or many times
-        ")                             # closing double quote
+        (?:"                               # opening double quote
+            (?: [^"\\\n\r]                 # no \, line terminators or "
+                | \\[a-zA-Z!-\/:-@\[-`{-~] # or escaped characters
+                | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
+                | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
+            )*?                            # zero or many times
+        ")                                 # closing double quote
         |
         # single quoted string
-        (?:'                           # opening single quote
-            (?: [^'\\\n\r]             # no escape chars, line terminators or '
-                | \\[a-zA-Z\\'"?]      # or escaped characters
-                | \\x[0-9a-fA-F]{2}    # or hex_escape_sequence
-                | \\u[0-9a-fA-F]{4}    # or unicode_escape_sequence
-            )*?                        # zero or many times
-        ')                             # closing single quote
+        (?:'                               # opening single quote
+            (?: [^'\\\n\r]                 # no \, line terminators or '
+                | \\[a-zA-Z!-\/:-@\[-`{-~] # or escaped characters
+                | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
+                | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
+            )*?                            # zero or many times
+        ')                                 # closing single quote
     )
     """  # "
 
