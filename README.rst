@@ -123,11 +123,11 @@ Installation
 
 Using ``pip``::
 
-    $ sudo pip install slimit
+    $ [sudo] pip install slimit
 
 Using ``easy_install``::
 
-    $ sudo easy_install slimit
+    $ [sudo] easy_install slimit
 
 Benchmarks
 ----------
