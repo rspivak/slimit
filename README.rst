@@ -132,7 +132,7 @@ Using ``easy_install``::
 Benchmarks
 ----------
 
-**SAM** - JQuery size after minification in bytes
+**SAM** - JQuery size after minification in bytes (the smaller number the better)
 
 +-------------------------------+------------+------------+------------+
 | Original jQuery 1.6.1 (bytes) | SlimIt SAM | rJSmin SAM | jsmin SAM  |
