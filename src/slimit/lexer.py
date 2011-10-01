@@ -43,6 +43,7 @@ TOKENS_THAT_IMPLY_DIVISON = frozenset([
     'TRUE',
     'FALSE',
     'NULL',
+    'THIS',
     'PLUSPLUS',
     'MINUSMINUS',
     'RPAREN',

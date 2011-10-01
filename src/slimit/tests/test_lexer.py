@@ -169,6 +169,10 @@ class LexerTestCase(unittest.TestCase):
          ['ID a', 'EQ =', r'REGEX /a*\[^/', 'COMMA ,', 'NUMBER 1']
          ),
         (r'a=/\//,1', ['ID a', 'EQ =', r'REGEX /\//', 'COMMA ,', 'NUMBER 1']),
+        # not a regex, just a division
+        # https://github.com/rspivak/slimit/issues/6
+        (r'x = this / y;',
+         ['ID x', 'EQ =', 'THIS this', r'DIV /', r'ID y', r'SEMI ;']),
 
         # next two are from
         # http://www.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
