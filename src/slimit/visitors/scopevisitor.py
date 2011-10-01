@@ -94,6 +94,20 @@ class ScopeTreeVisitor(Visitor):
     # alias
     visit_FuncExpr = visit_FuncDecl
 
+    def visit_Catch(self, node):
+        # push local scope
+        self.current_scope = LocalScope(self.current_scope)
+
+        ident = node.identifier
+        self.current_scope.define(VarSymbol(ident.value))
+        ident.scope = self.current_scope
+
+        for element in node.elements:
+            self.visit(element)
+
+        # pop the local scope
+        self.current_scope = self.current_scope.get_enclosing_scope()
+
 
 class RefVisitor(Visitor):
     """Fill 'ref' attribute in scopes."""

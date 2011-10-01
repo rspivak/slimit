@@ -91,7 +91,7 @@ class ManglerTestCase(unittest.TestCase):
         # https://github.com/rspivak/slimit/issues/7
         ("""
         function a() {
-          var $exc = null;
+          var $exc1 = null;
           try {
             lala();
           } catch($exc) {
