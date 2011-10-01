@@ -94,6 +94,19 @@ class ScopeTreeVisitor(Visitor):
     # alias
     visit_FuncExpr = visit_FuncDecl
 
+    def visit_Catch(self, node):
+        # The catch identifier actually lives in a new scope, but additional
+        # variables defined in the catch statement belong to the outer scope.
+        # For the sake of simplicity we just reuse any existing variables
+        # from the outer scope if they exist.
+        ident = node.identifier
+        existing_symbol = self.current_scope.symbols.get(ident.value)
+        if existing_symbol is None:
+            self.current_scope.define(VarSymbol(ident.value))
+        ident.scope = self.current_scope
+
+        for element in node.elements:
+            self.visit(element)
 
 class RefVisitor(Visitor):
     """Fill 'ref' attribute in scopes."""

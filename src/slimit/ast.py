@@ -311,6 +311,7 @@ class Try(Node):
 class Catch(Node):
     def __init__(self, identifier, elements):
         self.identifier = identifier
+        self.identifier._mangle_candidate = True
         self.elements = elements
 
     def children(self):
