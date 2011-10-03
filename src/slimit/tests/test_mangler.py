@@ -116,6 +116,20 @@ class ManglerTestCase(unittest.TestCase):
          }
          """),
 
+        ("""
+        function a(arg) {
+          arg = 9;
+          var arg = 0;
+          return arg;
+        }
+        """,
+         """
+         function a(a) {
+           a = 9;
+           var a = 0;
+           return a;
+         }
+         """),
         ]
 
 
