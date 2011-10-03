@@ -88,6 +88,34 @@ class ManglerTestCase(unittest.TestCase):
          };
          """),
 
+        # https://github.com/rspivak/slimit/issues/7
+        ("""
+        function a() {
+          var $exc1 = null;
+          try {
+            lala();
+          } catch($exc) {
+            if ($exc.__name__ == 'hi') {
+              return 'bam';
+            }
+          }
+          return 'bum';
+        }
+        """,
+         """
+         function a() {
+           var a = null;
+           try {
+             lala();
+           } catch (a) {
+             if (a.__name__ == 'hi') {
+               return 'bam';
+             }
+           }
+           return 'bum';
+         }
+         """),
+
         ]
 
 
