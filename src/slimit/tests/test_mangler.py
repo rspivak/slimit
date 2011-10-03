@@ -107,8 +107,8 @@ class ManglerTestCase(unittest.TestCase):
            var a = null;
            try {
              lala();
-           } catch (a) {
-             if (a.__name__ == 'hi') {
+           } catch (b) {
+             if (b.__name__ == 'hi') {
                return 'bam';
              }
            }
