@@ -88,6 +88,53 @@ class ManglerTestCase(unittest.TestCase):
          };
          """),
 
+        # https://github.com/rspivak/slimit/issues/7
+        ("""
+        function a() {
+          var $exc1 = null;
+          try {
+            lala();
+          } catch($exc) {
+            if ($exc.__name__ == 'hi') {
+              return 'bam';
+            }
+          }
+          return 'bum';
+        }
+        """,
+         """
+         function a() {
+           var a = null;
+           try {
+             lala();
+           } catch (b) {
+             if (b.__name__ == 'hi') {
+               return 'bam';
+             }
+           }
+           return 'bum';
+         }
+         """),
+
+        # Handle the case when function arguments are redefined;
+        # in the example below statement arg = 9; doesn't create
+        # a global variable -it changes the value of arguments[0].
+        # The same is with statement var arg = 0;
+        # http://spin.atomicobject.com/2011/04/10/javascript-don-t-reassign-your-function-arguments/
+        ("""
+        function a(arg) {
+          arg = 9;
+          var arg = 0;
+          return arg;
+        }
+        """,
+         """
+         function a(a) {
+           a = 9;
+           var a = 0;
+           return a;
+         }
+         """),
         ]
 
 

@@ -74,6 +74,9 @@ class Scope(object):
             self.enclosing_scope.add_child(self)
         self.base54 = powerset(ID_CHARS)
 
+    def __contains__(self, sym):
+        return sym.name in self.symbols
+
     def add_child(self, scope):
         self.children.append(scope)
 

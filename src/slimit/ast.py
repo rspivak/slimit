@@ -311,6 +311,8 @@ class Try(Node):
 class Catch(Node):
     def __init__(self, identifier, elements):
         self.identifier = identifier
+        # CATCH identifiers are subject to name mangling. we need to mark them.
+        self.identifier._mangle_candidate = True
         self.elements = elements
 
     def children(self):

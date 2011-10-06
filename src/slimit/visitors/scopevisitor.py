@@ -54,7 +54,8 @@ class ScopeTreeVisitor(Visitor):
     def visit_VarDecl(self, node):
         ident = node.identifier
         symbol = VarSymbol(name=ident.value)
-        self.current_scope.define(symbol)
+        if symbol not in self.current_scope:
+            self.current_scope.define(symbol)
         ident.scope = self.current_scope
         self.visit(node.initializer)
 
@@ -80,20 +81,28 @@ class ScopeTreeVisitor(Visitor):
             self.current_scope.define(VarSymbol(ident.value))
             ident.scope = self.current_scope
 
-        # push local scope
-        self.current_scope = LocalScope(self.current_scope)
-
         for element in node.elements:
             self.visit(element)
 
-        # pop the local scope
-        self.current_scope = self.current_scope.get_enclosing_scope()
         # pop the function scope
         self.current_scope = self.current_scope.get_enclosing_scope()
 
     # alias
     visit_FuncExpr = visit_FuncDecl
 
+    def visit_Catch(self, node):
+        # The catch identifier actually lives in a new scope, but additional
+        # variables defined in the catch statement belong to the outer scope.
+        # For the sake of simplicity we just reuse any existing variables
+        # from the outer scope if they exist.
+        ident = node.identifier
+        existing_symbol = self.current_scope.symbols.get(ident.value)
+        if existing_symbol is None:
+            self.current_scope.define(VarSymbol(ident.value))
+        ident.scope = self.current_scope
+
+        for element in node.elements:
+            self.visit(element)
 
 class RefVisitor(Visitor):
     """Fill 'ref' attribute in scopes."""
