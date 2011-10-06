@@ -107,8 +107,8 @@ class ManglerTestCase(unittest.TestCase):
            var a = null;
            try {
              lala();
-           } catch (a) {
-             if (a.__name__ == 'hi') {
+           } catch (b) {
+             if (b.__name__ == 'hi') {
                return 'bam';
              }
            }
@@ -116,6 +116,20 @@ class ManglerTestCase(unittest.TestCase):
          }
          """),
 
+        ("""
+        function a(arg) {
+          arg = 9;
+          var arg = 0;
+          return arg;
+        }
+        """,
+         """
+         function a(a) {
+           a = 9;
+           var a = 0;
+           return a;
+         }
+         """),
         ]
 
 
