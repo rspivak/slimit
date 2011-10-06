@@ -116,6 +116,11 @@ class ManglerTestCase(unittest.TestCase):
          }
          """),
 
+        # Handle the case when function arguments are redefined;
+        # in the example below statement arg = 9; doesn't create
+        # a global variable -it changes the value of arguments[0].
+        # The same is with statement var arg = 0;
+        # http://spin.atomicobject.com/2011/04/10/javascript-don-t-reassign-your-function-arguments/
         ("""
         function a(arg) {
           arg = 9;
