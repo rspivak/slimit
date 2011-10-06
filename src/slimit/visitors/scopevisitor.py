@@ -53,8 +53,8 @@ class ScopeTreeVisitor(Visitor):
 
     def visit_VarDecl(self, node):
         ident = node.identifier
-        if ident.value not in self.current_scope.symbols:
-            symbol = VarSymbol(name=ident.value)
+        symbol = VarSymbol(name=ident.value)
+        if symbol not in self.current_scope:
             self.current_scope.define(symbol)
         ident.scope = self.current_scope
         self.visit(node.initializer)
