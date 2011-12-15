@@ -26,7 +26,19 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 
 class ASTVisitor(object):
-    """Base class for custom AST node visitors."""
+    """Base class for custom AST node visitors.
+
+    Example:
+
+    class MyVisitor(ASTVisitor):
+        def visit_Object(self, node):
+            '''Visit object literal.'''
+            for prop in node:
+                left, right = prop.left, prop.right
+                print 'Property value: %s' % right.value
+                # visit all children in turn
+                self.visit(prop)
+    """
 
     def visit(self, node):
         method = 'visit_%s' % node.__class__.__name__
