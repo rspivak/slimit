@@ -30,14 +30,33 @@ class ASTVisitor(object):
 
     Example:
 
-    class MyVisitor(ASTVisitor):
-        def visit_Object(self, node):
-            '''Visit object literal.'''
-            for prop in node:
-                left, right = prop.left, prop.right
-                print 'Property value: %s' % right.value
-                # visit all children in turn
-                self.visit(prop)
+    >>> from slimit.parser import Parser
+    >>> from slimit.visitors.nodevisitor import ASTVisitor
+    >>>
+    >>> text = '''
+    ... var x = {
+    ...     "key1": "value1",
+    ...     "key2": "value2"
+    ... };
+    ... '''
+    >>>
+    >>> class MyVisitor(ASTVisitor):
+    ...     def visit_Object(self, node):
+    ...         '''Visit object literal.'''
+    ...         for prop in node:
+    ...             left, right = prop.left, prop.right
+    ...             print 'Property value: %s' % right.value
+    ...             # visit all children in turn
+    ...             self.visit(prop)
+    ...
+    >>>
+    >>> parser = Parser()
+    >>> tree = parser.parse(text)
+    >>> visitor = MyVisitor()
+    >>> visitor.visit(tree)
+    Property value: "value1"
+    Property value: "value2"
+
     """
 
     def visit(self, node):
