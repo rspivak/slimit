@@ -25,6 +25,18 @@
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 
+class ASTVisitor(object):
+    """Base class for custom AST node visitors."""
+
+    def visit(self, node):
+        method = 'visit_%s' % node.__class__.__name__
+        return getattr(self, method, self.generic_visit)(node)
+
+    def generic_visit(self, node):
+        for child in node:
+            self.visit(child)
+
+
 class NodeVisitor(object):
     """Simple node visitor."""
 
