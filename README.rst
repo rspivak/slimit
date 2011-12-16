@@ -20,6 +20,17 @@ lexer, pretty printer and a tree visitor.
 
 `http://slimit.org/ <http://slimit.org/>`_
 
+Installation
+------------
+
+Using ``pip``::
+
+    $ [sudo] pip install slimit
+
+Using ``easy_install``::
+
+    $ [sudo] easy_install slimit
+
 Let's minify some code
 ----------------------
 
@@ -117,17 +128,6 @@ LexToken(SEMI,';',1,5)
 >>> token = lexer.token()
 >>> token.type, token.value, token.lineno, token.lexpos
 ('ID', 'a', 1, 0)
-
-Installation
-------------
-
-Using ``pip``::
-
-    $ [sudo] pip install slimit
-
-Using ``easy_install``::
-
-    $ [sudo] easy_install slimit
 
 Benchmarks
 ----------
