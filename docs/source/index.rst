@@ -17,6 +17,8 @@ lexer, pretty printer and a tree visitor.
 Installation
 ------------
 
+.. code-block:: bash
+
     $ [sudo] pip install slimit
 
 
