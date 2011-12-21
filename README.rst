@@ -23,13 +23,10 @@ lexer, pretty printer and a tree visitor.
 Installation
 ------------
 
-Using ``pip``::
+::
 
     $ [sudo] pip install slimit
 
-Using ``easy_install``::
-
-    $ [sudo] easy_install slimit
 
 Let's minify some code
 ----------------------
