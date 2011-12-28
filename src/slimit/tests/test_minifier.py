@@ -353,6 +353,8 @@ class MinifierTestCase(unittest.TestCase):
         # foo["bar"] --> foo.bar
         ('foo["bar"];', 'foo.bar;'),
         ("foo['bar'];", 'foo.bar;'),
+        ("""foo['bar"']=42;""", """foo['bar"']=42;"""),
+        ("""foo["bar'"]=42;""", """foo["bar'"]=42;"""),
         ('foo["bar bar"];', 'foo["bar bar"];'),
         ('foo["bar"+"bar"];', 'foo["bar"+"bar"];'),
         ]

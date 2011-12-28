@@ -359,7 +359,12 @@ class ECMAMinifier(object):
 
     def visit_BracketAccessor(self, node):
         if isinstance(node.expr, ast.String):
-            value = node.expr.value.strip('"\'')
+            value = node.expr.value
+            # remove single or double quotes around the value, but not both
+            if value.startswith("'"):
+                value = value.strip("'")
+            elif value.startswith('"'):
+                value = value.strip('"')
             if _is_identifier(value):
                 s = '%s.%s' % (self.visit(node.node), value)
                 return s
