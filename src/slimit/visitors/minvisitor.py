@@ -24,7 +24,15 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
+import re
+
 from slimit import ast
+from slimit.lexer import Lexer
+
+_HAS_ID_MATCH = re.compile('^%s$' % Lexer.identifier).match
+
+def _is_identifier(value):
+    return _HAS_ID_MATCH(value) and value not in Lexer.keywords_dict
 
 
 class ECMAMinifier(object):
@@ -350,6 +358,12 @@ class ECMAMinifier(object):
         return s
 
     def visit_BracketAccessor(self, node):
+        if isinstance(node.expr, ast.String):
+            value = node.expr.value.strip('"\'')
+            if _is_identifier(value):
+                s = '%s.%s' % (self.visit(node.node), value)
+                return s
+
         s = '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
         return s
 

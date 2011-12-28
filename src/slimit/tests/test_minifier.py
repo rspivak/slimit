@@ -350,6 +350,11 @@ class MinifierTestCase(unittest.TestCase):
         """,
          'if(obj)for(n in obj)if(v===false)break;else n=3;else for(;i<l;)if(nv===false)break;'),
 
+        # foo["bar"] --> foo.bar
+        ('foo["bar"];', 'foo.bar;'),
+        ("foo['bar'];", 'foo.bar;'),
+        ('foo["bar bar"];', 'foo["bar bar"];'),
+        ('foo["bar"+"bar"];', 'foo["bar"+"bar"];'),
         ]
 
 
