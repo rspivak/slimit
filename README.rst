@@ -195,3 +195,7 @@ Acknowledgments
 - Many grammar rules are taken from `rkelly <https://github.com/tenderlove/rkelly>`_
 - Name mangling and different optimization ideas - `UglifyJS <https://github.com/mishoo/UglifyJS>`_
 - ASI implementation was inspired by `pyjsparser <http://bitbucket.org/mvantellingen/pyjsparser>`_
+
+License
+-------
+The MIT License (MIT)
