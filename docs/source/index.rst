@@ -173,3 +173,7 @@ Roadmap
 
 .. toctree::
    :maxdepth: 2
+
+License
+-------
+The MIT License (MIT)
