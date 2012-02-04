@@ -27,6 +27,12 @@ Installation
 
     $ [sudo] pip install slimit
 
+Or the bleeding edge version from the git master branch:
+
+::
+
+    $ [sudo] pip install git+https://github.com/rspivak/slimit.git#egg=slimit
+
 
 Let's minify some code
 ----------------------
