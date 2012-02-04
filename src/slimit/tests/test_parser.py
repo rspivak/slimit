@@ -82,6 +82,13 @@ class ParserTestCase(unittest.TestCase):
         tree = parser.parse(text)
         self.assertTrue(bool(tree.children()))
 
+    def test_function_expression_is_part_of_member_expr_nobf(self):
+        # https://github.com/rspivak/slimit/issues/22
+        # The problem happened to be that function_expr was not
+        # part of member_expr_nobf rule
+        text = 'window.done_already || function () { return "slimit!" ; }();'
+        self.assertTrue(bool(Parser().parse(text).children()))
+
 
 class ASITestCase(unittest.TestCase):
     TEST_CASES = [
@@ -181,7 +188,6 @@ class ASITestCase(unittest.TestCase):
 
          }
          """),
-
         ]
 
     def test_throw_statement(self):

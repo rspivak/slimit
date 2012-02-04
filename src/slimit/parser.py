@@ -307,6 +307,7 @@ class Parser(object):
 
     def p_member_expr_nobf(self, p):
         """member_expr_nobf : primary_expr_no_brace
+                            | function_expr
                             | member_expr_nobf LBRACKET expr RBRACKET
                             | member_expr_nobf PERIOD identifier
                             | NEW member_expr arguments
