@@ -83,7 +83,10 @@ class ECMAMinifier(object):
         return node.value
 
     def visit_Comma(self, node):
-        return '%s,%s' % (self.visit(node.left), self.visit(node.right))
+        template = '%s,%s'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+        return template % (self.visit(node.left), self.visit(node.right))
 
     def visit_EmptyStatement(self, node):
         return node.value

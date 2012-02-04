@@ -357,6 +357,11 @@ class MinifierTestCase(unittest.TestCase):
         ("""foo["bar'"]=42;""", """foo["bar'"]=42;"""),
         ('foo["bar bar"];', 'foo["bar bar"];'),
         ('foo["bar"+"bar"];', 'foo["bar"+"bar"];'),
+
+        # https://github.com/rspivak/slimit/issues/21
+        # c||(c=393,a=323,b=2321); --> c||c=393,a=323,b=2321; ERROR
+        ('c||(c=393);', 'c||(c=393);'),
+        ('c||(c=393,a=323,b=2321);', 'c||(c=393,a=323,b=2321);'),
         ]
 
 
