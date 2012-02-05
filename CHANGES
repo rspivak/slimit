@@ -1,5 +1,12 @@
 Change History
 ==============
+0.6 (2011-02-04)
+----------------
+- Added optimization: foo["bar"] ==> foo.bar
+- Added base class for custom AST node visitors
+- Documentation updates
+- Bug fix: https://github.com/rspivak/slimit/issues/22
+- Bug fix: https://github.com/rspivak/slimit/issues/21
 
 0.5.5 (2011-10-05)
 ------------------
