@@ -362,6 +362,9 @@ class MinifierTestCase(unittest.TestCase):
         # c||(c=393,a=323,b=2321); --> c||c=393,a=323,b=2321; ERROR
         ('c||(c=393);', 'c||(c=393);'),
         ('c||(c=393,a=323,b=2321);', 'c||(c=393,a=323,b=2321);'),
+
+        # https://github.com/rspivak/slimit/issues/25
+        ('for(a?b:c;d;)e=1;', 'for(a?b:c;d;)e=1;'),
         ]
 
 
