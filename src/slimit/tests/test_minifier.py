@@ -365,6 +365,9 @@ class MinifierTestCase(unittest.TestCase):
 
         # https://github.com/rspivak/slimit/issues/25
         ('for(a?b:c;d;)e=1;', 'for(a?b:c;d;)e=1;'),
+
+        # https://github.com/rspivak/slimit/issues/26
+        ('"begin"+ ++a+"end";', '"begin"+ ++a+"end";'),
         ]
 
 

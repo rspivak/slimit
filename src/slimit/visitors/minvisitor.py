@@ -164,6 +164,13 @@ class ECMAMinifier(object):
     def visit_BinOp(self, node):
         if node.op in ('instanceof', 'in'):
             template = '%s %s %s'
+        elif (node.op == '+' and
+              isinstance(node.right, ast.UnaryOp) and
+              node.right.op == '++' and not node.right.postfix
+              ):
+            # make a space between + and ++
+            # https://github.com/rspivak/slimit/issues/26
+            template = '%s%s %s'
         else:
             template = '%s%s%s'
         if getattr(node, '_parens', False):
