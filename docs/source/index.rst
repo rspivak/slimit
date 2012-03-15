@@ -43,11 +43,13 @@ From the command line:
 
 
     Options:
-      -h, --help    show this help message and exit
-      -m, --mangle  mangle names
+      -h, --help            show this help message and exit
+      -m, --mangle          mangle names
+      -t, --mangle-toplevel
+                            mangle top level scope (defaults to False)
 
     $ cat test.js
-    var a = function( obj ) {
+    var foo = function( obj ) {
             for ( var name in obj ) {
                     return false;
             }
@@ -55,7 +57,7 @@ From the command line:
     };
     $
     $ slimit --mangle < test.js
-    var a=function(a){for(var b in a)return false;return true;};
+    var foo=function(a){for(var b in a)return false;return true;};
 
 Or using library API:
 
@@ -70,7 +72,7 @@ Or using library API:
     ...         return true;
     ... };
     ... """
-    >>> print minify(text, mangle=True)
+    >>> print minify(text, mangle=True, mangle_toplevel=True)
     var a=function(a){for(var b in a)return false;return true;};
 
 Iterate over, modify a JavaScript AST and pretty print it

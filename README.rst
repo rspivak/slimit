@@ -47,13 +47,14 @@ From the command line:
     If no input file is provided STDIN is used by default.
     Minified JavaScript code is printed to STDOUT.
 
-
     Options:
-      -h, --help    show this help message and exit
-      -m, --mangle  mangle names
+      -h, --help            show this help message and exit
+      -m, --mangle          mangle names
+      -t, --mangle-toplevel
+                            mangle top level scope (defaults to False)
 
     $ cat test.js
-    var a = function( obj ) {
+    var foo = function( obj ) {
             for ( var name in obj ) {
                     return false;
             }
@@ -61,20 +62,20 @@ From the command line:
     };
     $
     $ slimit --mangle < test.js
-    var a=function(a){for(var b in a)return false;return true;};
+    var foo=function(a){for(var b in a)return false;return true;};
 
 Or using library API:
 
 >>> from slimit import minify
 >>> text = """
-... var a = function( obj ) {
+... var foo = function( obj ) {
 ...         for ( var name in obj ) {
 ...                 return false;
 ...         }
 ...         return true;
 ... };
 ... """
->>> print minify(text, mangle=True)
+>>> print minify(text, mangle=True, mangle_toplevel=True)
 var a=function(a){for(var b in a)return false;return true;};
 
 

@@ -33,11 +33,11 @@ from slimit.parser import Parser
 from slimit.visitors.minvisitor import ECMAMinifier
 
 
-def minify(text, mangle=False):
+def minify(text, mangle=False, mangle_toplevel=False):
     parser = Parser()
     tree = parser.parse(text)
     if mangle:
-        mangler.mangle(tree)
+        mangler.mangle(tree, toplevel=mangle_toplevel)
     minified = ECMAMinifier().visit(tree)
     return minified
 
@@ -52,6 +52,9 @@ def main(argv=None, inp=sys.stdin, out=sys.stdout):
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-m', '--mangle', action='store_true',
                       dest='mangle', default=False, help='mangle names')
+    parser.add_option('-t', '--mangle-toplevel', action='store_true',
+                      dest='mangle_toplevel', default=False,
+                      help='mangle top level scope (defaults to False)')
 
     if argv is None:
         argv = sys.argv[1:]
@@ -62,5 +65,6 @@ def main(argv=None, inp=sys.stdin, out=sys.stdout):
     else:
         text = inp.read()
 
-    minified = minify(text, mangle=options.mangle)
+    minified = minify(
+        text, mangle=options.mangle, mangle_toplevel=options.mangle_toplevel)
     out.write(minified)

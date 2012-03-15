@@ -143,7 +143,7 @@ def make_test_function(input, expected):
     def test_func(self):
         parser = Parser()
         tree = parser.parse(input)
-        mangle(tree)
+        mangle(tree, toplevel=True)
         self.assertMultiLineEqual(
             textwrap.dedent(tree.to_ecma()).strip(),
             textwrap.dedent(expected).strip()

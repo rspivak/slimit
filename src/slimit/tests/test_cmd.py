@@ -68,21 +68,21 @@ class CmdTestCase(unittest.TestCase):
     def test_main_dash_m_with_input_file(self):
         from slimit.minifier import main
         out = StringIO.StringIO()
-        main(['-m', self.path], out=out)
+        main(['-m', '-t', self.path], out=out)
         self.assertEqual('var a=5;', out.getvalue())
 
     def test_main_dash_dash_mangle_with_input_file(self):
         from slimit.minifier import main
         out = StringIO.StringIO()
-        main(['--mangle', self.path], out=out)
+        main(['--mangle', '--mangle-toplevel', self.path], out=out)
         self.assertEqual('var a=5;', out.getvalue())
 
     def test_main_dash_m_with_mock_stdin(self):
         from slimit.minifier import main
         out = StringIO.StringIO()
-        inp = StringIO.StringIO('var global = 5;')
+        inp = StringIO.StringIO('function foo() { var local = 5; }')
         main(['-m'], inp=inp, out=out)
-        self.assertEqual('var a=5;', out.getvalue())
+        self.assertEqual('function foo(){var a=5;}', out.getvalue())
 
     def test_main_stdin_stdout(self):
         # slimit.minifier should be deleted from sys.modules in order
@@ -93,16 +93,17 @@ class CmdTestCase(unittest.TestCase):
         except KeyError:
             pass
 
-        with redirected_input_output(input='var global = 5;') as out:
+        with redirected_input_output(
+            input='function foo() { var local = 5; }') as out:
             from slimit.minifier import main
             main(['-m'])
 
-        self.assertEqual('var a=5;', out.getvalue())
+        self.assertEqual('function foo(){var a=5;}', out.getvalue())
 
     def test_main_sys_argv(self):
         out = StringIO.StringIO()
         inp = StringIO.StringIO('var global = 5;')
-        with redirected_sys_argv(['slimit', '-m']):
+        with redirected_sys_argv(['slimit', '-m', '-t']):
             from slimit.minifier import main
             main(inp=inp, out=out)
 

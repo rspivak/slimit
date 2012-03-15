@@ -33,13 +33,19 @@ from slimit.visitors.scopevisitor import (
     )
 
 
-def mangle(tree):
+def mangle(tree, toplevel=False):
+    """Mangle names.
+
+    Args:
+        toplevel: defaults to False. Defines if global
+        scope should be mangled or not.
+    """
     sym_table = SymbolTable()
     visitor = ScopeTreeVisitor(sym_table)
     visitor.visit(tree)
 
     fill_scope_references(tree)
-    mangle_scope_tree(sym_table.globals)
+    mangle_scope_tree(sym_table.globals, toplevel)
 
     mangler = NameManglerVisitor()
     mangler.visit(tree)
