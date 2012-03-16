@@ -1,6 +1,6 @@
 Change History
 ==============
-0.6.1 (2011-03-15)
+0.6.1 (2012-03-15)
 ------------------
 - Added command-line option *-t/--mangle-toplevel* to turn on
   global scope name mangling. As of this version it's off by
@@ -9,7 +9,7 @@ Change History
 - Bug fix: https://github.com/rspivak/slimit/issues/26
 - Bug fix: https://github.com/rspivak/slimit/issues/25
 
-0.6 (2011-02-04)
+0.6 (2012-02-04)
 ----------------
 - Added optimization: foo["bar"] ==> foo.bar
 - Added base class for custom AST node visitors
