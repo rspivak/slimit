@@ -18,7 +18,7 @@ and runs faster.
 `SlimIt` also provides a library that includes a JavaScript parser,
 lexer, pretty printer and a tree visitor.
 
-`http://slimit.org/ <http://slimit.org/>`_
+`http://slimit.readthedocs.org/ <http://slimit.readthedocs.org/>`_
 
 Installation
 ------------
