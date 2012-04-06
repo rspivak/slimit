@@ -368,6 +368,14 @@ class MinifierTestCase(unittest.TestCase):
 
         # https://github.com/rspivak/slimit/issues/26
         ('"begin"+ ++a+"end";', '"begin"+ ++a+"end";'),
+
+        # https://github.com/rspivak/slimit/issues/28
+        ("""
+         (function($) {
+             $.hello = 'world';
+         }(jQuery));
+         """,
+         "(function($){$.hello='world';}(jQuery);)"),
         ]
 
 
