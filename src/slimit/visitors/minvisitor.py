@@ -383,7 +383,11 @@ class ECMAMinifier(object):
         return s
 
     def visit_FunctionCall(self, node):
-        s = '%s(%s)' % (self.visit(node.identifier),
+        template = '%s(%s)'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+
+        s = template % (self.visit(node.identifier),
                         ','.join(self.visit(arg) for arg in node.args))
         return s
 

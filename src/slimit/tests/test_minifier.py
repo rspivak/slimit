@@ -375,7 +375,7 @@ class MinifierTestCase(unittest.TestCase):
              $.hello = 'world';
          }(jQuery));
          """,
-         "(function($){$.hello='world';}(jQuery);)"),
+         "(function($){$.hello='world';}(jQuery));"),
         ]
 
 
