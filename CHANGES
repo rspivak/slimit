@@ -1,5 +1,10 @@
 Change History
 ==============
+0.6.2 (2012-04-07)
+------------------
+- Bug fix: https://github.com/rspivak/slimit/issues/29
+- Bug fix: https://github.com/rspivak/slimit/issues/28
+
 0.6.1 (2012-03-15)
 ------------------
 - Added command-line option *-t/--mangle-toplevel* to turn on
