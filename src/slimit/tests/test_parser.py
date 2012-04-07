@@ -89,6 +89,13 @@ class ParserTestCase(unittest.TestCase):
         text = 'window.done_already || function () { return "slimit!" ; }();'
         self.assertTrue(bool(Parser().parse(text).children()))
 
+    # https://github.com/rspivak/slimit/issues/29
+    def test_that_parsing_eventually_stops(self):
+        text = """var a;
+        , b;"""
+        parser = Parser()
+        self.assertRaises(SyntaxError, parser.parse, text)
+
 
 class ASITestCase(unittest.TestCase):
     TEST_CASES = [

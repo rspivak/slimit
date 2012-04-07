@@ -60,6 +60,35 @@ class Parser(object):
             module=self, optimize=yacc_optimize,
             debug=yacc_debug, tabmodule=yacctab, start='program')
 
+        # https://github.com/rspivak/slimit/issues/29
+        # lexer.auto_semi can cause a loop in a parser
+        # when a parser error happens on a token right after
+        # a newline.
+        # We keep record of the tokens that caused p_error
+        # and if the token has already been seen - we raise
+        # a SyntaxError exception to avoid looping over and
+        # over again.
+        self._error_tokens = {}
+
+    def _has_been_seen_before(self, token):
+        if token is None:
+            return False
+        key = token.type, token.value, token.lineno, token.lexpos
+        return key in self._error_tokens
+
+    def _mark_as_seen(self, token):
+        if token is None:
+            return
+        key = token.type, token.value, token.lineno, token.lexpos
+        self._error_tokens[key] = True
+
+    def _raise_syntax_error(self, token):
+        raise SyntaxError(
+            'Unexpected token (%s, %r) at %s:%s between %s and %s' % (
+                token.type, token.value, token.lineno, token.lexpos,
+                self.lexer.prev_token, self.lexer.token())
+            )
+
     def parse(self, text, debug=False):
         return self.parser.parse(text, lexer=self.lexer, debug=debug)
 
@@ -72,17 +101,19 @@ class Parser(object):
         pass
 
     def p_error(self, token):
+        # https://github.com/rspivak/slimit/issues/29
+        if self._has_been_seen_before(token):
+            self._raise_syntax_error(token)
+
         if token is None or token.type != 'SEMI':
             next_token = self.lexer.auto_semi(token)
             if next_token is not None:
+                # https://github.com/rspivak/slimit/issues/29
+                self._mark_as_seen(token)
                 self.parser.errok()
                 return next_token
 
-        raise SyntaxError(
-            'Unexpected token (%s, %r) at %s:%s between %s and %s' % (
-                token.type, token.value, token.lineno, token.lexpos,
-                self.lexer.prev_token, self.lexer.token())
-            )
+        self._raise_syntax_error(token)
 
     # Comment rules
     # def p_single_line_comment(self, p):
