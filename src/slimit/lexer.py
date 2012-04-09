@@ -369,7 +369,7 @@ class Lexer(object):
             )*?                            # zero or many times
             (?: \\\n                       # multiline ?
               (?:
-                [^'\\\n\r]                 # no \, line terminators or '
+                [^"\\\n\r]                 # no \, line terminators or "
                 | \\[a-zA-Z!-\/:-@\[-`{-~] # or escaped characters
                 | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
                 | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
