@@ -417,5 +417,6 @@ class Lexer(object):
         return token
 
     def t_error(self, token):
-        print 'Illegal character %r' % token.value[0]
+        print 'Illegal character %r at %s:%s after %s' % (
+            token.value[0], token.lineno, token.lexpos, self.prev_token)
         token.lexer.skip(1)
