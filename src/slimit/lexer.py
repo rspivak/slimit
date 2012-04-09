@@ -358,7 +358,7 @@ class Lexer(object):
     )
     """
 
-    t_STRING = r"""
+    string = r"""
     (?:
         # double quoted string
         (?:"                               # opening double quote
@@ -367,6 +367,14 @@ class Lexer(object):
                 | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
                 | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
             )*?                            # zero or many times
+            (?: \\\n                       # multiline ?
+              (?:
+                [^'\\\n\r]                 # no \, line terminators or '
+                | \\[a-zA-Z!-\/:-@\[-`{-~] # or escaped characters
+                | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
+                | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
+              )*?                          # zero or many times
+            )*
         ")                                 # closing double quote
         |
         # single quoted string
@@ -376,10 +384,24 @@ class Lexer(object):
                 | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
                 | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
             )*?                            # zero or many times
+            (?: \\\n                       # multiline ?
+              (?:
+                [^'\\\n\r]                 # no \, line terminators or '
+                | \\[a-zA-Z!-\/:-@\[-`{-~] # or escaped characters
+                | \\x[0-9a-fA-F]{2}        # or hex_escape_sequence
+                | \\u[0-9a-fA-F]{4}        # or unicode_escape_sequence
+              )*?                          # zero or many times
+            )*
         ')                                 # closing single quote
     )
     """  # "
 
+    @ply.lex.TOKEN(string)
+    def t_STRING(self, token):
+        # remove escape + new line sequence used for strings
+        # written across multiple lines of code
+        token.value = token.value.replace('\\\n', '')
+        return token
 
     # XXX: <ZWNJ> <ZWJ> ?
     identifier_start = r'(?:' + r'[a-zA-Z_$]' + r'|' + LETTER + r')+'

@@ -142,7 +142,14 @@ class LexerTestCase(unittest.TestCase):
         ),
         # same as above but inside double quotes
         (r'"<(\/*)(FooBar)"', [r'STRING "<(\/*)(FooBar)"']),
-
+        # multiline string (string written across multiple lines
+        # of code) https://github.com/rspivak/slimit/issues/24
+        (r"""var a = 'hello \
+world'""",
+         ['VAR var', 'ID a', 'EQ =', "STRING 'hello world'"]),
+        (r'''var a = "hello \
+world"''',
+         ['VAR var', 'ID a', 'EQ =', 'STRING "hello world"']),
 
         # # Comments
         # ("""
