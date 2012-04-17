@@ -1,5 +1,9 @@
 Change History
 ==============
+0.7 (2012-04-16)
+----------------
+- Multiline string support: https://github.com/rspivak/slimit/issues/24
+
 0.6.2 (2012-04-07)
 ------------------
 - Bug fix: https://github.com/rspivak/slimit/issues/29
