@@ -377,8 +377,8 @@ class MinifierTestCase(unittest.TestCase):
          """,
          "(function($){$.hello='world';}(jQuery));"),
 
-        # another issue
-        ('for(o();i<3;i++){}', 'for(o();i<3;i++){}'),
+        # function call in FOR init
+        ('for(o(); i < 3; i++) {}', 'for(o();i<3;i++){}'),
         ]
 
 
