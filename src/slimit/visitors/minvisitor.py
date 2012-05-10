@@ -140,7 +140,8 @@ class ECMAMinifier(object):
             s += self.visit(node.init)
         if node.init is None:
             s += ';'
-        elif isinstance(node.init, (ast.Assign, ast.Comma, ast.Conditional)):
+        elif isinstance(node.init, (ast.Assign, ast.Comma, ast.Conditional,
+                                    ast.FunctionCall)):
             s += ';'
         else:
             s += ''

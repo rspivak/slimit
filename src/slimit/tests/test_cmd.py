@@ -88,8 +88,9 @@ class CmdTestCase(unittest.TestCase):
         # slimit.minifier should be deleted from sys.modules in order
         # to have a proper reference to sys.stdin and sys.stdou when
         # 'main' definition is evaluated during module import
+        old_module = None
         try:
-            del sys.modules['slimit.minifier']
+            old_module = sys.modules.pop('slimit.minifier')
         except KeyError:
             pass
 
@@ -99,6 +100,8 @@ class CmdTestCase(unittest.TestCase):
             main(['-m'])
 
         self.assertEqual('function foo(){var a=5;}', out.getvalue())
+        if old_module:
+            sys.modules['slimit.minifier'] = old_module
 
     def test_main_sys_argv(self):
         out = StringIO.StringIO()
@@ -108,4 +111,3 @@ class CmdTestCase(unittest.TestCase):
             main(inp=inp, out=out)
 
         self.assertEqual('var a=5;', out.getvalue())
-

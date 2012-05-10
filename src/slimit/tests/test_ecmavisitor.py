@@ -425,6 +425,12 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         # typeof
         'typeof second.length === "number";',
+
+        """
+        for (o(); i < 3; i++) {
+
+        }
+        """
         ]
 
 def make_test_function(input, expected):
