@@ -426,6 +426,7 @@ class ECMAVisitorTestCase(unittest.TestCase):
         # typeof
         'typeof second.length === "number";',
 
+        # function call in FOR init
         """
         for (o(); i < 3; i++) {
 
