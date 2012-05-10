@@ -1,5 +1,10 @@
 Change History
 ==============
+0.7.1 (2012-05-10)
+------------------
+- Function call support in FOR init section:
+  https://github.com/rspivak/slimit/pull/31
+
 0.7 (2012-04-16)
 ----------------
 - Multiline string support: https://github.com/rspivak/slimit/issues/24
