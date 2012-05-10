@@ -100,7 +100,7 @@ class CmdTestCase(unittest.TestCase):
             main(['-m'])
 
         self.assertEqual('function foo(){var a=5;}', out.getvalue())
-        if old_module is None:
+        if old_module is not None:
             sys.modules['slimit.minifier'] = old_module
 
     def test_main_sys_argv(self):
