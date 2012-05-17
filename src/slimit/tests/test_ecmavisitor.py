@@ -431,7 +431,21 @@ class ECMAVisitorTestCase(unittest.TestCase):
         for (o(); i < 3; i++) {
 
         }
+        """,
+
+        # https://github.com/rspivak/slimit/issues/32
         """
+        Name.prototype = {
+          get fullName() {
+            return this.first + " " + this.last;
+          },
+          set fullName(name) {
+            var names = name.split(" ");
+            this.first = names[0];
+            this.last = names[1];
+          }
+        };
+        """,
         ]
 
 def make_test_function(input, expected):

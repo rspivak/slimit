@@ -79,6 +79,28 @@ class ECMAMinifier(object):
         return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
+    def visit_GetPropAssign(self, node):
+        template = 'get %s(){%s}'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+        return template % (
+            self.visit(node.prop_name),
+            ''.join(self.visit(element) for element in node.elements)
+            )
+
+    def visit_SetPropAssign(self, node):
+        template = 'set %s(%s){%s}'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+        if len(node.parameters) > 1:
+            raise SyntaxError(
+                'Setter functions must have one argument: %s' % node)
+        return template % (
+            self.visit(node.prop_name),
+            ''.join(self.visit(param) for param in node.parameters),
+            ''.join(self.visit(element) for element in node.elements)
+            )
+
     def visit_Number(self, node):
         return node.value
 

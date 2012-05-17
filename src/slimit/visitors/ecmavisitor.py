@@ -78,6 +78,36 @@ class ECMAVisitor(object):
         return template % (
             self.visit(node.left), node.op, self.visit(node.right))
 
+    def visit_GetPropAssign(self, node):
+        template = 'get %s() {\n%s\n%s}'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+        self.indent_level += 2
+        body = '\n'.join(
+            (self._make_indent() + self.visit(el))
+            for el in node.elements
+            )
+        self.indent_level -= 2
+        tail = self._make_indent()
+        return template % (self.visit(node.prop_name), body, tail)
+
+    def visit_SetPropAssign(self, node):
+        template = 'set %s(%s) {\n%s\n%s}'
+        if getattr(node, '_parens', False):
+            template = '(%s)' % template
+        if len(node.parameters) > 1:
+            raise SyntaxError(
+                'Setter functions must have one argument: %s' % node)
+        params = ','.join(self.visit(param) for param in node.parameters)
+        self.indent_level += 2
+        body = '\n'.join(
+            (self._make_indent() + self.visit(el))
+            for el in node.elements
+            )
+        self.indent_level -= 2
+        tail = self._make_indent()
+        return template % (self.visit(node.prop_name), params, body, tail)
+
     def visit_Number(self, node):
         return node.value
 

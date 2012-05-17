@@ -379,6 +379,31 @@ class MinifierTestCase(unittest.TestCase):
 
         # function call in FOR init
         ('for(o(); i < 3; i++) {}', 'for(o();i<3;i++){}'),
+
+        # https://github.com/rspivak/slimit/issues/32
+        ("""
+         Name.prototype = {
+           getPageProp: function Page_getPageProp(key) {
+             return this.pageDict.get(key);
+           },
+
+           get fullName() {
+             return this.first + " " + this.last;
+           },
+
+           set fullName(name) {
+             var names = name.split(" ");
+             this.first = names[0];
+             this.last = names[1];
+           }
+         };
+         """,
+         ('Name.prototype={getPageProp:function Page_getPageProp(key){'
+          'return this.pageDict.get(key);},'
+          'get fullName(){return this.first+" "+this.last;},'
+          'set fullName(name){var names=name.split(" ");this.first=names[0];'
+          'this.last=names[1];}};')
+        ),
         ]
 
 

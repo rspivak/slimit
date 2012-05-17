@@ -241,6 +241,9 @@ class Lexer(object):
         # Terminal types
         'NUMBER', 'STRING', 'ID', 'REGEX',
 
+        # Properties
+        'GETPROP', 'SETPROP',
+
         # Comments
         'LINE_COMMENT', 'BLOCK_COMMENT',
 
@@ -410,6 +413,16 @@ class Lexer(object):
         r'|' + CONNECTOR_PUNCTUATION + r')*'
         )
     identifier = identifier_start + identifier_part
+
+    getprop = r'get' + r'(?=\s' + identifier + r')'
+    @ply.lex.TOKEN(getprop)
+    def t_GETPROP(self, token):
+        return token
+
+    setprop = r'set' + r'(?=\s' + identifier + r')'
+    @ply.lex.TOKEN(setprop)
+    def t_SETPROP(self, token):
+        return token
 
     @ply.lex.TOKEN(identifier)
     def t_ID(self, token):

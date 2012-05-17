@@ -147,6 +147,25 @@ class Assign(Node):
     def children(self):
         return [self.left, self.right]
 
+class GetPropAssign(Node):
+    def __init__(self, prop_name, elements):
+        """elements - function body"""
+        self.prop_name = prop_name
+        self.elements = elements
+
+    def children(self):
+        return [self.prop_name] + self.elements
+
+class SetPropAssign(Node):
+    def __init__(self, prop_name, parameters, elements):
+        """elements - function body"""
+        self.prop_name = prop_name
+        self.parameters = parameters
+        self.elements = elements
+
+    def children(self):
+        return [self.prop_name] + self.parameters + self.elements
+
 class VarStatement(Node):
     pass
 
