@@ -380,6 +380,12 @@ class MinifierTestCase(unittest.TestCase):
         # function call in FOR init
         ('for(o(); i < 3; i++) {}', 'for(o();i<3;i++){}'),
 
+        # unary increment operator in FOR init
+        ('for(i++; i < 3; i++) {}', 'for(i++;i<3;i++){}'),
+
+        # unary decrement operator in FOR init
+        ('for(i--; i < 3; i++) {}', 'for(i--;i<3;i++){}'),
+
         # https://github.com/rspivak/slimit/issues/32
         ("""
          Name.prototype = {
