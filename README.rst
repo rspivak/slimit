@@ -34,6 +34,10 @@ Or the bleeding edge version from the git master branch:
     $ [sudo] pip install git+https://github.com/rspivak/slimit.git#egg=slimit
 
 
+There is also an official DEB package available at
+`http://packages.debian.org/sid/slimit <http://packages.debian.org/sid/slimit>`_
+
+
 Let's minify some code
 ----------------------
 
