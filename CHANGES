@@ -1,5 +1,9 @@
 Change History
 ==============
+0.7.3 (2012-05-21)
+------------------
+- Bug fix (unary op in FOR init): https://github.com/rspivak/slimit/pull/33
+
 0.7.2 (2012-05-17)
 ------------------
 - Added support for get/set properties:
