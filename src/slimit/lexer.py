@@ -208,8 +208,10 @@ class Lexer(object):
         'DO', 'ELSE', 'FINALLY', 'FOR', 'FUNCTION', 'IF', 'IN',
         'INSTANCEOF', 'NEW', 'RETURN', 'SWITCH', 'THIS', 'THROW', 'TRY',
         'TYPEOF', 'VAR', 'VOID', 'WHILE', 'WITH', 'NULL', 'TRUE', 'FALSE',
-        # future reserved words
-        # 'CLASS', 'CONST', 'ENUM', 'EXPORT', 'EXTENDS', 'IMPORT', 'SUPER',
+        # future reserved words - well, it's uncommented now to make
+        # IE8 happy because it chokes up on minification:
+        # obj["class"] -> obj.class
+        'CLASS', 'CONST', 'ENUM', 'EXPORT', 'EXTENDS', 'IMPORT', 'SUPER',
         )
     keywords_dict = dict((key.lower(), key) for key in keywords)
 

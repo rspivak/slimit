@@ -357,6 +357,11 @@ class MinifierTestCase(unittest.TestCase):
         ("""foo["bar'"]=42;""", """foo["bar'"]=42;"""),
         ('foo["bar bar"];', 'foo["bar bar"];'),
         ('foo["bar"+"bar"];', 'foo["bar"+"bar"];'),
+        # https://github.com/rspivak/slimit/issues/34
+        # test some reserved keywords
+        ('foo["for"];', 'foo["for"];'),
+        ('foo["class"];', 'foo["class"];'),
+
 
         # https://github.com/rspivak/slimit/issues/21
         # c||(c=393,a=323,b=2321); --> c||c=393,a=323,b=2321; ERROR
