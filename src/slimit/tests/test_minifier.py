@@ -391,6 +391,9 @@ class MinifierTestCase(unittest.TestCase):
         # unary decrement operator in FOR init
         ('for(i--; i < 3; i++) {}', 'for(i--;i<3;i++){}'),
 
+        # issue-37, simple identifier in FOR init
+        ('for(i; i < 3; i++) {}', 'for(i;i<3;i++){}'),
+
         # https://github.com/rspivak/slimit/issues/32
         ("""
          Name.prototype = {
