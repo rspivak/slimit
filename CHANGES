@@ -1,5 +1,8 @@
 Change History
 ==============
+0.7.x (unreleased)
+- Bug fix (simple identifier in FOR init): https://github.com/rspivak/slimit/issues/37
+
 0.7.4 (2012-06-5)
 ------------------
 - Bug fix: https://github.com/rspivak/slimit/issues/34

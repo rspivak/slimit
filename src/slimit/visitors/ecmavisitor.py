@@ -138,7 +138,7 @@ class ECMAVisitor(object):
         if node.init is None:
             s += ' ; '
         elif isinstance(node.init, (ast.Assign, ast.Comma, ast.FunctionCall,
-                                    ast.UnaryOp)):
+                                    ast.UnaryOp, ast.Identifier)):
             s += '; '
         else:
             s += ' '
