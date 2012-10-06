@@ -195,6 +195,18 @@ class ASITestCase(unittest.TestCase):
 
          }
          """),
+
+        ("""
+        var i;
+        for (i; i < length; i++) {
+        }
+        """,
+         """
+         var i;
+         for (i; i < length; i++) {
+
+         }
+         """),
         ]
 
     def test_throw_statement(self):
