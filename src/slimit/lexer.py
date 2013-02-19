@@ -26,7 +26,7 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import ply.lex
 
-from slimit.unicode import (
+from slimit.unicode_chars import (
     LETTER,
     DIGIT,
     COMBINING_MARK,
