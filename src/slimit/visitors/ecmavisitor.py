@@ -112,7 +112,10 @@ class ECMAVisitor(object):
         return node.value
 
     def visit_Comma(self, node):
-        return '%s, %s' % (self.visit(node.left), self.visit(node.right))
+        s = '%s, %s' % (self.visit(node.left), self.visit(node.right))
+        if getattr(node, '_parens', False):
+            s = '(' + s + ')'
+		return s
 
     def visit_EmptyStatement(self, node):
         return node.value
@@ -360,6 +363,8 @@ class ECMAVisitor(object):
     def visit_FunctionCall(self, node):
         s = '%s(%s)' % (self.visit(node.identifier),
                         ', '.join(self.visit(arg) for arg in node.args))
+        if getattr(node, '_parens', False):
+            s = '(' + s + ')'
         return s
 
     def visit_Object(self, node):
