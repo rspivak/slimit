@@ -412,6 +412,17 @@ class ECMAVisitorTestCase(unittest.TestCase):
         # test 54
         'return (/h\d/i).test(elem.nodeName);',
 
+        # https://github.com/rspivak/slimit/issues/42
+        """
+        e.b(d) ? (a = [c.f(j[1])], e.fn.attr.call(a, d, !0)) : a = [k.f(j[1])];
+        """,
+
+        """
+        (function() {
+          x = 5;
+        }());
+        """,
+
         """
         (function() {
           x = 5;
