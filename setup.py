@@ -35,8 +35,8 @@ def read(*rel_names):
 
 setup(
     name='slimit',
-    version='0.7.4',
-    url='http://slimit.org',
+    version='0.8.0',
+    url='http://slimit.readthedocs.org',
     cmdclass = {'build_py': build_py},
     license='MIT',
     description='SlimIt - JavaScript minifier',
