@@ -115,7 +115,7 @@ class ECMAVisitor(object):
         s = '%s, %s' % (self.visit(node.left), self.visit(node.right))
         if getattr(node, '_parens', False):
             s = '(' + s + ')'
-		return s
+        return s
 
     def visit_EmptyStatement(self, node):
         return node.value
