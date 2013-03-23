@@ -1,6 +1,7 @@
 Change History
 ==============
 0.8.0 (2013-03-23)
+------------------
 - Python 3.x support
 - Bug fix: https://github.com/rspivak/slimit/issues/42
   slimit removes parentheses from ternary expression, causes syntax error in jQuery
