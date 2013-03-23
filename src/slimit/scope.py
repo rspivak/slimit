@@ -34,7 +34,7 @@ except ImportError:
 from slimit.lexer import Lexer
 
 
-ID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_'
+ID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def powerset(iterable):
     """powerset('abc') -> a b c ab ac bc abc"""
