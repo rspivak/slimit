@@ -1,7 +1,13 @@
 Change History
 ==============
-0.7.x (unreleased)
-- Bug fix (simple identifier in FOR init): https://github.com/rspivak/slimit/issues/37
+0.8.0 (2013-03-23)
+- Python 3.x support
+- Bug fix: https://github.com/rspivak/slimit/issues/42
+  slimit removes parentheses from ternary expression, causes syntax error in jQuery
+- Bug fix: https://github.com/rspivak/slimit/issues/37
+  simple identifier in FOR init
+- Bug fix: https://github.com/rspivak/slimit/issues/36
+  using $ for mangled function names conflicts with jQuery
 
 0.7.4 (2012-06-5)
 ------------------
