@@ -119,6 +119,30 @@ class ECMAVisitorTestCase(unittest.TestCase):
 
         }
         """,
+        # retain the semicolon in the initialiser part of a 'for' statement
+        """
+        for (Q || (Q = []); d < b; ) {
+          d = 1;
+        }
+        """,
+
+        """
+        for (new Foo(); d < b; ) {
+          d = 1;
+        }
+        """,
+
+        """
+        for (2 >> (foo ? 32 : 43) && 54; 21; ) {
+          a = c;
+        }
+        """,
+
+        """
+        for (/^.+/g; cond(); ++z) {
+          ev();
+        }
+        """,
 
         # test 12
         """
