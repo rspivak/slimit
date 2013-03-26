@@ -1,5 +1,10 @@
 Change History
 ==============
+0.8.1 (2013-03-26)
+------------------
+- Bug fix: https://github.com/rspivak/slimit/pull/45
+  Fix syntax error in the output of for statement with some form of expressions
+
 0.8.0 (2013-03-23)
 ------------------
 - Python 3.x support
