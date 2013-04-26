@@ -435,8 +435,36 @@ class MinifierTestCase(unittest.TestCase):
           'this.last=names[1];}};')
         ),
 
-        ('testObj[":"] = undefined;', 'testObj[":"]=undefined;'),
-        ('testObj["::"] = undefined;', 'testObj["::"]=undefined;'),
-
+        # https://github.com/rspivak/slimit/issues/47 - might be a Python 3
+        # related issue
+        ('testObj[":"] = undefined; // Breaks', 'testObj[":"]=undefined;'),
+        ('testObj["::"] = undefined; // Breaks', 'testObj["::"]=undefined;'),
+        ('testObj["a:"] = undefined; // Breaks', 'testObj["a:"]=undefined;'),
+        ('testObj["."] = undefined; // OK', 'testObj["."]=undefined;'),
+        ('testObj["{"] = undefined; // OK', 'testObj["{"]=undefined;'),
+        ('testObj["}"] = undefined; // OK', 'testObj["}"]=undefined;'),
+        ('testObj["["] = undefined; // Breaks', 'testObj["["]=undefined;'),
+        ('testObj["]"] = undefined; // Breaks', 'testObj["]"]=undefined;'),
+        ('testObj["("] = undefined; // OK', 'testObj["("]=undefined;'),
+        ('testObj[")"] = undefined; // OK', 'testObj[")"]=undefined;'),
+        ('testObj["="] = undefined; // Breaks', 'testObj["="]=undefined;'),
+        ('testObj["-"] = undefined; // OK', 'testObj["-"]=undefined;'),
+        ('testObj["+"] = undefined; // OK', 'testObj["+"]=undefined;'),
+        ('testObj["*"] = undefined; // OK', 'testObj["*"]=undefined;'),
+        ('testObj["/"] = undefined; // OK', 'testObj["/"]=undefined;'),
+        (r'testObj["\\"] = undefined; // Breaks', r'testObj["\\"]=undefined;'),
+        ('testObj["%"] = undefined; // OK', 'testObj["%"]=undefined;'),
+        ('testObj["<"] = undefined; // Breaks', 'testObj["<"]=undefined;'),
+        ('testObj[">"] = undefined; // Breaks', 'testObj[">"]=undefined;'),
+        ('testObj["!"] = undefined; // OK', 'testObj["!"]=undefined;'),
+        ('testObj["?"] = undefined; // Breaks', 'testObj["?"]=undefined;'),
+        ('testObj[","] = undefined; // OK', 'testObj[","]=undefined;'),
+        ('testObj["@"] = undefined; // Breaks', 'testObj["@"]=undefined;'),
+        ('testObj["#"] = undefined; // OK', 'testObj["#"]=undefined;'),
+        ('testObj["&"] = undefined; // OK', 'testObj["&"]=undefined;'),
+        ('testObj["|"] = undefined; // OK', 'testObj["|"]=undefined;'),
+        ('testObj["~"] = undefined; // OK', 'testObj["~"]=undefined;'),
+        ('testObj["`"] = undefined; // Breaks', 'testObj["`"]=undefined;'),
+        ('testObj["."] = undefined; // OK', 'testObj["."]=undefined;'),
         ]
 
