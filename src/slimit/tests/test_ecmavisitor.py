@@ -30,6 +30,25 @@ import unittest
 from slimit.parser import Parser
 
 
+def decorator(cls):
+    def make_test_function(input, expected):
+
+        def test_func(self):
+            parser = Parser()
+            result = parser.parse(input).to_ecma()
+            self.assertMultiLineEqual(result, expected)
+
+        return test_func
+
+    for index, input in enumerate(cls.TEST_CASES):
+        input = textwrap.dedent(input).strip()
+        func = make_test_function(input, input)
+        setattr(cls, 'test_case_%d' % index, func)
+
+    return cls
+
+
+@decorator
 class ECMAVisitorTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -482,19 +501,5 @@ class ECMAVisitorTestCase(unittest.TestCase):
         };
         """,
         ]
-
-def make_test_function(input, expected):
-
-    def test_func(self):
-        parser = Parser()
-        result = parser.parse(input).to_ecma()
-        self.assertMultiLineEqual(result, expected)
-
-    return test_func
-
-for index, input in enumerate(ECMAVisitorTestCase.TEST_CASES):
-    input = textwrap.dedent(input).strip()
-    func = make_test_function(input, input)
-    setattr(ECMAVisitorTestCase, 'test_case_%d' % index, func)
 
 

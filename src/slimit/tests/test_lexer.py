@@ -33,8 +33,26 @@ import pprint
 from slimit.lexer import Lexer
 
 
+def decorator(cls):
+    def make_test_function(input, expected):
+
+        def test_func(self):
+            lexer = self._get_lexer()
+            lexer.input(input)
+            result = ['%s %s' % (token.type, token.value) for token in lexer]
+            self.assertListEqual(result, expected)
+
+        return test_func
+
+    for index, (input, expected) in enumerate(cls.TEST_CASES):
+        func = make_test_function(input, expected)
+        setattr(cls, 'test_case_%d' % index, func)
+
+    return cls
+
 # The structure and some test cases are taken
 # from https://bitbucket.org/ned/jslex
+@decorator
 class LexerTestCase(unittest.TestCase):
 
     def _get_lexer(self):
@@ -267,21 +285,6 @@ world"''',
           "LPAREN (", r'REGEX /"/g', "COMMA ,", r'STRING "\\\""', "RPAREN )",
           "PLUS +", r'STRING "\")"', "SEMI ;"]),
         ]
-
-
-def make_test_function(input, expected):
-
-    def test_func(self):
-        lexer = self._get_lexer()
-        lexer.input(input)
-        result = ['%s %s' % (token.type, token.value) for token in lexer]
-        self.assertListEqual(result, expected)
-
-    return test_func
-
-for index, (input, expected) in enumerate(LexerTestCase.TEST_CASES):
-    func = make_test_function(input, expected)
-    setattr(LexerTestCase, 'test_case_%d' % index, func)
 
 
 def test_suite():

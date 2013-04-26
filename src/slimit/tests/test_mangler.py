@@ -31,6 +31,27 @@ from slimit.parser import Parser
 from slimit.mangler import mangle
 
 
+def decorator(cls):
+    def make_test_function(input, expected):
+        def test_func(self):
+            parser = Parser()
+            tree = parser.parse(input)
+            mangle(tree, toplevel=True)
+            self.assertMultiLineEqual(
+                textwrap.dedent(tree.to_ecma()).strip(),
+                textwrap.dedent(expected).strip()
+                )
+
+        return test_func
+
+    for index, (input, expected) in enumerate(cls.TEST_CASES):
+        func = make_test_function(input, expected)
+        setattr(cls, 'test_case_%d' % index, func)
+
+    return cls
+
+
+@decorator
 class ManglerTestCase(unittest.TestCase):
 
     TEST_CASES = [
@@ -136,21 +157,3 @@ class ManglerTestCase(unittest.TestCase):
          }
          """),
         ]
-
-
-def make_test_function(input, expected):
-
-    def test_func(self):
-        parser = Parser()
-        tree = parser.parse(input)
-        mangle(tree, toplevel=True)
-        self.assertMultiLineEqual(
-            textwrap.dedent(tree.to_ecma()).strip(),
-            textwrap.dedent(expected).strip()
-            )
-
-    return test_func
-
-for index, (input, expected) in enumerate(ManglerTestCase.TEST_CASES):
-    func = make_test_function(input, expected)
-    setattr(ManglerTestCase, 'test_case_%d' % index, func)

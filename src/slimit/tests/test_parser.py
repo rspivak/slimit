@@ -32,6 +32,25 @@ from slimit.parser import Parser
 from slimit.visitors import nodevisitor
 
 
+def decorator(cls):
+    def make_test_function(input, expected):
+
+        def test_func(self):
+            parser = Parser()
+            result = parser.parse(input).to_ecma()
+            self.assertMultiLineEqual(result, expected)
+
+        return test_func
+
+    for index, (input, expected) in enumerate(cls.TEST_CASES):
+        input = textwrap.dedent(input).strip()
+        expected = textwrap.dedent(expected).strip()
+        func = make_test_function(input, expected)
+        setattr(cls, 'test_case_%d' % index, func)
+
+    return cls
+
+
 class ParserTestCase(unittest.TestCase):
 
     def test_line_terminator_at_the_end_of_file(self):
@@ -97,6 +116,7 @@ class ParserTestCase(unittest.TestCase):
         self.assertRaises(SyntaxError, parser.parse, text)
 
 
+@decorator
 class ASITestCase(unittest.TestCase):
     TEST_CASES = [
         ("""
@@ -219,20 +239,5 @@ class ASITestCase(unittest.TestCase):
         # ASI at lexer level should insert ';' after throw
         self.assertRaises(SyntaxError, parser.parse, input)
 
-
-def make_test_function(input, expected):
-
-    def test_func(self):
-        parser = Parser()
-        result = parser.parse(input).to_ecma()
-        self.assertMultiLineEqual(result, expected)
-
-    return test_func
-
-for index, (input, expected) in enumerate(ASITestCase.TEST_CASES):
-    input = textwrap.dedent(input).strip()
-    expected = textwrap.dedent(expected).strip()
-    func = make_test_function(input, expected)
-    setattr(ASITestCase, 'test_case_%d' % index, func)
 
 

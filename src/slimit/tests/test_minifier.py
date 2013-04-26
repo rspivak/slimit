@@ -29,6 +29,22 @@ import unittest
 from slimit import minify
 
 
+def decorator(cls):
+    def make_test_function(input, expected):
+
+        def test_func(self):
+            self.assertMinified(input, expected)
+
+        return test_func
+
+    for index, (input, expected) in enumerate(cls.TEST_CASES):
+        func = make_test_function(input, expected)
+        setattr(cls, 'test_case_%d' % index, func)
+
+    return cls
+
+
+@decorator
 class MinifierTestCase(unittest.TestCase):
 
     def assertMinified(self, source, expected):
@@ -418,16 +434,9 @@ class MinifierTestCase(unittest.TestCase):
           'set fullName(name){var names=name.split(" ");this.first=names[0];'
           'this.last=names[1];}};')
         ),
+
+        ('testObj[":"] = undefined;', 'testObj[":"]=undefined;'),
+        ('testObj["::"] = undefined;', 'testObj["::"]=undefined;'),
+
         ]
 
-
-def make_test_function(input, expected):
-
-    def test_func(self):
-        self.assertMinified(input, expected)
-
-    return test_func
-
-for index, (input, expected) in enumerate(MinifierTestCase.TEST_CASES):
-    func = make_test_function(input, expected)
-    setattr(MinifierTestCase, 'test_case_%d' % index, func)
