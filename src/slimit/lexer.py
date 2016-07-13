@@ -414,7 +414,7 @@ class Lexer(object):
         r'(?:' + COMBINING_MARK + r'|' + r'[0-9a-zA-Z_$]' + r'|' + DIGIT +
         r'|' + CONNECTOR_PUNCTUATION + r')*'
         )
-    identifier = identifier_start + identifier_part
+    identifier = (identifier_start + identifier_part).replace(']|[', '')
 
     getprop = r'get' + r'(?=\s' + identifier + r')'
     @ply.lex.TOKEN(getprop)
