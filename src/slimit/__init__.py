@@ -24,4 +24,4 @@
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
-from minifier import minify
+from slimit.minifier import minify  # noqa: F401

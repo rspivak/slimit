@@ -15,7 +15,7 @@ Topic :: Software Development :: Compilers
 Operating System :: Unix
 """
 
-requirements = ['ply>=3.4']
+requirements = ['ply>=3.11']
 major, minor = sys.version_info[:2] # Python version
 if major == 2 and minor <=6:
     # OrderedDict was added to the collections module in Python 2.7 and it is
@@ -54,4 +54,3 @@ setup(
     long_description=read('README.rst') + '\n\n' + read('CHANGES'),
     extras_require={'test': []}
     )
-

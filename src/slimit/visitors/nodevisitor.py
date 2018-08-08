@@ -30,6 +30,7 @@ class ASTVisitor(object):
 
     Example:
 
+    >>> from __future__ import print_function
     >>> from slimit.parser import Parser
     >>> from slimit.visitors.nodevisitor import ASTVisitor
     >>>
@@ -45,7 +46,7 @@ class ASTVisitor(object):
     ...         '''Visit object literal.'''
     ...         for prop in node:
     ...             left, right = prop.left, prop.right
-    ...             print 'Property value: %s' % right.value
+    ...             print('Property value: %s' % right.value)
     ...             # visit all children in turn
     ...             self.visit(prop)
     ...

@@ -87,8 +87,8 @@ class LexerTestCase(unittest.TestCase):
          ['ID i', 'ID my_variable_name', 'ID c17', 'ID _dummy',
           'ID $str', 'ID $', 'ID _', 'ID CamelCase', 'ID class2type']
          ),
-        (ur'\u03c0 \u03c0_tail var\ua67c',
-         [ur'ID \u03c0', ur'ID \u03c0_tail', ur'ID var\ua67c']),
+        (u'\u03c0 \u03c0_tail var\ua67c',
+         [u'ID \u03c0', u'ID \u03c0_tail', u'ID var\ua67c']),
         # https://github.com/rspivak/slimit/issues/2
         ('nullify truelie falsepositive',
          ['ID nullify', 'ID truelie', 'ID falsepositive']),
@@ -150,7 +150,7 @@ class LexerTestCase(unittest.TestCase):
         (r"""'\u0001' "\uFCEF" 'a\\\b\n'""",
          [r"STRING '\u0001'", r'STRING "\uFCEF"', r"STRING 'a\\\b\n'"]
          ),
-        (ur'"тест строки\""', [ur'STRING "тест строки\""']),
+        (u'"\u0442\u0435\u0441\u0442 \u0441\u0442\u0440\u043e\u043a\u0438\\""', [u'STRING "\u0442\u0435\u0441\u0442 \u0441\u0442\u0440\u043e\u043a\u0438\\""']),
         # Bug - https://github.com/rspivak/slimit/issues/5
         (r"var tagRegExp = new RegExp('<(\/*)(FooBar)', 'gi');",
          ['VAR var', 'ID tagRegExp', 'EQ =',

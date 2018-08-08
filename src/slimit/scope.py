@@ -133,7 +133,7 @@ class Scope(object):
 
         """
         while True:
-            mangled = self.base54.next()
+            mangled = next(self.base54)
 
             # case 1
             ancestor = self._get_scope_with_mangled(mangled)
@@ -181,5 +181,3 @@ class FuncSymbol(Symbol, Scope):
     def __init__(self, name, enclosing_scope):
         Symbol.__init__(self, name)
         Scope.__init__(self, enclosing_scope)
-
-

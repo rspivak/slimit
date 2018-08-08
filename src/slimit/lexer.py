@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 #
 ###############################################################################
+from  __future__ import print_function
 
 __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
@@ -62,7 +63,7 @@ class Lexer(object):
 
     >>> lexer.input('a = 1;')
     >>> for token in lexer:
-    ...     print token
+    ...     print(token)
     ...
     LexToken(ID,'a',1,0)
     LexToken(EQ,'=',1,2)
@@ -76,7 +77,7 @@ class Lexer(object):
     ...     token = lexer.token()
     ...     if not token:
     ...         break
-    ...     print token
+    ...     print(token)
     ...
     LexToken(ID,'a',1,0)
     LexToken(EQ,'=',1,2)
@@ -192,12 +193,15 @@ class Lexer(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         token = self.token()
         if not token:
             raise StopIteration
 
         return token
+
+    def next(self):
+        return self.__next__()
 
     states = (
         ('regex', 'exclusive'),
@@ -432,6 +436,12 @@ class Lexer(object):
         return token
 
     def t_error(self, token):
-        print 'Illegal character %r at %s:%s after %s' % (
-            token.value[0], token.lineno, token.lexpos, self.prev_token)
+        print(
+            'Illegal character %r at %s:%s after %s' % (
+                token.value[0],
+                token.lineno,
+                token.lexpos,
+                self.prev_token
+            )
+        )
         token.lexer.skip(1)

@@ -26,17 +26,22 @@ __author__ = 'Ruslan Spivak <ruslan.spivak@gmail.com>'
 
 import os
 import sys
-import StringIO
 import tempfile
 import unittest
 
 from contextlib import contextmanager
 
 
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
+
+
 @contextmanager
 def redirected_input_output(input=''):
     old_inp, old_out = sys.stdin, sys.stdout
-    inp, out = StringIO.StringIO(input), StringIO.StringIO()
+    inp, out = StringIO(input), StringIO()
     sys.stdin, sys.stdout = inp, out
     try:
         yield out
@@ -67,20 +72,20 @@ class CmdTestCase(unittest.TestCase):
 
     def test_main_dash_m_with_input_file(self):
         from slimit.minifier import main
-        out = StringIO.StringIO()
+        out = StringIO()
         main(['-m', '-t', self.path], out=out)
         self.assertEqual('var a=5;', out.getvalue())
 
     def test_main_dash_dash_mangle_with_input_file(self):
         from slimit.minifier import main
-        out = StringIO.StringIO()
+        out = StringIO()
         main(['--mangle', '--mangle-toplevel', self.path], out=out)
         self.assertEqual('var a=5;', out.getvalue())
 
     def test_main_dash_m_with_mock_stdin(self):
         from slimit.minifier import main
-        out = StringIO.StringIO()
-        inp = StringIO.StringIO('function foo() { var local = 5; }')
+        out = StringIO()
+        inp = StringIO('function foo() { var local = 5; }')
         main(['-m'], inp=inp, out=out)
         self.assertEqual('function foo(){var a=5;}', out.getvalue())
 
@@ -104,8 +109,8 @@ class CmdTestCase(unittest.TestCase):
             sys.modules['slimit.minifier'] = old_module
 
     def test_main_sys_argv(self):
-        out = StringIO.StringIO()
-        inp = StringIO.StringIO('var global = 5;')
+        out = StringIO()
+        inp = StringIO('var global = 5;')
         with redirected_sys_argv(['slimit', '-m', '-t']):
             from slimit.minifier import main
             main(inp=inp, out=out)
